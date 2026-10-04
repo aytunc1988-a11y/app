@@ -1,12 +1,11 @@
 import React from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { Home, BarChart3, Camera, LogOut, FileText, Users, UserCircle, ShoppingBag, MessageCircle } from "lucide-react";
+import { Home, BarChart3, LogOut, FileText, Users, UserCircle, ShoppingBag, MessageCircle } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 
 const NAV_DESKTOP = [
   { to: "/faecher", label: "Fächer", icon: Home },
   { to: "/pruefungen", label: "Prüfungen", icon: FileText },
-  { to: "/meine-fragen", label: "Fragen", icon: Camera },
   { to: "/statistik", label: "Statistik", icon: BarChart3 },
   { to: "/anzeigen", label: "Anzeigen", icon: ShoppingBag },
   { to: "/leute", label: "Leute", icon: Users },
@@ -22,7 +21,7 @@ const BOTTOM = [
 ];
 
 export default function AppLayout() {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   return (
     <div className="min-h-screen pb-24 md:pb-10" style={{ fontFamily: "Space Grotesk, Inter, sans-serif" }}>
       <header className="sticky top-0 z-20 bg-background/90 backdrop-blur border-b-2 border-black">
@@ -37,19 +36,17 @@ export default function AppLayout() {
               </NavLink>
             ))}
           </nav>
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
+            {user?.name && <span className="hidden sm:block text-xs font-bold truncate max-w-[120px]">{user.name}</span>}
             <button onClick={() => logout()} className="p-2 rounded-lg border-2 border-transparent hover:border-black transition-all" aria-label="Abmelden"><LogOut className="w-5 h-5" /></button>
           </div>
         </div>
       </header>
-      <main className="max-w-3xl mx-auto px-3 py-3 md:px-6 md:py-8">
-        <Outlet />
-      </main>
+      <main className="max-w-3xl mx-auto px-3 py-3 md:px-6 md:py-8"><Outlet /></main>
       <nav className="md:hidden fixed bottom-4 left-3 right-3 z-20 brutal bg-white grid grid-cols-5 py-2">
         {BOTTOM.map((n) => (
           <NavLink key={n.to} to={n.to} end className={({ isActive }) => `flex flex-col items-center gap-0.5 py-1 rounded-lg text-[9px] font-bold transition-all ${isActive ? "bg-[#FDFFB6]" : ""}`}>
-            <n.icon className="w-5 h-5" />
-            {n.label}
+            <n.icon className="w-5 h-5" />{n.label}
           </NavLink>
         ))}
       </nav>

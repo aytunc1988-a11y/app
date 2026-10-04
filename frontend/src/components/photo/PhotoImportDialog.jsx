@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Camera, Upload, Loader2, Plus, X } from "lucide-react";
+import { Camera, Upload, FileText, Loader2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
-
 import { db } from "@/api/base44Client";
 import { getSubject, professionSubjects } from "@/lib/subjects";
 import useCurrentUser from "@/lib/useCurrentUser";
@@ -17,27 +16,28 @@ export default function PhotoImportDialog({ open, onOpenChange }) {
   const subjects = professionSubjects(user?.profession || "kaufmann");
   const [stage, setStage] = useState("pick");
   const [file, setFile] = useState(null);
+  const [isPdf, setIsPdf] = useState(false);
   const [preview, setPreview] = useState(null);
   const [subject, setSubject] = useState(subjects[0]?.id);
+  const [count, setCount] = useState(5);
   const [items, setItems] = useState([]);
 
-  const reset = () => { setStage("pick"); setFile(null); setPreview(null); setItems([]); };
+  const reset = () => { setStage("pick"); setFile(null); setPreview(null); setItems([]); setIsPdf(false); };
   const close = (o) => { if (!o) reset(); onOpenChange(o); };
-  const handleFile = (f) => { if (!f) return; setFile(f); setPreview(URL.createObjectURL(f)); };
+  const handleFile = (f, pdf) => { if (!f) return; setFile(f); setIsPdf(pdf); setPreview(pdf ? null : URL.createObjectURL(f)); };
 
   const analyze = async () => {
     if (!file) return;
     setStage("loading");
     try {
-      const imageBase64 = await db.fileToDataUrl(file);
-      const res = await db.ai.generateQuestions({ subjectName: getSubject(subject)?.name || subject, imageBase64, count: 5 });
+      const b64 = await db.fileToDataUrl(file);
+      const payload = { subjectName: getSubject(subject)?.name || subject, count };
+      if (isPdf) payload.pdfBase64 = b64; else payload.imageBase64 = b64;
+      const res = await db.ai.generateQuestions(payload);
       const qs = (res.questions || []).map((q) => ({ ...q, options: q.type === "gap" ? [] : q.options, subject, source: "user_photo" }));
       setItems(qs.length ? qs : [blank(subject)]);
       setStage("editing");
-    } catch (e) {
-      toast.error("Analyse fehlgeschlagen");
-      setStage("pick");
-    }
+    } catch (e) { toast.error("Analyse fehlgeschlagen"); setStage("pick"); }
   };
 
   const updateItem = (i, patch) => setItems((prev) => prev.map((q, j) => (j === i ? { ...q, ...patch } : q)));
@@ -46,74 +46,52 @@ export default function PhotoImportDialog({ open, onOpenChange }) {
 
   const save = async () => {
     const valid = items.filter((q) => q.question?.trim() && q.correct_answer?.trim());
-    if (!valid.length) { toast.error("Mindestens eine vollständige Frage (Frage + Antwort) nötig."); return; }
+    if (!valid.length) { toast.error("Mindestens eine vollständige Frage nötig."); return; }
     setStage("saving");
     try {
       await db.entities.UserQuestion.bulkCreate(valid.map((q) => ({ ...q, subject })));
       qc.invalidateQueries({ queryKey: ["userQuestions"] });
-      toast.success(`${valid.length} Frage(n) gespeichert`);
-      close(false);
+      toast.success(`${valid.length} Frage(n) gespeichert`); close(false);
     } catch (e) { toast.error("Speichern fehlgeschlagen"); setStage("editing"); }
   };
 
   return (
     <Dialog open={open} onOpenChange={close}>
       <DialogContent className="brutal max-w-lg">
-        <DialogHeader>
-          <DialogTitle className="font-heading text-xl">Foto importieren</DialogTitle>
-        </DialogHeader>
-
+        <DialogHeader><DialogTitle className="font-heading text-xl">Importieren → KI-Fragen</DialogTitle></DialogHeader>
         {stage === "pick" && (
           <div className="space-y-4">
-            <div>
-              <label className="text-xs font-bold uppercase tracking-widest">Fach</label>
-              <select value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-bold bg-white">
-                {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-              </select>
-            </div>
             <div className="grid grid-cols-2 gap-3">
-              <label className="brutal-btn bg-[#FDFFB6] py-4 font-heading flex flex-col items-center justify-center gap-1 cursor-pointer text-sm">
-                <Camera className="w-6 h-6" /> Foto aufnehmen
-                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
-              </label>
-              <label className="brutal-btn bg-white py-4 font-heading flex flex-col items-center justify-center gap-1 cursor-pointer text-sm">
-                <Upload className="w-6 h-6" /> Hochladen
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
-              </label>
+              <div><label className="text-xs font-bold uppercase tracking-widest">Fach</label>
+                <select value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-bold bg-white">
+                  {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select></div>
+              <div><label className="text-xs font-bold uppercase tracking-widest">Anzahl (1–10)</label>
+                <select value={count} onChange={(e) => setCount(Number(e.target.value))} className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-bold bg-white">
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => <option key={n} value={n}>{n}</option>)}
+                </select></div>
             </div>
-            {preview && <img src={preview} alt="Vorschau" className="w-full brutal object-contain max-h-48" />}
-            <button onClick={analyze} disabled={!file} className="brutal-btn bg-black text-white w-full py-3">Fragen aus Foto erstellen</button>
+            <div className="grid grid-cols-3 gap-2">
+              <label className="brutal-btn bg-[#FDFFB6] py-3 flex flex-col items-center gap-1 cursor-pointer text-xs"><Camera className="w-5 h-5" /> Kamera<input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleFile(e.target.files?.[0], false)} /></label>
+              <label className="brutal-btn bg-white py-3 flex flex-col items-center gap-1 cursor-pointer text-xs"><Upload className="w-5 h-5" /> Bild<input type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0], false)} /></label>
+              <label className="brutal-btn bg-white py-3 flex flex-col items-center gap-1 cursor-pointer text-xs"><FileText className="w-5 h-5" /> PDF<input type="file" accept="application/pdf" className="hidden" onChange={(e) => handleFile(e.target.files?.[0], true)} /></label>
+            </div>
+            {preview && <img src={preview} alt="" className="w-full brutal object-contain max-h-48" />}
+            {isPdf && file && <div className="brutal bg-[#CAFFBF] p-2 text-sm font-bold flex items-center gap-2"><FileText className="w-4 h-4" /> {file.name}</div>}
+            <button onClick={analyze} disabled={!file} className="brutal-btn bg-black text-white w-full py-3">{count} Fragen erstellen</button>
           </div>
         )}
-
-        {stage === "loading" && (
-          <div className="py-12 flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 animate-spin" />
-            <p className="font-semibold text-sm">KI analysiert dein Foto…</p>
-          </div>
-        )}
-
+        {stage === "loading" && <div className="py-12 flex flex-col items-center gap-3"><Loader2 className="w-8 h-8 animate-spin" /><p className="font-semibold text-sm">KI analysiert…</p></div>}
         {(stage === "editing" || stage === "saving") && (
           <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-            <div>
-              <label className="text-xs font-bold uppercase tracking-widest">Fach</label>
-              <select value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-bold bg-white">
-                {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-              </select>
-            </div>
-            {items.map((q, i) => (
-              <QuestionEditor key={i} q={q} onChange={(patch) => updateItem(i, patch)} onRemove={() => removeItem(i)} />
-            ))}
+            {items.map((q, i) => <QuestionEditor key={i} q={q} onChange={(patch) => updateItem(i, patch)} onRemove={() => removeItem(i)} />)}
             <button onClick={addItem} className="brutal-btn bg-white w-full py-3 flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Frage hinzufügen</button>
           </div>
         )}
-
         {stage !== "loading" && (
           <DialogFooter className="gap-2">
             <button onClick={() => close(false)} className="brutal-btn bg-white px-4 py-2 flex items-center gap-1"><X className="w-4 h-4" /> Abbrechen</button>
-            {stage === "editing" && (
-              <button onClick={save} disabled={stage === "saving"} className="brutal-btn bg-[#FDFFB6] px-4 py-2">{stage === "saving" ? "Speichern…" : "Speichern"}</button>
-            )}
+            {stage === "editing" && <button onClick={save} className="brutal-btn bg-[#FDFFB6] px-4 py-2">Speichern</button>}
           </DialogFooter>
         )}
       </DialogContent>

@@ -48,6 +48,7 @@ export default function AnzeigeDetail() {
             <h1 className="font-heading text-2xl md:text-4xl mt-4 leading-tight">{ad.title}</h1>
             <div className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground mt-3"><MapPin className="w-4 h-4" />{[ad.ort, ad.canton].filter(Boolean).join(", ") || "Schweiz"}</div>
             {ad.description && <p className="mt-5 whitespace-pre-wrap text-base leading-relaxed font-medium">{ad.description}</p>}
+            {ad.attachment_url && <a href={ad.attachment_url} download={ad.attachment_name || "anhang"} className="brutal-btn bg-[#9BF6FF] mt-4 inline-flex items-center gap-2 px-4 py-2.5 text-sm no-underline">📎 {ad.attachment_name || "Anhang herunterladen"}</a>}
             <div className="text-xs font-semibold text-muted-foreground mt-5 border-t-2 border-black pt-3">Inserat von: {ad.created_by}</div>
 
             <div className="mt-6">

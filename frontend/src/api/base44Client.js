@@ -1,11 +1,18 @@
-// Backend-connected client (FastAPI + MongoDB). Keeps the same interface the
-// pages already use (db.entities.X.*, db.auth.*, db.ai.*, db.integrations.Core.*).
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+const TOKEN_KEY = "lapquiz_token";
 
-const http = axios.create({ baseURL: API });
+export const getToken = () => localStorage.getItem(TOKEN_KEY);
+export const setToken = (t) => t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY);
+
+const http = axios.create({ baseURL: API, withCredentials: true });
+http.interceptors.request.use((cfg) => {
+  const t = getToken();
+  if (t) cfg.headers.Authorization = `Bearer ${t}`;
+  return cfg;
+});
 
 const entity = (name) => ({
   list: async (sort, limit) => (await http.post(`/entities/${name}/list`, { sort, limit })).data,
@@ -17,60 +24,54 @@ const entity = (name) => ({
   delete: async (id) => (await http.delete(`/entities/${name}/${id}`)).data,
   deleteMany: async (filter) => (await http.post(`/entities/${name}/delete-many`, { filter })).data,
 });
-
-const entityNames = ["Question", "UserQuestion", "StudySession", "CustomExam", "Listing", "Message", "LiebeProfile"];
 const entities = {};
-entityNames.forEach((n) => (entities[n] = entity(n)));
+["Question", "UserQuestion", "StudySession", "CustomExam", "Listing", "Message", "LiebeProfile"].forEach((n) => (entities[n] = entity(n)));
 
-// Read a File into a data URL (used for images stored inline on entities).
-function fileToDataUrl(file) {
+export function fileToDataUrl(file) {
   return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => resolve("");
-    reader.readAsDataURL(file);
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = () => resolve("");
+    r.readAsDataURL(file);
   });
 }
 
 const ai = {
-  // { subjectName, topic, imageBase64, count }
-  generateQuestions: async (payload) => {
-    const { data } = await http.post(`/ai/generate-questions`, {
-      subject_name: payload.subjectName,
-      topic: payload.topic || null,
-      image_base64: payload.imageBase64 || null,
-      count: payload.count || 5,
-    });
-    return data; // { questions: [...] }
-  },
+  generateQuestions: async (p) => (await http.post(`/ai/generate-questions`, {
+    subject_name: p.subjectName, topic: p.topic || null, image_base64: p.imageBase64 || null,
+    pdf_base64: p.pdfBase64 || null, count: p.count || 5,
+  })).data,
 };
 
-const integrations = {
-  Core: {
-    // Images are stored inline as data URLs on the entity docs (persist in Mongo).
-    UploadPublicFile: async ({ file }) => ({ file_url: await fileToDataUrl(file) }),
-    UploadFile: async ({ file }) => ({ file_url: await fileToDataUrl(file) }),
-  },
-};
+const integrations = { Core: {
+  UploadPublicFile: async ({ file }) => ({ file_url: await fileToDataUrl(file) }),
+  UploadFile: async ({ file }) => ({ file_url: await fileToDataUrl(file) }),
+}};
 
 const auth = {
-  isAuthenticated: async () => true,
-  me: async () => (await http.get(`/me`)).data,
-  updateMe: async (patch) => (await http.put(`/me`, patch)).data,
-  loginViaEmailPassword: async () => (await http.get(`/me`)).data,
-  loginWithProvider: () => { window.location.href = "/faecher"; },
-  register: async () => ({}),
-  verifyOtp: async () => ({ access_token: "demo-token" }),
-  resendOtp: async () => ({}),
-  setToken: () => {},
-  resetPasswordRequest: async () => ({}),
-  resetPassword: async () => ({}),
-  redirectToLogin: () => { window.location.href = "/login"; },
-  logout: () => { window.location.href = "/"; },
+  me: async () => (await http.get(`/auth/me`)).data,
+  updateMe: async (patch) => (await http.put(`/auth/me`, patch)).data,
+  registerEmail: async (email, password, name) => {
+    const { data } = await http.post(`/auth/register`, { email, password, name });
+    setToken(data.session_token); return data.user;
+  },
+  loginEmail: async (email, password) => {
+    const { data } = await http.post(`/auth/login`, { email, password });
+    setToken(data.session_token); return data.user;
+  },
+  exchangeSession: async (session_id) => {
+    const { data } = await http.post(`/auth/session`, { session_id });
+    setToken(data.session_token); return data.user;
+  },
+  redeem: async (code) => (await http.post(`/auth/redeem`, { code })).data,
+  logout: async () => { try { await http.post(`/auth/logout`); } catch {} setToken(null); window.location.href = "/"; },
+  loginWithProvider: () => {
+    // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+    const redirectUrl = window.location.origin + "/faecher";
+    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+  },
 };
 
-const app = { getPublicSettings: async () => ({ id: "lapquiz", public_settings: {} }) };
-
-export const db = { auth, entities, integrations, ai, app, fileToDataUrl };
+export const db = { auth, entities, integrations, ai, fileToDataUrl };
 export const base44 = db;
 export default db;

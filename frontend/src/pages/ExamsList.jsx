@@ -23,10 +23,22 @@ export default function ExamsList() {
     qc.invalidateQueries({ queryKey: ["exams"] });
   };
 
+  const exportExams = () => {
+    if (!exams.length) return;
+    const data = exams.map(({ id, created_by_id, created_by, created_date, ...e }) => e);
+    const blob = new Blob([JSON.stringify({ type: "lapquiz_exams", items: data }, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "lapquiz-pruefungen.json"; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div>
       <LearnTabs />
-      <h1 className="font-heading text-xl sm:text-3xl">Prüfungen</h1>
+      <div className="flex items-center justify-between gap-2">
+        <h1 className="font-heading text-xl sm:text-3xl">Prüfungen</h1>
+        <button onClick={exportExams} className="brutal-btn bg-white px-2.5 py-1 text-xs">Export JSON</button>
+      </div>
 
       <div className="grid grid-cols-2 gap-2 mt-3">
         {SUB.map((t) => (

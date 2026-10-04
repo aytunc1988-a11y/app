@@ -16,8 +16,15 @@ export default function AnzeigeCreate() {
   const { user } = useCurrentUser();
   const [form, setForm] = useState({ title: "", description: "", profession: user?.profession || "kaufmann", canton: user?.canton || "", ort: user?.ort || "", price: "" });
   const [image, setImage] = useState("");
+  const [attachment, setAttachment] = useState({ url: "", name: "" });
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const uploadDoc = async (file) => {
+    if (!file) return;
+    const url = await db.fileToDataUrl(file);
+    setAttachment({ url, name: file.name });
+  };
 
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
@@ -27,6 +34,7 @@ export default function AnzeigeCreate() {
       if (!ad) return;
       setForm({ title: ad.title || "", description: ad.description || "", profession: ad.profession || "kaufmann", canton: ad.canton || "", ort: ad.ort || "", price: ad.price ?? "" });
       setImage(ad.image_url || "");
+      setAttachment({ url: ad.attachment_url || "", name: ad.attachment_name || "" });
     });
   }, [id]);
 
@@ -42,7 +50,7 @@ export default function AnzeigeCreate() {
     if (!form.title.trim()) { toast.error("Bitte einen Titel eingeben."); return; }
     setSaving(true);
     try {
-      const data = { title: form.title.trim(), description: form.description, profession: form.profession, canton: form.canton, ort: form.ort, price: form.price === "" ? null : Number(form.price), image_url: image, active: true };
+      const data = { title: form.title.trim(), description: form.description, profession: form.profession, canton: form.canton, ort: form.ort, price: form.price === "" ? null : Number(form.price), image_url: image, attachment_url: attachment.url, attachment_name: attachment.name, active: true };
       if (isEdit) {
         await db.entities.Listing.update(id, data);
         await qc.invalidateQueries({ queryKey: ["listings"] });
@@ -70,6 +78,14 @@ export default function AnzeigeCreate() {
             <input type="file" accept="image/*" className="hidden" onChange={(e) => upload(e.target.files?.[0])} disabled={uploading} />
           </label>
           {image && <img src={image} alt="" className="w-full brutal mt-2 max-h-48 object-cover" />}
+        </div>
+        <div>
+          <label className="text-xs font-bold uppercase tracking-widest">Datei anhängen (z.B. Prüfungsunterlagen – PDF/Bild)</label>
+          <label className="brutal-btn bg-white w-full py-3 mt-1 flex items-center justify-center gap-2 cursor-pointer text-sm">
+            <Camera className="w-4 h-4" /> {attachment.name ? "Datei ändern" : "Datei wählen"}
+            <input type="file" accept="application/pdf,image/*" className="hidden" onChange={(e) => uploadDoc(e.target.files?.[0])} />
+          </label>
+          {attachment.name && <div className="brutal bg-[#CAFFBF] p-2 mt-2 text-sm font-bold truncate">📎 {attachment.name}</div>}
         </div>
         <div>
           <label className="text-xs font-bold uppercase tracking-widest">Titel</label>
