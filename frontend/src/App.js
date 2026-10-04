@@ -31,6 +31,7 @@ import AnzeigeDetail from "@/pages/AnzeigeDetail";
 import AlleProfile from "@/pages/AlleProfile";
 import LeuteDetail from "@/pages/LeuteDetail";
 import Chat from "@/pages/Chat";
+import Admin from "@/pages/Admin";
 import PageNotFound from "@/pages/PageNotFound";
 
 function AppRouter() {
@@ -54,6 +55,7 @@ function AppRouter() {
           <Route path="/leute/:id" element={<LeuteDetail />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/profil" element={<Profile />} />
+          <Route path="/admin" element={<Admin />} />
           <Route element={<RequireLicense />}>
             <Route path="/faecher" element={<Faecher />} />
             <Route path="/berufe" element={<Berufe />} />

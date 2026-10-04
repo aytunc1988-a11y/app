@@ -21,6 +21,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 LICENSE_CODES = {c.strip().upper() for c in os.environ.get("LICENSE_CODES", "").split(",") if c.strip()}
+ADMIN_EMAILS = {e.strip().lower() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()}
 SALT = os.environ.get("SESSION_SECRET", "lapquiz")
 
 # Entities scoped to the owner (personal data). Others are shared/global read.
@@ -101,7 +102,14 @@ def set_cookie(resp, token):
 
 
 def public_user(u):
-    return {k: u.get(k) for k in ["user_id", "email", "name", "picture", "licensed", "profession", "age", "canton", "ort", "profile_picture", "bio"]}
+    return {k: u.get(k) for k in ["user_id", "email", "name", "picture", "licensed", "role", "profession", "age", "canton", "ort", "profile_picture", "bio"]}
+
+
+async def require_admin(request: Request):
+    u = await require_user(request)
+    if u.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin only")
+    return u
 
 
 async def upsert_user(email, name, picture="", password=None):
@@ -109,8 +117,11 @@ async def upsert_user(email, name, picture="", password=None):
     if existing:
         return existing["user_id"]
     uid = f"user_{uuid.uuid4().hex[:12]}"
+    # First user ever, or a configured admin email, becomes admin.
+    is_admin = email.lower() in ADMIN_EMAILS or (await db.users.count_documents({"role": "admin"})) == 0
     doc = {"user_id": uid, "email": email, "name": name or email.split("@")[0], "picture": picture,
-           "licensed": False, "profession": "kaufmann", "age": None, "canton": "", "ort": "",
+           "licensed": False, "role": "admin" if is_admin else "user",
+           "profession": "kaufmann", "age": None, "canton": "", "ort": "",
            "profile_picture": picture or "", "bio": "", "created_at": now_iso()}
     if password is not None:
         doc["password_hash"] = hash_pw(password)
@@ -185,11 +196,84 @@ async def logout(request: Request, response: Response):
 @api_router.post("/auth/redeem")
 async def redeem(request: Request, body: RedeemBody):
     u = await require_user(request)
-    if body.code.strip().upper() not in LICENSE_CODES:
+    code = body.code.strip().upper()
+    lic = await db.licenses.find_one({"code": code})
+    if not lic:
         raise HTTPException(status_code=400, detail="Ungültiger Lizenzcode")
+    if not lic.get("active", True):
+        raise HTTPException(status_code=400, detail="Dieser Lizenzcode wurde gesperrt")
+    used_by = lic.get("used_by", [])
+    max_uses = lic.get("max_uses", 0) or 0
+    if u["user_id"] not in used_by and max_uses and len(used_by) >= max_uses:
+        raise HTTPException(status_code=400, detail="Lizenzcode-Limit erreicht")
+    if u["user_id"] not in used_by:
+        await db.licenses.update_one({"code": code}, {"$addToSet": {"used_by": u["user_id"]}, "$inc": {"uses": 1}})
     await db.users.update_one({"user_id": u["user_id"]}, {"$set": {"licensed": True}})
     nu = await db.users.find_one({"user_id": u["user_id"]}, {"_id": 0})
     return public_user(nu)
+
+
+# ---------- Admin: license management ----------
+class LicenseCreate(BaseModel):
+    code: Optional[str] = None
+    note: Optional[str] = None
+    max_uses: int = 0
+
+
+def gen_code():
+    import random, string
+    return "LAP-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+
+
+@api_router.get("/admin/licenses")
+async def admin_list_licenses(request: Request):
+    await require_admin(request)
+    rows = await db.licenses.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return rows
+
+
+@api_router.post("/admin/licenses")
+async def admin_create_license(request: Request, body: LicenseCreate):
+    admin = await require_admin(request)
+    code = (body.code or gen_code()).strip().upper()
+    if await db.licenses.find_one({"code": code}):
+        raise HTTPException(status_code=400, detail="Code existiert bereits")
+    lic = {"id": str(uuid.uuid4()), "code": code, "active": True, "note": body.note or "",
+           "max_uses": max(0, int(body.max_uses or 0)), "uses": 0, "used_by": [],
+           "created_at": now_iso(), "created_by": admin["email"]}
+    await db.licenses.insert_one(dict(lic))
+    lic.pop("_id", None)
+    return lic
+
+
+@api_router.patch("/admin/licenses/{lic_id}")
+async def admin_toggle_license(request: Request, lic_id: str, data: Dict[str, Any]):
+    await require_admin(request)
+    patch = {}
+    if "active" in data: patch["active"] = bool(data["active"])
+    if "note" in data: patch["note"] = data["note"]
+    if "max_uses" in data: patch["max_uses"] = max(0, int(data["max_uses"] or 0))
+    await db.licenses.update_one({"id": lic_id}, {"$set": patch})
+    r = await db.licenses.find_one({"id": lic_id}, {"_id": 0})
+    return r
+
+
+@api_router.delete("/admin/licenses/{lic_id}")
+async def admin_delete_license(request: Request, lic_id: str):
+    await require_admin(request)
+    await db.licenses.delete_one({"id": lic_id})
+    return {"ok": True}
+
+
+@api_router.get("/admin/stats")
+async def admin_stats(request: Request):
+    await require_admin(request)
+    total_users = await db.users.count_documents({})
+    licensed_users = await db.users.count_documents({"licensed": True})
+    total_codes = await db.licenses.count_documents({})
+    active_codes = await db.licenses.count_documents({"active": True})
+    return {"total_users": total_users, "licensed_users": licensed_users,
+            "total_codes": total_codes, "active_codes": active_codes}
 
 
 # ---------- Generic entity CRUD (per-user scoped) ----------
@@ -328,6 +412,12 @@ app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=["*"], 
 
 
 async def seed():
+    # Seed license codes from env into the DB (so admins can manage them).
+    for code in LICENSE_CODES:
+        if not await db.licenses.find_one({"code": code}):
+            await db.licenses.insert_one({"id": str(uuid.uuid4()), "code": code, "active": True,
+                                          "note": "Standard-Code", "max_uses": 0, "uses": 0, "used_by": [],
+                                          "created_at": now_iso(), "created_by": "system"})
     # Curated questions & demo marketplace/profiles are shared (global read).
     if await coll("Question").count_documents({}) == 0:
         try:

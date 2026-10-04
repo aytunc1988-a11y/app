@@ -273,25 +273,241 @@ backend:
         agent: "testing"
         comment: "Seed data loads correctly on startup. Verified: 24 total questions (7 rechnungswesen), 6 listings, 12 profiles. Seed is idempotent (only runs if collections are empty)."
 
-frontend:
-  - task: "Frontend testing"
-    implemented: false
-    working: "NA"
-    file: ""
+  - task: "Admin user bootstrap and role assignment"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "low"
+    priority: "high"
     needs_retesting: false
     status_history:
-      - working: "NA"
+      - working: true
         agent: "testing"
-        comment: "Frontend testing not performed as per testing agent instructions. Backend testing only."
+        comment: "Admin bootstrap working correctly. Users with email in ADMIN_EMAILS (admin@lapquiz.ch) get role=admin. Normal users get role=user. Role field included in auth responses (/auth/register, /auth/login, /auth/me)."
+
+  - task: "License seeding from environment"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "License codes from LICENSE_CODES env variable (LAP-PRO-2025, LAPQUIZ-LIFETIME, DEMO-UNLOCK) are seeded into MongoDB licenses collection on startup. Verified all 3 codes present."
+
+  - task: "GET /admin/licenses endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /admin/licenses returns list of all licenses for admin users. Returns 403 Forbidden for normal users. Verified admin access works and normal user access is blocked."
+
+  - task: "POST /admin/licenses endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /admin/licenses creates licenses with auto-generated codes (LAP-XXXXXXXX format) or explicit codes (uppercased). Returns 400 for duplicate codes. All fields (id, code, active, uses, max_uses, note, created_at, created_by) working correctly."
+
+  - task: "PATCH /admin/licenses/{id} endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "PATCH /admin/licenses/{id} updates license fields (active, note, max_uses). Tested deactivating a license (active=false) and verified it blocks redemption with 'gesperrt' error."
+
+  - task: "DELETE /admin/licenses/{id} endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "DELETE /admin/licenses/{id} removes license from database. Verified license disappears from GET /admin/licenses list after deletion."
+
+  - task: "GET /admin/stats endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /admin/stats returns total_users, licensed_users, total_codes, active_codes as integers. Returns 403 Forbidden for normal users. Admin access verified working."
+
+  - task: "POST /auth/redeem endpoint - valid code"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /auth/redeem with valid active code (DEMO-UNLOCK) sets user.licensed=true, increments license.uses, and adds user_id to license.used_by array. Verified all fields update correctly."
+
+  - task: "POST /auth/redeem endpoint - error handling"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /auth/redeem error handling verified: unknown code returns 400 'Ungültiger Lizenzcode', deactivated code returns 400 'gesperrt', max_uses limit reached returns 400 'Limit erreicht'. All error messages correct."
+
+  - task: "License max_uses enforcement"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "License max_uses limit enforced correctly. Created license with max_uses=1, first user redeemed successfully, second user got 400 error. Users already in used_by list can redeem again without incrementing uses."
+
+frontend:
+  - task: "Landing page and registration flow"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/Home.jsx, /app/frontend/src/pages/Register.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Landing page displays hero text 'Foto rein. Bestanden raus.' correctly. Registration flow works: new user registration with email/password redirects to /faecher. Neo-brutalist UI with black borders and yellow accents correctly implemented."
+
+  - task: "License gate and redemption"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/RequireAuth.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "License gate appears correctly for unlicensed users with 'Lern-Bereich freischalten' screen. Code input and 'Freischalten' button work. Valid code 'DEMO-UNLOCK' successfully unlocks learning area and shows Fächer dashboard. WhatsApp button present."
+
+  - task: "Fächer dashboard"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/Faecher.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Fächer dashboard loads after license unlock. Shows greeting 'Was lernst du heute?', profession card, stats cards (Genauigkeit, Beantwortet, Lernzeit), and subject cards (Rechnungswesen, Wirtschaft & Gesellschaft, etc.). All cards clickable and navigate to quiz setup."
+
+  - task: "Quiz flow (setup and run)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/QuizSetup.jsx, /app/frontend/src/pages/QuizRun.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Quiz setup page shows question count selector (5, 10, 20, Alle) and timer options (Aus, 15', 30', 60'). 'Session starten' button starts quiz. Quiz run page displays questions with 4 answer options (multiple choice). Clicking answer shows green (correct) or red (incorrect) feedback panel with explanation and 'Weiter' button. Progress bar and timer working. Quiz flow complete and functional."
+
+  - task: "Meine Fragen (import/export)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/MeineFragen.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Meine Fragen page has all required toolbar buttons: JSON export, PDF export, Import, and 'Foto importieren'. Clicking 'Foto importieren' opens dialog with Fach selector, Anzahl (1-10) selector, and three upload buttons (Kamera, Bild, PDF). Dialog closes correctly. JSON export button works without errors."
+
+  - task: "Prüfung erstellen"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/ExamCreate.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Prüfung erstellen page (/pruefung/neu) loads correctly. Shows 'Thema (optional)' input field with placeholder text. Multiple select elements present including Fach selector and count selector for KI generation. Form layout and controls render correctly."
+
+  - task: "Inserat mit Datei"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/AnzeigeCreate.jsx, /app/frontend/src/pages/AnzeigeDetail.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Anzeigen page has '+ Inserat' button that navigates to /anzeigen/neu. Create page shows all fields: Bild upload, 'DATEI ANHÄNGEN (Z.B. PRÜFUNGSUNTERLAGEN – PDF/BILD)' file attachment control, Titel input, Beschreibung textarea, Rubrik (Beruf) selector, Preis input, Kanton selector, Ort input. 'Veröffentlichen' button publishes and redirects to detail view. File attachment control correctly labeled and functional."
+
+  - task: "Admin license management"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/Admin.jsx, /app/frontend/src/components/AppLayout.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Admin user (admin@lapquiz.ch) sees 'Admin' link with key icon in desktop navigation. /admin page shows 'Lizenz-Verwaltung' title, 4 stats cards (Nutzer, Freigeschaltet, Codes, Aktiv), 'Neuen Code erstellen' form with inputs for custom code, note, and max uses. Code list displays all licenses with code, copy button, aktiv/gesperrt badge, uses count. Lock/unlock button toggles active status (badge changes from 'aktiv' to 'gesperrt'). Delete button removes codes. Normal users do NOT see Admin link and are redirected from /admin to /faecher. Role-based access control working correctly."
+
+  - task: "Mobile bottom navigation"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/AppLayout.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Mobile bottom navigation present with 5 tabs: Lernen, Anzeigen, Leute, Chat, Profil. Navigation uses neo-brutalist styling with yellow highlight for active tab. Desktop shows horizontal nav in header. Responsive design working."
 
 metadata:
   created_by: "testing_agent"
   version: "1.0"
-  test_sequence: 1
-  run_ui: false
-  last_updated: "2026-10-04T20:03:00Z"
+  test_sequence: 3
+  run_ui: true
+  last_updated: "2026-10-04T21:55:00Z"
 
 test_plan:
   current_focus: []
@@ -302,3 +518,7 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "Completed comprehensive backend API testing. All 18 tests passed successfully. Tested: user profile endpoints, generic entities CRUD (7 entity types), AI question generation (with and without images), MongoDB persistence, and seed data. All endpoints working correctly at https://dupe-app.preview.emergentagent.com/api. Data persists correctly to MongoDB. AI generation uses Emergent LLM with gpt-4o model. Image-based generation requires realistic learning material content (not abstract shapes)."
+  - agent: "testing"
+    message: "Completed license management and admin features testing. All 20 tests passed successfully. Tested: admin user bootstrap (admin@lapquiz.ch gets role=admin), normal user registration (role=user), license seeding from env (LAP-PRO-2025, LAPQUIZ-LIFETIME, DEMO-UNLOCK), GET /admin/licenses (admin access + 403 for normal users), POST /admin/licenses (auto-generated and explicit codes, duplicate validation), PATCH /admin/licenses (deactivate licenses), DELETE /admin/licenses, GET /admin/stats (admin only), POST /auth/redeem (valid/invalid/deactivated codes, max_uses enforcement). All admin endpoints correctly require admin role. License redemption flow working perfectly with proper error messages in German. Role field included in all auth responses."
+  - agent: "testing"
+    message: "Completed comprehensive end-to-end frontend testing. ALL 9 FRONTEND FEATURES PASSED. Tested: (A) Landing page + registration + license gate - new user flow works perfectly with DEMO-UNLOCK code. (B) Quiz flow - setup page with count/timer selectors, quiz run with answer buttons, green/red feedback panel with 'Weiter' button, all working. (C) Meine Fragen - JSON/PDF/Import buttons + Foto importieren dialog with Fach/Anzahl selectors and Kamera/Bild/PDF buttons, all functional. (D) Prüfung erstellen - Thema input and KI generate controls present. (E) Inserat mit Datei - file attachment control 'DATEI ANHÄNGEN (Z.B. PRÜFUNGSUNTERLAGEN – PDF/BILD)' present, form complete, publishes to detail view. (F) Admin license management - Admin link visible for admin users only, stats cards, code creation form, code list with aktiv/gesperrt badges, lock/unlock toggle working, normal users redirected from /admin. Neo-brutalist UI (black borders, yellow accents) correctly implemented throughout. Mobile bottom nav working. No critical console errors. App fully functional."

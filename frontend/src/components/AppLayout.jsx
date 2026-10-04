@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { Home, BarChart3, LogOut, FileText, Users, UserCircle, ShoppingBag, MessageCircle } from "lucide-react";
+import { Home, BarChart3, LogOut, FileText, Users, UserCircle, ShoppingBag, MessageCircle, KeyRound } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 
 const NAV_DESKTOP = [
@@ -35,6 +35,11 @@ export default function AppLayout() {
                 {n.label}
               </NavLink>
             ))}
+            {user?.role === "admin" && (
+              <NavLink to="/admin" className={({ isActive }) => `px-2.5 py-1.5 rounded-lg border-2 font-semibold text-xs whitespace-nowrap transition-all flex items-center gap-1 ${isActive ? "border-black bg-[#FDFFB6] shadow-[2px_2px_0_0_#000]" : "border-transparent hover:border-black"}`}>
+                <KeyRound className="w-3.5 h-3.5" /> Admin
+              </NavLink>
+            )}
           </nav>
           <div className="flex items-center gap-2 shrink-0">
             {user?.name && <span className="hidden sm:block text-xs font-bold truncate max-w-[120px]">{user.name}</span>}

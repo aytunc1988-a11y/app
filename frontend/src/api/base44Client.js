@@ -72,6 +72,16 @@ const auth = {
   },
 };
 
-export const db = { auth, entities, integrations, ai, fileToDataUrl };
+const app = { getPublicSettings: async () => ({ id: "lapquiz", public_settings: {} }) };
+
+const admin = {
+  listLicenses: async () => (await http.get(`/admin/licenses`)).data,
+  createLicense: async (payload) => (await http.post(`/admin/licenses`, payload)).data,
+  updateLicense: async (id, patch) => (await http.patch(`/admin/licenses/${id}`, patch)).data,
+  deleteLicense: async (id) => (await http.delete(`/admin/licenses/${id}`)).data,
+  stats: async () => (await http.get(`/admin/stats`)).data,
+};
+
+export const db = { auth, entities, integrations, ai, admin, app, fileToDataUrl };
 export const base44 = db;
 export default db;
