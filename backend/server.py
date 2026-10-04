@@ -276,6 +276,27 @@ async def admin_stats(request: Request):
             "total_codes": total_codes, "active_codes": active_codes}
 
 
+@api_router.get("/admin/users")
+async def admin_users(request: Request):
+    await require_admin(request)
+    rows = await db.users.find({}, {"_id": 0, "password_hash": 0}).sort("created_at", -1).to_list(2000)
+    return [{"user_id": r.get("user_id"), "email": r.get("email"), "name": r.get("name"),
+             "role": r.get("role", "user"), "licensed": bool(r.get("licensed")),
+             "created_at": r.get("created_at")} for r in rows]
+
+
+@api_router.patch("/admin/users/{uid}")
+async def admin_update_user(request: Request, uid: str, data: Dict[str, Any]):
+    await require_admin(request)
+    patch = {}
+    if "licensed" in data: patch["licensed"] = bool(data["licensed"])
+    if "role" in data and data["role"] in ("user", "admin"): patch["role"] = data["role"]
+    if patch:
+        await db.users.update_one({"user_id": uid}, {"$set": patch})
+    r = await db.users.find_one({"user_id": uid}, {"_id": 0, "password_hash": 0})
+    return public_user(r) if r else None
+
+
 # ---------- Generic entity CRUD (per-user scoped) ----------
 def check(name):
     if name not in ALLOWED:
@@ -373,10 +394,12 @@ async def ai_generate(body: AIGenBody, request: Request):
     topic = body.topic or "allgemein, passend zum Fach"
     schema = '{"questions":[{"type":"mc|tf|gap","question":"...","options":["..."],"correct_answer":"...","explanation":"..."}]}'
     pdf_text = pdf_to_text(body.pdf_base64) if body.pdf_base64 else ""
+    auto = bool(body.image_base64 or pdf_text)  # Foto/PDF: KI bestimmt Anzahl automatisch
+    cap = 12 if auto else n
     if body.image_base64:
-        task = f'Analysiere das Foto von Lernunterlagen und erstelle {n} Prüfungsfragen zum Fach "{body.subject_name}".'
+        task = f'Analysiere das Foto von Lernunterlagen und erstelle so viele sinnvolle Prüfungsfragen zum Fach "{body.subject_name}" wie der Inhalt hergibt (zwischen 3 und 10).'
     elif pdf_text:
-        task = f'Erstelle {n} Prüfungsfragen zum Fach "{body.subject_name}" basierend auf diesem Skript-Text:\n"""\n{pdf_text}\n"""'
+        task = f'Erstelle zum Fach "{body.subject_name}" so viele sinnvolle Prüfungsfragen wie der Skript-Text hergibt (zwischen 3 und 10):\n"""\n{pdf_text}\n"""'
     else:
         task = f'Erstelle {n} Prüfungsfragen für die Schweizer LAP im Fach "{body.subject_name}". Thema: {topic}.'
     prompt = f"{task}\n\n{QUESTION_RULES}\n\nAntworte NUR mit gültigem JSON in diesem Format:\n{schema}"
@@ -393,7 +416,7 @@ async def ai_generate(body: AIGenBody, request: Request):
         data = extract_json(resp if isinstance(resp, str) else str(resp))
         if not data or "questions" not in data: raise ValueError("keine Fragen")
         out = []
-        for q in data["questions"][:n]:
+        for q in data["questions"][:cap]:
             t = q.get("type", "mc"); opts = q.get("options") or []
             if t == "tf": opts = ["Wahr", "Falsch"]
             elif t == "gap": opts = []

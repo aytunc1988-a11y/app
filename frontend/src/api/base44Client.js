@@ -80,6 +80,8 @@ const admin = {
   updateLicense: async (id, patch) => (await http.patch(`/admin/licenses/${id}`, patch)).data,
   deleteLicense: async (id) => (await http.delete(`/admin/licenses/${id}`)).data,
   stats: async () => (await http.get(`/admin/stats`)).data,
+  listUsers: async () => (await http.get(`/admin/users`)).data,
+  updateUser: async (uid, patch) => (await http.patch(`/admin/users/${uid}`, patch)).data,
 };
 
 export const db = { auth, entities, integrations, ai, admin, app, fileToDataUrl };

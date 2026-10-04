@@ -393,6 +393,102 @@ backend:
         agent: "testing"
         comment: "License max_uses limit enforced correctly. Created license with max_uses=1, first user redeemed successfully, second user got 400 error. Users already in used_by list can redeem again without incrementing uses."
 
+  - task: "GET /admin/users endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /admin/users returns array of users with all required fields (user_id, email, name, role, licensed, created_at). Admin access verified working. Normal users correctly receive 403 Forbidden. Tested with 10 users in database."
+
+  - task: "PATCH /admin/users/{uid} endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "PATCH /admin/users/{uid} successfully updates user licensed status. Tested toggling licensed=true then licensed=false, both work correctly. Normal users correctly receive 403 Forbidden. Admin-only access control working."
+
+  - task: "GET /admin/stats licensed_users count"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /admin/stats licensed_users count correctly increases when a user is licensed via PATCH /admin/users/{uid}. Verified count increased from 7 to 8 after licensing a user. Stats tracking working correctly."
+
+  - task: "AI auto-count with image (no count field)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /ai/generate-questions with image_base64 but WITHOUT count field successfully auto-determines question count. Generated 5 questions (expected range 3-10, capped at 12). AI correctly analyzes image content and determines appropriate number of questions. Feature working as designed."
+
+  - task: "AI text with explicit count"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /ai/generate-questions with text-only input and explicit count=3 correctly respects the requested count. Generated exactly 3 questions as requested. Explicit count parameter still honored for non-image requests."
+
+  - task: "Regression: POST /auth/redeem"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Regression test passed. POST /auth/redeem with DEMO-UNLOCK code still works correctly. User licensed=true after redemption. No breaking changes detected."
+
+  - task: "Regression: POST /entities/CustomExam"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Regression test passed. POST /entities/CustomExam create endpoint still works correctly. Created exam with auto-generated id and all fields preserved. No breaking changes detected."
+
+  - task: "Regression: POST /entities/UserQuestion/bulk"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Regression test passed. POST /entities/UserQuestion/bulk still works correctly. Created 2 questions in bulk with unique IDs. No breaking changes detected."
+
 frontend:
   - task: "Landing page and registration flow"
     implemented: true
@@ -505,9 +601,9 @@ frontend:
 metadata:
   created_by: "testing_agent"
   version: "1.0"
-  test_sequence: 3
+  test_sequence: 4
   run_ui: true
-  last_updated: "2026-10-04T21:55:00Z"
+  last_updated: "2026-10-04T21:11:30Z"
 
 test_plan:
   current_focus: []
@@ -522,3 +618,5 @@ agent_communication:
     message: "Completed license management and admin features testing. All 20 tests passed successfully. Tested: admin user bootstrap (admin@lapquiz.ch gets role=admin), normal user registration (role=user), license seeding from env (LAP-PRO-2025, LAPQUIZ-LIFETIME, DEMO-UNLOCK), GET /admin/licenses (admin access + 403 for normal users), POST /admin/licenses (auto-generated and explicit codes, duplicate validation), PATCH /admin/licenses (deactivate licenses), DELETE /admin/licenses, GET /admin/stats (admin only), POST /auth/redeem (valid/invalid/deactivated codes, max_uses enforcement). All admin endpoints correctly require admin role. License redemption flow working perfectly with proper error messages in German. Role field included in all auth responses."
   - agent: "testing"
     message: "Completed comprehensive end-to-end frontend testing. ALL 9 FRONTEND FEATURES PASSED. Tested: (A) Landing page + registration + license gate - new user flow works perfectly with DEMO-UNLOCK code. (B) Quiz flow - setup page with count/timer selectors, quiz run with answer buttons, green/red feedback panel with 'Weiter' button, all working. (C) Meine Fragen - JSON/PDF/Import buttons + Foto importieren dialog with Fach/Anzahl selectors and Kamera/Bild/PDF buttons, all functional. (D) Prüfung erstellen - Thema input and KI generate controls present. (E) Inserat mit Datei - file attachment control 'DATEI ANHÄNGEN (Z.B. PRÜFUNGSUNTERLAGEN – PDF/BILD)' present, form complete, publishes to detail view. (F) Admin license management - Admin link visible for admin users only, stats cards, code creation form, code list with aktiv/gesperrt badges, lock/unlock toggle working, normal users redirected from /admin. Neo-brutalist UI (black borders, yellow accents) correctly implemented throughout. Mobile bottom nav working. No critical console errors. App fully functional."
+  - agent: "testing"
+    message: "Completed testing of NEW/CHANGED backend endpoints (test sequence 4). ALL 12 TESTS PASSED. Tested: (1) GET /admin/users as admin returns user array with all required fields (user_id, email, name, role, licensed, created_at), normal user gets 403. (2) PATCH /admin/users/{uid} as admin successfully toggles licensed=true/false, normal user gets 403. (3) GET /admin/stats licensed_users count correctly increases after licensing a user (verified 7→8). (4) AI auto-count with image: POST /ai/generate-questions with image_base64 but NO count field auto-determines question count (generated 5 questions, expected 3-10 range, capped at 12). (5) AI text with explicit count=3 respects the count (generated exactly 3 questions). (6) Regression tests: POST /auth/redeem with DEMO-UNLOCK works, POST /entities/CustomExam creates exam, POST /entities/UserQuestion/bulk creates 2 questions. All new admin user management endpoints working correctly with proper role-based access control. AI auto-count feature working as designed. No regressions detected."

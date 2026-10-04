@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, Lock, Unlock, Copy, Loader2, KeyRound } from "lucide-react";
+import { Plus, Trash2, Lock, Unlock, Copy, Loader2, KeyRound, Users, Check } from "lucide-react";
 import { toast } from "sonner";
 import { db } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
@@ -13,6 +13,7 @@ export default function Admin() {
   const [maxUses, setMaxUses] = useState(0);
   const [custom, setCustom] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showUsers, setShowUsers] = useState(false);
 
   const { data: licenses = [], isLoading } = useQuery({
     queryKey: ["licenses"], queryFn: () => db.admin.listLicenses(), enabled: user?.role === "admin",
@@ -20,11 +21,20 @@ export default function Admin() {
   const { data: stats } = useQuery({
     queryKey: ["adminStats"], queryFn: () => db.admin.stats(), enabled: user?.role === "admin",
   });
+  const { data: users = [], isLoading: usersLoading } = useQuery({
+    queryKey: ["adminUsers"], queryFn: () => db.admin.listUsers(), enabled: user?.role === "admin" && showUsers,
+  });
 
   if (loading) return <div className="grid place-items-center py-24"><div className="w-10 h-10 border-4 border-black border-t-[#FDFFB6] rounded-full animate-spin" /></div>;
   if (user && user.role !== "admin") return <Navigate to="/faecher" replace />;
 
   const refresh = () => { qc.invalidateQueries({ queryKey: ["licenses"] }); qc.invalidateQueries({ queryKey: ["adminStats"] }); };
+
+  const toggleUserLicense = async (u) => {
+    await db.admin.updateUser(u.user_id, { licensed: !u.licensed });
+    qc.invalidateQueries({ queryKey: ["adminUsers"] });
+    qc.invalidateQueries({ queryKey: ["adminStats"] });
+  };
 
   const create = async () => {
     setBusy(true);
@@ -48,10 +58,38 @@ export default function Admin() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-        {[["Nutzer", stats?.total_users], ["Freigeschaltet", stats?.licensed_users], ["Codes", stats?.total_codes], ["Aktiv", stats?.active_codes]].map(([l, v]) => (
-          <div key={l} className="brutal bg-white p-3"><div className="font-heading text-2xl">{v ?? "–"}</div><div className="text-[10px] font-bold uppercase tracking-widest">{l}</div></div>
+        {[["Nutzer", stats?.total_users, true], ["Freigeschaltet", stats?.licensed_users, true], ["Codes", stats?.total_codes, false], ["Aktiv", stats?.active_codes, false]].map(([l, v, clickable]) => (
+          <button key={l} onClick={() => clickable && setShowUsers((s) => !s)} className={`brutal bg-white p-3 text-left transition-all ${clickable ? "hover:bg-[#FDFFB6] hover:-translate-y-0.5 cursor-pointer" : "cursor-default"} ${clickable && showUsers ? "bg-[#FDFFB6]" : ""}`}>
+            <div className="font-heading text-2xl">{v ?? "–"}</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest">{l}{clickable ? " ›" : ""}</div>
+          </button>
         ))}
       </div>
+
+      {showUsers && (
+        <div className="brutal bg-white p-3 mt-4">
+          <div className="flex items-center gap-2 mb-2"><Users className="w-4 h-4" /><h2 className="font-heading text-lg">Nutzer</h2></div>
+          {usersLoading ? (
+            <div className="grid place-items-center py-6"><div className="w-7 h-7 border-4 border-black border-t-[#FDFFB6] rounded-full animate-spin" /></div>
+          ) : (
+            <div className="space-y-2 max-h-[22rem] overflow-y-auto pr-1">
+              {users.map((u) => (
+                <div key={u.user_id} className="border-2 border-black rounded-lg p-2 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="font-bold text-sm truncate">{u.name || u.email}{u.role === "admin" && <span className="ml-1 text-[9px] font-bold border-2 border-black rounded-full px-1.5 bg-[#9BF6FF]">Admin</span>}</div>
+                    <div className="text-xs text-muted-foreground truncate">{u.email}</div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`text-[9px] font-bold border-2 border-black rounded-full px-1.5 ${u.licensed ? "bg-[#CAFFBF]" : "bg-[#FFADAD]"}`}>{u.licensed ? "lizenziert" : "gesperrt"}</span>
+                    <button onClick={() => toggleUserLicense(u)} className="brutal-btn bg-white px-2 py-1 text-[11px] flex items-center gap-1">{u.licensed ? <><Lock className="w-3 h-3" /> Sperren</> : <><Check className="w-3 h-3" /> Freischalten</>}</button>
+                  </div>
+                </div>
+              ))}
+              {!users.length && <div className="text-center font-semibold text-sm py-3">Keine Nutzer.</div>}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="brutal bg-[#FDFFB6] p-4 mt-4">
         <h2 className="font-heading text-lg">Neuen Code erstellen</h2>
