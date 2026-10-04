@@ -31,34 +31,37 @@ export default function AnzeigeDetail() {
   };
 
   return (
-    <div>
-      <button onClick={() => navigate("/anzeigen")} className="brutal-btn bg-white px-2.5 py-1.5 inline-flex items-center gap-1 text-xs mb-3"><ArrowLeft className="w-4 h-4" /> Zurück</button>
+    <div className="-mx-3 md:-mx-6 -my-3 md:-my-8 min-h-[calc(100vh-3rem)] md:min-h-[calc(100vh-4rem)]">
+      <div className="max-w-5xl mx-auto px-3 md:px-6 py-4 md:py-6">
+        <button onClick={() => navigate("/anzeigen")} className="brutal-btn bg-white px-3 py-2 inline-flex items-center gap-1 text-sm mb-4"><ArrowLeft className="w-4 h-4" /> Zurück zu den Anzeigen</button>
 
-      <div className="brutal bg-white overflow-hidden">
-        <div className="h-32 bg-[#FDFFB6] grid place-items-center overflow-hidden">
-          {ad.image_url ? <UiImage src={ad.image_url} fittingType="cover" className="w-full h-full" /> : <span className="font-heading text-4xl">{prof?.emoji || "🏷️"}</span>}
-        </div>
-        <div className="p-3">
-          <div className="flex items-center justify-between gap-3">
-            <span className={`text-[9px] font-bold border-2 border-black rounded-full px-1.5 py-0.5 ${prof?.bg || "bg-white"}`}>{prof?.name || "Anzeige"}</span>
-            {ad.price != null && <span className="font-heading text-lg">CHF {ad.price}</span>}
+        <div className="grid md:grid-cols-2 gap-5 items-start">
+          <div className="brutal bg-[#FDFFB6] overflow-hidden h-64 sm:h-80 md:h-[26rem] grid place-items-center">
+            {ad.image_url ? <UiImage src={ad.image_url} fittingType="cover" className="w-full h-full" /> : <span className="font-heading text-7xl md:text-8xl">{prof?.emoji || "❖"}</span>}
           </div>
-          <h1 className="font-heading text-base mt-2 leading-tight">{ad.title}</h1>
-          <div className="flex items-center gap-1 text-xs font-semibold text-muted-foreground mt-1"><MapPin className="w-3.5 h-3.5" />{[ad.ort, ad.canton].filter(Boolean).join(", ") || "Schweiz"}</div>
-          {ad.description && <p className="mt-2 whitespace-pre-wrap text-xs font-semibold">{ad.description}</p>}
-          <div className="text-[10px] font-semibold text-muted-foreground mt-2 border-t-2 border-black pt-1.5">Inserat von: {ad.created_by}</div>
-        </div>
-      </div>
 
-      <div className="mt-3">
-        {isOwn ? (
-          <div className="grid grid-cols-2 gap-2">
-            <Link to={`/anzeigen/${ad.id}/bearbeiten`} className="brutal-btn bg-[#FDFFB6] py-2.5 flex items-center justify-center gap-2 text-sm"><Pencil className="w-4 h-4" /> Bearbeiten</Link>
-            <button onClick={remove} disabled={deleting} className="brutal-btn bg-[#FFADAD] py-2.5 flex items-center justify-center gap-2 text-sm"><Trash2 className="w-4 h-4" /> Löschen</button>
+          <div className="brutal bg-white p-5 md:p-7">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <span className={`text-[11px] font-bold border-2 border-black rounded-full px-2.5 py-1 ${prof?.bg || "bg-white"}`}>{prof?.name || "Anzeige"}</span>
+              {ad.price != null && <span className="font-heading text-3xl md:text-4xl">{ad.price === 0 ? "Gratis" : `CHF ${ad.price}`}</span>}
+            </div>
+            <h1 className="font-heading text-2xl md:text-4xl mt-4 leading-tight">{ad.title}</h1>
+            <div className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground mt-3"><MapPin className="w-4 h-4" />{[ad.ort, ad.canton].filter(Boolean).join(", ") || "Schweiz"}</div>
+            {ad.description && <p className="mt-5 whitespace-pre-wrap text-base leading-relaxed font-medium">{ad.description}</p>}
+            <div className="text-xs font-semibold text-muted-foreground mt-5 border-t-2 border-black pt-3">Inserat von: {ad.created_by}</div>
+
+            <div className="mt-6">
+              {isOwn ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <Link to={`/anzeigen/${ad.id}/bearbeiten`} className="brutal-btn bg-[#FDFFB6] py-3 flex items-center justify-center gap-2"><Pencil className="w-4 h-4" /> Bearbeiten</Link>
+                  <button onClick={remove} disabled={deleting} className="brutal-btn bg-[#FFADAD] py-3 flex items-center justify-center gap-2"><Trash2 className="w-4 h-4" /> Löschen</button>
+                </div>
+              ) : (
+                <button onClick={() => navigate(`/chat?tab=anzeigen&to=${ad.created_by_id}&listing=${ad.id}`)} className="brutal-btn bg-black text-white w-full py-4 flex items-center justify-center gap-2 text-base"><MessageCircle className="w-5 h-5" /> Verkäufer anschreiben</button>
+              )}
+            </div>
           </div>
-        ) : (
-          <button onClick={() => navigate(`/chat?tab=anzeigen&to=${ad.created_by_id}&listing=${ad.id}`)} className="brutal-btn bg-black text-white w-full py-3 flex items-center justify-center gap-2 text-sm"><MessageCircle className="w-4 h-4" /> Verkäufer anschreiben</button>
-        )}
+        </div>
       </div>
     </div>
   );

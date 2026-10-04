@@ -19,6 +19,7 @@ export default function ExamCreate() {
   const [mode, setMode] = useState("learn");
   const [timer, setTimer] = useState(0);
   const [subject, setSubject] = useState(profSubjects[0]?.id || SUBJECTS[0].id);
+  const [topic, setTopic] = useState("");
   const [selected, setSelected] = useState(new Set());
 
   const { data: mine = [] } = useQuery({ queryKey: ["userQuestions"], queryFn: () => db.entities.UserQuestion.list("-created_date", 1000) });
@@ -95,7 +96,13 @@ export default function ExamCreate() {
           </select>
         </div>
 
-        <ExamAiGenerate subject={subject} onDone={(ids) => setSelected((prev) => new Set([...prev, ...ids]))} />
+        <div>
+          <label className="text-xs font-bold uppercase tracking-widest">Thema (optional)</label>
+          <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="z.B. Doppelte Buchhaltung, Bilanz, Zeitformen…" className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-semibold bg-white" />
+          <p className="text-[11px] font-semibold text-muted-foreground mt-1">Die KI generiert Fragen passend zum Fach und diesem Thema.</p>
+        </div>
+
+        <ExamAiGenerate subject={subject} topic={topic} onDone={(ids) => setSelected((prev) => new Set([...prev, ...ids]))} />
 
         <div>
           <div className="flex items-center justify-between mb-2">

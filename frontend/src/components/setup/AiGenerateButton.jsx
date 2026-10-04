@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { db } from "@/api/base44Client";
-import { QUESTION_JSON_SCHEMA, QUESTION_RULES } from "@/lib/subjects";
 
 export default function AiGenerateButton({ subject }) {
   const [loading, setLoading] = useState(false);
@@ -13,14 +12,9 @@ export default function AiGenerateButton({ subject }) {
   const generate = async () => {
     setLoading(true);
     try {
-      const res = await db.integrations.Core.InvokeLLM({
-        prompt: `Du erstellst Prüfungsfragen für KV-Lehrlinge in der Schweiz im Fach "${subject.name}".
-Erstelle 5 neue, abwechslungsreiche und fachlich korrekte Fragen, gemischt aus den Typen mc, tf und gap.
-${QUESTION_RULES}`,
-        response_json_schema: QUESTION_JSON_SCHEMA,
-      });
+      const res = await db.ai.generateQuestions({ subjectName: subject.name, count: 5 });
       await db.entities.Question.bulkCreate(
-        res.questions.map((q) => ({ ...q, options: q.type === "gap" ? [] : q.options, subject: subject.id, source: "ai_generated" }))
+        (res.questions || []).map((q) => ({ ...q, options: q.type === "gap" ? [] : q.options, subject: subject.id, source: "ai_generated" }))
       );
       qc.invalidateQueries({ queryKey: ["questions"] });
       toast.success(`${res.questions.length} neue Fragen hinzugefügt`);

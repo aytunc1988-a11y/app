@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { db } from "@/api/base44Client";
-import { getSubject, QUESTION_JSON_SCHEMA, QUESTION_RULES } from "@/lib/subjects";
+import { getSubject } from "@/lib/subjects";
 
 export default function ExamAiGenerate({ subject, topic, onDone }) {
   const [loading, setLoading] = useState(false);
@@ -14,19 +14,12 @@ export default function ExamAiGenerate({ subject, topic, onDone }) {
   const generate = async () => {
     setLoading(true);
     try {
-      const res = await db.integrations.Core.InvokeLLM({
-        prompt: `Du erstellst Prüfungsfragen für KV-Lehrlinge in der Schweiz (LAP-Vorbereitung, Kaufmann/Kauffrau EFZ).
-Fach: ${subjectObj.name}.
-Thema: ${topic || "allgemein, passend zum Fach"}.
-Erstelle 5 neue, abwechslungsreiche und fachlich korrekte Fragen, gemischt aus mc, tf und gap.
-${QUESTION_RULES}`,
-        response_json_schema: QUESTION_JSON_SCHEMA,
-      });
+      const res = await db.ai.generateQuestions({ subjectName: subjectObj?.name || subject, topic, count: 5 });
       const created = await db.entities.UserQuestion.bulkCreate(
-        res.questions.map((q) => ({ ...q, options: q.type === "gap" ? [] : q.options, subject, source: "ai_generated" }))
+        (res.questions || []).map((q) => ({ ...q, options: q.type === "gap" ? [] : q.options, subject, source: "ai_generated" }))
       );
       qc.invalidateQueries({ queryKey: ["userQuestions"] });
-      toast.success(`${res.questions.length} KI-Fragen generiert`);
+      toast.success(`${created.length} KI-Fragen generiert`);
       onDone(created.map((q) => q.id));
     } catch (e) {
       toast.error("KI-Generierung fehlgeschlagen");

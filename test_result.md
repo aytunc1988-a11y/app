@@ -101,3 +101,204 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "LAP QUIZ FastAPI backend with MongoDB persistence and AI question generator"
+
+backend:
+  - task: "User profile endpoint (GET /me)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /me returns correct demo user with full_name='Demo Lernende' and profession='kaufmann'. Endpoint working correctly."
+
+  - task: "User profile update (PUT /me)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "PUT /me successfully updates user data and persists to MongoDB. Verified with GET /me after update. Data persistence confirmed."
+
+  - task: "Generic entities CRUD - List endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /entities/{name}/list working for all entity types (Question, Listing, LiebeProfile, etc.). Filters, sorting, and limits work correctly. Seeded data verified: 7 rechnungswesen questions, 6 listings, 12 profiles."
+
+  - task: "Generic entities CRUD - Create endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /entities/{name} creates entities with auto-generated id, created_date, created_by_id, and created_by fields. Tested with UserQuestion, StudySession, and CustomExam entities."
+
+  - task: "Generic entities CRUD - Get by ID endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /entities/{name}/{id} retrieves entities by ID correctly. Returns null for non-existent IDs."
+
+  - task: "Generic entities CRUD - Update endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "PUT /entities/{name}/{id} updates entities correctly. Tested with UserQuestion entity, updates persist to MongoDB."
+
+  - task: "Generic entities CRUD - Bulk create endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /entities/{name}/bulk creates multiple entities in one request. Tested with 2 UserQuestion items, both created successfully with unique IDs."
+
+  - task: "Generic entities CRUD - Delete endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "DELETE /entities/{name}/{id} deletes entities correctly. Verified deletion by GET returning null after delete."
+
+  - task: "Generic entities CRUD - Delete many endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /entities/{name}/delete-many deletes multiple entities based on filter. Tested with StudySession entities filtered by created_by_id."
+
+  - task: "Entity validation - Invalid entity name"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Invalid entity names (not in ALLOWED list) correctly return 404 error. Tested with entity name 'Foo'."
+
+  - task: "AI question generation - Text only"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /ai/generate-questions generates questions using Emergent LLM (gpt-4o). Returns 1-5 questions with correct structure (type, question, options, correct_answer, explanation). Question types (mc, tf, gap) validated. Options arrays correct: mc=4, tf=2, gap=0."
+
+  - task: "AI question generation - With image"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /ai/generate-questions with image_base64 works correctly using gpt-4o vision. Image must contain realistic learning material content (text, diagrams) not just abstract shapes. Tested with realistic textbook-style image containing German grammar content. Generated 2 valid questions from image."
+
+  - task: "MongoDB data persistence"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "All data persists correctly to MongoDB collections with e_ prefix (e_Question, e_UserQuestion, e_StudySession, e_CustomExam, e_Listing, e_LiebeProfile). Verified collection counts match expected values."
+
+  - task: "Seed data initialization"
+    implemented: true
+    working: true
+    file: "/app/backend/seed_data.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Seed data loads correctly on startup. Verified: 24 total questions (7 rechnungswesen), 6 listings, 12 profiles. Seed is idempotent (only runs if collections are empty)."
+
+frontend:
+  - task: "Frontend testing"
+    implemented: false
+    working: "NA"
+    file: ""
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Frontend testing not performed as per testing agent instructions. Backend testing only."
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+  last_updated: "2026-10-04T20:03:00Z"
+
+test_plan:
+  current_focus: []
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "testing"
+    message: "Completed comprehensive backend API testing. All 18 tests passed successfully. Tested: user profile endpoints, generic entities CRUD (7 entity types), AI question generation (with and without images), MongoDB persistence, and seed data. All endpoints working correctly at https://dupe-app.preview.emergentagent.com/api. Data persists correctly to MongoDB. AI generation uses Emergent LLM with gpt-4o model. Image-based generation requires realistic learning material content (not abstract shapes)."

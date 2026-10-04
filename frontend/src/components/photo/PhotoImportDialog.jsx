@@ -1,21 +1,24 @@
 import React, { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Camera, Loader2, Plus, X } from "lucide-react";
+import { Camera, Upload, Loader2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { db } from "@/api/base44Client";
-import { SUBJECTS, getSubject, QUESTION_JSON_SCHEMA, QUESTION_RULES } from "@/lib/subjects";
+import { getSubject, professionSubjects } from "@/lib/subjects";
+import useCurrentUser from "@/lib/useCurrentUser";
 import QuestionEditor from "@/components/photo/QuestionEditor";
 
 const blank = (subject) => ({ type: "mc", question: "", options: ["", "", "", ""], correct_answer: "", explanation: "", subject, source: "user_photo" });
 
 export default function PhotoImportDialog({ open, onOpenChange }) {
   const qc = useQueryClient();
+  const { user } = useCurrentUser();
+  const subjects = professionSubjects(user?.profession || "kaufmann");
   const [stage, setStage] = useState("pick");
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [subject, setSubject] = useState(SUBJECTS[0].id);
+  const [subject, setSubject] = useState(subjects[0]?.id);
   const [items, setItems] = useState([]);
 
   const reset = () => { setStage("pick"); setFile(null); setPreview(null); setItems([]); };
@@ -26,14 +29,8 @@ export default function PhotoImportDialog({ open, onOpenChange }) {
     if (!file) return;
     setStage("loading");
     try {
-      const { file_url } = await db.integrations.Core.UploadPublicFile({ file });
-      const res = await db.integrations.Core.InvokeLLM({
-        prompt: `Du analysierst ein Foto von Lernunterlagen für die LAP-Vorbereitung.
-Erstelle daraus passende Prüfungsfragen zum Fach "${getSubject(subject).name}".
-${QUESTION_RULES}`,
-        response_json_schema: QUESTION_JSON_SCHEMA,
-        file_urls: [file_url],
-      });
+      const imageBase64 = await db.fileToDataUrl(file);
+      const res = await db.ai.generateQuestions({ subjectName: getSubject(subject)?.name || subject, imageBase64, count: 5 });
       const qs = (res.questions || []).map((q) => ({ ...q, options: q.type === "gap" ? [] : q.options, subject, source: "user_photo" }));
       setItems(qs.length ? qs : [blank(subject)]);
       setStage("editing");
@@ -68,17 +65,22 @@ ${QUESTION_RULES}`,
 
         {stage === "pick" && (
           <div className="space-y-4">
-            <div className="text-[11px] font-semibold bg-[#9BF6FF] border-2 border-black rounded-lg px-2 py-1">Demo: Die KI-Analyse ist gemockt und liefert Beispielfragen.</div>
             <div>
               <label className="text-xs font-bold uppercase tracking-widest">Fach</label>
               <select value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-bold bg-white">
-                {SUBJECTS.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
-            <label className="brutal-btn bg-[#FDFFB6] w-full py-4 font-heading flex items-center justify-center gap-2 cursor-pointer">
-              <Camera className="w-5 h-5" /> Foto wählen
-              <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
-            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="brutal-btn bg-[#FDFFB6] py-4 font-heading flex flex-col items-center justify-center gap-1 cursor-pointer text-sm">
+                <Camera className="w-6 h-6" /> Foto aufnehmen
+                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+              </label>
+              <label className="brutal-btn bg-white py-4 font-heading flex flex-col items-center justify-center gap-1 cursor-pointer text-sm">
+                <Upload className="w-6 h-6" /> Hochladen
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+              </label>
+            </div>
             {preview && <img src={preview} alt="Vorschau" className="w-full brutal object-contain max-h-48" />}
             <button onClick={analyze} disabled={!file} className="brutal-btn bg-black text-white w-full py-3">Fragen aus Foto erstellen</button>
           </div>
@@ -96,7 +98,7 @@ ${QUESTION_RULES}`,
             <div>
               <label className="text-xs font-bold uppercase tracking-widest">Fach</label>
               <select value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-bold bg-white">
-                {SUBJECTS.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
             {items.map((q, i) => (
