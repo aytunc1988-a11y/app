@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Camera, Upload, FileText, Loader2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { db } from "@/api/base44Client";
+import { AI_MODELS } from "@/api/base44Client";
 import { getSubject, professionSubjects } from "@/lib/subjects";
 import useCurrentUser from "@/lib/useCurrentUser";
 import QuestionEditor from "@/components/photo/QuestionEditor";
@@ -19,6 +20,7 @@ export default function PhotoImportDialog({ open, onOpenChange }) {
   const [isPdf, setIsPdf] = useState(false);
   const [preview, setPreview] = useState(null);
   const [subject, setSubject] = useState(subjects[0]?.id);
+  const [model, setModel] = useState(AI_MODELS[0].id);
   const [items, setItems] = useState([]);
 
   const reset = () => { setStage("pick"); setFile(null); setPreview(null); setItems([]); setIsPdf(false); };
@@ -30,7 +32,7 @@ export default function PhotoImportDialog({ open, onOpenChange }) {
     setStage("loading");
     try {
       const b64 = await db.fileToDataUrl(file);
-      const payload = { subjectName: getSubject(subject)?.name || subject };
+      const payload = { subjectName: getSubject(subject)?.name || subject, model };
       if (isPdf) payload.pdfBase64 = b64; else payload.imageBase64 = b64;
       const res = await db.ai.generateQuestions(payload);
       const qs = (res.questions || []).map((q) => ({ ...q, options: q.type === "gap" ? [] : q.options, subject, source: "user_photo" }));
@@ -63,6 +65,10 @@ export default function PhotoImportDialog({ open, onOpenChange }) {
             <div><label className="text-xs font-bold uppercase tracking-widest">Fach</label>
               <select value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-bold bg-white">
                 {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select></div>
+            <div><label className="text-xs font-bold uppercase tracking-widest">KI-Modell</label>
+              <select value={model} onChange={(e) => setModel(e.target.value)} className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-bold bg-white">
+                {AI_MODELS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
               </select></div>
             <p className="text-[11px] font-semibold text-muted-foreground">Die KI erkennt automatisch, wie viele Fragen der Inhalt hergibt.</p>
             <div className="grid grid-cols-3 gap-2">

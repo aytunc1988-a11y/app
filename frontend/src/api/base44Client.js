@@ -39,9 +39,14 @@ export function fileToDataUrl(file) {
 const ai = {
   generateQuestions: async (p) => (await http.post(`/ai/generate-questions`, {
     subject_name: p.subjectName, topic: p.topic || null, image_base64: p.imageBase64 || null,
-    pdf_base64: p.pdfBase64 || null, count: p.count || 5,
+    pdf_base64: p.pdfBase64 || null, count: p.count || 5, model: p.model || null,
   })).data,
 };
+
+export const AI_MODELS = [
+  { id: "gpt-4o", label: "GPT-4o (OpenAI)" },
+  { id: "claude-sonnet-5-5", label: "Claude Sonnet 5.5 (Anthropic)" },
+];
 
 const integrations = { Core: {
   UploadPublicFile: async ({ file }) => ({ file_url: await fileToDataUrl(file) }),

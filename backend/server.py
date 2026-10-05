@@ -48,6 +48,7 @@ class AIGenBody(BaseModel):
     image_base64: Optional[str] = None
     pdf_base64: Optional[str] = None
     count: int = 5
+    model: Optional[str] = None
 
 class RegisterBody(BaseModel):
     email: str
@@ -404,8 +405,10 @@ async def ai_generate(body: AIGenBody, request: Request):
         task = f'Erstelle {n} Prüfungsfragen für die Schweizer LAP im Fach "{body.subject_name}". Thema: {topic}.'
     prompt = f"{task}\n\n{QUESTION_RULES}\n\nAntworte NUR mit gültigem JSON in diesem Format:\n{schema}"
     try:
+        model = (body.model or "gpt-4o").strip()
+        provider = "anthropic" if model.startswith("claude") else ("gemini" if model.startswith("gemini") else "openai")
         chat = LlmChat(api_key=key, session_id=f"lapquiz-{uuid.uuid4()}",
-                       system_message="Du bist Experte für Schweizer Berufsprüfungen. Antworte nur mit gültigem JSON.").with_model("openai", "gpt-4o")
+                       system_message="Du bist Experte für Schweizer Berufsprüfungen. Antworte nur mit gültigem JSON.").with_model(provider, model)
         if body.image_base64:
             b = body.image_base64
             if "," in b and b.strip().startswith("data:"): b = b.split(",", 1)[1]
