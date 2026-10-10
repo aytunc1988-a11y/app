@@ -43,7 +43,7 @@ export default function Chat() {
     messages.forEach((m) => {
       const mine = m.created_by_id === user.user_id;
       const peer = mine ? m.recipient_id : m.created_by_id;
-      if (!peer || peer === user.id) return;
+      if (!peer || peer === user.user_id) return;
       const listingId = m.listing_id || null;
       const key = `${peer}:${listingId || "none"}`;
       const prev = map.get(key);
