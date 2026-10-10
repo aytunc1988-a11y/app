@@ -15,7 +15,7 @@ export default function Chat() {
   const [tab, setTab] = useState(params.get("tab") === "anzeigen" ? "anzeigen" : "leute");
   const [activeKey, setActiveKey] = useState(null);
 
-  const { data: messages = [] } = useQuery({ queryKey: ["messages"], queryFn: () => db.entities.Message.list("-created_date", 1000) });
+  const { data: messages = [] } = useQuery({ queryKey: ["messages"], queryFn: () => db.entities.Message.filter({ created_by_id: user?.user_id }, "-created_date", 1000).then(sent => db.entities.Message.filter({ recipient_id: user?.user_id }, "-created_date", 1000).then(recv => [...sent, ...recv])) });
   const { data: profiles = [] } = useQuery({ queryKey: ["liebeProfiles"], queryFn: () => db.entities.LiebeProfile.list("-created_date", 500) });
   const { data: listings = [] } = useQuery({ queryKey: ["listings"], queryFn: () => db.entities.Listing.list("-created_date", 500) });
 
