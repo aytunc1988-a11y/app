@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SlidersHorizontal } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
@@ -11,6 +11,22 @@ const AVATAR_COLORS = ["#FDFFB6", "#CAFFBF", "#9BF6FF", "#FFADAD", "#BDB2FF", "#
 
 export default function AlleProfile() {
   const [filterOpen, setFilterOpen] = useState(false);
+  const [myPos, setMyPos] = useState(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (p) => setMyPos({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      () => {}
+    );
+  }, []);
+
+  const calcDist = (lat1, lng1, lat2, lng2) => {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
+    return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+  };
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({ minAge: 0, maxAge: 99, gender: "Alle", distance: 100, canton: "Alle", online: false });
@@ -24,7 +40,8 @@ export default function AlleProfile() {
       if (filters.gender !== "Alle" && p.gender !== filters.gender) return false;
       if (filters.canton !== "Alle" && p.canton !== filters.canton) return false;
       if (p.age != null && (p.age < filters.minAge || p.age > filters.maxAge)) return false;
-      if (p.distance_km != null && p.distance_km > filters.distance) return false;
+      const pDist = (myPos && p.lat && p.lng) ? calcDist(myPos.lat, myPos.lng, p.lat, p.lng) : null;
+      if (pDist != null && pDist > filters.distance) return false;
       return true;
     });
   }, [profiles, filters]);
@@ -46,6 +63,7 @@ export default function AlleProfile() {
         <div className="grid grid-cols-3 gap-2 mt-3">
           {filtered.map((p, i) => {
             const initials = (p.full_name || "?").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+            const dist = (myPos && p.lat && p.lng) ? calcDist(myPos.lat, myPos.lng, p.lat, p.lng) : null;
             const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
             return (
               <div key={p.id} className="brutal bg-white p-2 flex flex-col items-center text-center">
@@ -58,7 +76,7 @@ export default function AlleProfile() {
                   </div>
                   <div className="font-bold mt-1 truncate w-full text-xs">{p.full_name}</div>
                   <div className="text-[10px] font-semibold text-muted-foreground">{p.age} · {p.canton || "CH"}</div>
-                  <div className="text-[10px] font-bold">{p.distance_km != null ? `${p.distance_km} km` : (p.canton && user?.canton ? (p.canton === user.canton ? "Gleicher Kanton" : p.canton) : "")}</div>
+                  <div className="text-[10px] font-bold">{dist != null ? `${dist} km` : (p.canton && user?.canton ? (p.canton === user.canton ? "Gleicher Kanton" : p.canton) : "")}</div>
                 </Link>
                 <button onClick={() => navigate(`/chat?tab=leute&to=${p.created_by_id}`)} className="brutal-btn bg-[#FDFFB6] w-full py-1 text-[11px] mt-1.5">Nachricht</button>
               </div>

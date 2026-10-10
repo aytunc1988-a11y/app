@@ -56,6 +56,13 @@ export default function Profile() {
   };
 
   const save = async () => {
+    // GPS Koordinaten erfassen
+    let lat = null, lng = null;
+    try {
+      const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout: 5000 }));
+      lat = pos.coords.latitude;
+      lng = pos.coords.longitude;
+    } catch(e) {}
     setSaving(true);
     const payload = {
       age: form.age === "" ? null : Number(form.age),
@@ -65,6 +72,7 @@ export default function Profile() {
       profile_picture: form.profile_picture,
       full_name: form.full_name,
       invisible: form.invisible,
+      lat, lng,
     };
     try {
       await db.auth.updateMe(payload);
@@ -80,6 +88,7 @@ export default function Profile() {
           profile_picture: payload.profile_picture || "",
           profession: payload.profession || user.profession,
           invisible: payload.invisible,
+          lat: lat, lng: lng,
         };
         if (existing && existing.length > 0) {
           await db.entities.LiebeProfile.update(existing[0].id, profileData);
