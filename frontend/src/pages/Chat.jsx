@@ -88,6 +88,18 @@ export default function Chat() {
     return messages.filter((m) => !m.read && m.recipient_id === user.user_id).length;
   }, [messages, user]);
 
+  const deleteConversation = async () => {
+    if (!active || !user) return;
+    const toDelete = messages.filter((m) => {
+      const mine = m.created_by_id === user.user_id;
+      const mPeer = mine ? m.recipient_id : m.created_by_id;
+      return mPeer === active.peer && (m.listing_id || null) === (active.listingId || null);
+    });
+    await Promise.all(toDelete.map(m => db.entities.Message.delete(m.id)));
+    qc.invalidateQueries({ queryKey: ["messages"] });
+    setActiveKey(null);
+  };
+
   const deleteMessage = async (id) => {
     await db.entities.Message.delete(id);
     qc.invalidateQueries({ queryKey: ["messages"] });
@@ -126,6 +138,7 @@ export default function Chat() {
                 <div className="border-b-2 border-black px-3 py-1.5 font-bold text-sm truncate flex items-center gap-2">
                   <button onClick={() => setActiveKey(null)} className="md:hidden p-1 -ml-1 text-lg leading-none">‹</button>
                   <span className="truncate">{activeName}</span>
+                  <button onClick={() => { if(window.confirm("Konversation löschen?")) deleteConversation(); }} className="ml-auto p-1 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
                 <ChatThread messages={threadMessages} peerName={activeName} onSend={send} onDelete={deleteMessage} />
               </>
