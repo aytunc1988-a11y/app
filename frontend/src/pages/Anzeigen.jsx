@@ -31,7 +31,7 @@ export default function Anzeigen() {
   };
 
   const filtered = useMemo(() => listings.filter((l) => {
-    const own = l.created_by_id === user?.id;
+    const own = l.created_by_id === user?.user_id;
     if (mine && !own) return false;
     if (l.active === false && !own) return false;
     if (prof !== "Alle" && l.profession !== prof) return false;
@@ -68,7 +68,7 @@ export default function Anzeigen() {
       ) : (
         <div className="grid grid-cols-1 gap-2 mt-3">
           {filtered.map((l) => {
-            const own = l.created_by_id === user?.id;
+            const own = l.created_by_id === user?.user_id;
             return <ListingCard key={l.id} listing={l} mine={own} onDelete={() => remove(l.id)} onToggle={() => toggle(l)} />;
           })}
         </div>

@@ -41,7 +41,7 @@ export default function Chat() {
     if (!user) return [];
     const map = new Map();
     messages.forEach((m) => {
-      const mine = m.created_by_id === user.id;
+      const mine = m.created_by_id === user.user_id;
       const peer = mine ? m.recipient_id : m.created_by_id;
       if (!peer || peer === user.id) return;
       const listingId = m.listing_id || null;
@@ -75,11 +75,11 @@ export default function Chat() {
     if (!active || !user) return [];
     return messages
       .filter((m) => {
-        const mine = m.created_by_id === user.id;
+        const mine = m.created_by_id === user.user_id;
         const mPeer = mine ? m.recipient_id : m.created_by_id;
         return mPeer === active.peer && (m.listing_id || null) === (active.listingId || null);
       })
-      .map((m) => ({ ...m, isMine: m.created_by_id === user.id }))
+      .map((m) => ({ ...m, isMine: m.created_by_id === user.user_id }))
       .sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
   }, [messages, active, user]);
 
