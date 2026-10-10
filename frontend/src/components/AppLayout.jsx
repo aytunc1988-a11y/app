@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { Home, BarChart3, LogOut, FileText, Users, UserCircle, ShoppingBag, MessageCircle, KeyRound } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
+import { db } from "@/api/base44Client";
 
 const NAV_DESKTOP = [
   { to: "/faecher", label: "Fächer", icon: Home },
@@ -22,6 +23,19 @@ const BOTTOM = [
 
 export default function AppLayout() {
   const { logout, user } = useAuth();
+  const [unread, setUnread] = useState(0);
+  useEffect(() => {
+    if (!user?.user_id) return;
+    const check = async () => {
+      try {
+        const msgs = await db.entities.Message.filter({ recipient_id: user.user_id }, "-created_date", 100);
+        setUnread(msgs.filter(m => !m.read).length);
+      } catch(e) {}
+    };
+    check();
+    const t = setInterval(check, 15000);
+    return () => clearInterval(t);
+  }, [user?.user_id]);
   return (
     <div className="min-h-screen pb-24 md:pb-10" style={{ fontFamily: "Space Grotesk, Inter, sans-serif" }}>
       <header className="sticky top-0 z-20 bg-background/90 backdrop-blur border-b-2 border-black">
@@ -51,7 +65,7 @@ export default function AppLayout() {
       <nav className="md:hidden fixed bottom-4 left-3 right-3 z-20 brutal bg-white grid grid-cols-5 py-2">
         {BOTTOM.map((n) => (
           <NavLink key={n.to} to={n.to} end className={({ isActive }) => `flex flex-col items-center gap-0.5 py-1 rounded-lg text-[9px] font-bold transition-all ${isActive ? "bg-[#FDFFB6]" : ""}`}>
-            <n.icon className="w-5 h-5" />{n.label}
+            <div className="relative"><n.icon className="w-5 h-5" />{n.to === "/chat" && unread > 0 && <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">{unread > 9 ? "9+" : unread}</span>}</div>{n.label}
           </NavLink>
         ))}
       </nav>

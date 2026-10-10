@@ -4,12 +4,14 @@ import { SlidersHorizontal } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 
 import { db } from "@/api/base44Client";
+import useCurrentUser from "@/lib/useCurrentUser";
 import LeuteFilterModal from "@/components/leute/LeuteFilterModal";
 
 const AVATAR_COLORS = ["#FDFFB6", "#CAFFBF", "#9BF6FF", "#FFADAD", "#BDB2FF", "#FFD6A5"];
 
 export default function AlleProfile() {
   const [filterOpen, setFilterOpen] = useState(false);
+  const { user } = useCurrentUser();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({ minAge: 0, maxAge: 99, gender: "Alle", distance: 100, canton: "Alle", online: false });
 
@@ -56,7 +58,7 @@ export default function AlleProfile() {
                   </div>
                   <div className="font-bold mt-1 truncate w-full text-xs">{p.full_name}</div>
                   <div className="text-[10px] font-semibold text-muted-foreground">{p.age} · {p.canton || "CH"}</div>
-                  <div className="text-[10px] font-bold">{p.distance_km != null ? `${p.distance_km} km` : ""}</div>
+                  <div className="text-[10px] font-bold">{p.distance_km != null ? `${p.distance_km} km` : (p.canton && user?.canton ? (p.canton === user.canton ? "Gleicher Kanton" : p.canton) : "")}</div>
                 </Link>
                 <button onClick={() => navigate(`/chat?tab=leute&to=${p.created_by_id}`)} className="brutal-btn bg-[#FDFFB6] w-full py-1 text-[11px] mt-1.5">Nachricht</button>
               </div>

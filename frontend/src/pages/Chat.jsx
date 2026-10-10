@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { MessageCircle, Tag } from "lucide-react";
+import { MessageCircle, Tag, Trash2 } from "lucide-react";
 
 import { db } from "@/api/base44Client";
 import useCurrentUser from "@/lib/useCurrentUser";
@@ -83,6 +83,16 @@ export default function Chat() {
       .sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
   }, [messages, active, user]);
 
+  const unread = useMemo(() => {
+    if (!user) return 0;
+    return messages.filter((m) => !m.read && m.recipient_id === user.user_id).length;
+  }, [messages, user]);
+
+  const deleteMessage = async (id) => {
+    await db.entities.Message.delete(id);
+    qc.invalidateQueries({ queryKey: ["messages"] });
+  };
+
   const send = async (text) => {
     if (!active) return;
     await db.entities.Message.create({ recipient_id: active.peer, listing_id: active.listingId || null, text });
@@ -101,7 +111,7 @@ export default function Chat() {
             { id: "leute", label: "Leute", icon: MessageCircle },
           ].map((t) => (
             <button key={t.id} onClick={() => { setTab(t.id); setActiveKey(null); setParams({}); }} className={`flex-1 py-2 text-sm font-heading flex items-center justify-center gap-2 ${tab === t.id ? "bg-[#FDFFB6]" : "bg-white"}`}>
-              <t.icon className="w-4 h-4" /> {t.label}
+              <t.icon className="w-4 h-4" /> {t.label}{t.id === "leute" && unread > 0 && <span className="bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{unread}</span>}
             </button>
           ))}
         </div>
@@ -117,7 +127,7 @@ export default function Chat() {
                   <button onClick={() => setActiveKey(null)} className="md:hidden p-1 -ml-1 text-lg leading-none">‹</button>
                   <span className="truncate">{activeName}</span>
                 </div>
-                <ChatThread messages={threadMessages} peerName={activeName} onSend={send} />
+                <ChatThread messages={threadMessages} peerName={activeName} onSend={send} onDelete={deleteMessage} />
               </>
             ) : (
               <div className="flex-1 grid place-items-center text-xs font-semibold text-muted-foreground p-6 text-center">Wähle links eine Unterhaltung – oder schreib jemanden direkt aus einem Profil oder einer Anzeige an.</div>

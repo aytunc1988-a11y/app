@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, MessageCircle } from "lucide-react";
+import { Send, MessageCircle, Trash2 } from "lucide-react";
 
-export default function ChatThread({ messages, peerName, onSend }) {
+export default function ChatThread({ messages, peerName, onSend, onDelete }) {
   const [text, setText] = useState("");
   const endRef = useRef(null);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages.length]);
@@ -23,7 +23,14 @@ export default function ChatThread({ messages, peerName, onSend }) {
           return (
             <div key={m.id} className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
               {!mine && <span className="text-[10px] font-semibold text-muted-foreground mb-0.5 ml-1">{peerName}</span>}
-              <div className={`max-w-[75%] brutal px-2.5 py-1 text-xs ${mine ? "bg-black text-white" : "bg-white"}`}>{m.text}</div>
+              <div className={`flex items-end gap-1 ${mine ? "flex-row-reverse" : ""}`}>
+                <div className={`max-w-[75%] brutal px-2.5 py-1 text-xs ${mine ? "bg-black text-white" : "bg-white"}`}>{m.text}</div>
+                {mine && onDelete && (
+                  <button onClick={() => onDelete(m.id)} className="opacity-30 hover:opacity-100 transition-opacity p-0.5">
+                    <Trash2 className="w-3 h-3 text-red-500" />
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}
