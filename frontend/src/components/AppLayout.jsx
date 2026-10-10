@@ -36,6 +36,31 @@ export default function AppLayout() {
     const t = setInterval(check, 15000);
     return () => clearInterval(t);
   }, [user?.user_id]);
+
+  // Online-Status setzen
+  useEffect(() => {
+    if (!user?.user_id) return;
+    const setOnline = async () => {
+      try {
+        const profiles = await db.entities.LiebeProfile.filter({ created_by_id: user.user_id }, null, 1);
+        if (profiles && profiles.length > 0) {
+          await db.entities.LiebeProfile.update(profiles[0].id, { online: true, last_seen: new Date().toISOString() });
+        }
+      } catch(e) {}
+    };
+    const setOffline = async () => {
+      try {
+        const profiles = await db.entities.LiebeProfile.filter({ created_by_id: user.user_id }, null, 1);
+        if (profiles && profiles.length > 0) {
+          await db.entities.LiebeProfile.update(profiles[0].id, { online: false });
+        }
+      } catch(e) {}
+    };
+    setOnline();
+    const t = setInterval(setOnline, 60000);
+    window.addEventListener("beforeunload", setOffline);
+    return () => { clearInterval(t); window.removeEventListener("beforeunload", setOffline); setOffline(); };
+  }, [user?.user_id]);
   return (
     <div className="min-h-screen pb-24 md:pb-10" style={{ fontFamily: "Space Grotesk, Inter, sans-serif" }}>
       <header className="sticky top-0 z-20 bg-background/90 backdrop-blur border-b-2 border-black">
