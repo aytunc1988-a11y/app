@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { X, Clock } from "lucide-react";
 
 import { db } from "@/api/base44Client";
+
 import { getSubject, isCorrect, formatClock } from "@/lib/subjects";
 import QuestionCard from "@/components/quiz/QuestionCard";
 import FeedbackPanel from "@/components/quiz/FeedbackPanel";
@@ -23,6 +24,8 @@ export default function QuizRun() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [params] = useSearchParams();
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => { db.auth.me().then(setCurrentUser).catch(() => {}); }, []);
   const subject = getSubject(subjectId);
 
   const countParam = params.get("count") || "10";
@@ -43,7 +46,9 @@ export default function QuizRun() {
   useEffect(() => {
     (async () => {
       setQuestions(null);
-      const base = await db.entities.Question.filter({ subject: subjectId }, "-created_date", 500);
+      const profession = currentUser?.profession || null;
+      const filter = profession ? { subject: subjectId, profession } : { subject: subjectId };
+      const base = await db.entities.Question.filter(filter, "-created_date", 500);
       let pool = [...base];
       if (own) {
         const mine = await db.entities.UserQuestion.filter({ subject: subjectId }, "-created_date", 500);

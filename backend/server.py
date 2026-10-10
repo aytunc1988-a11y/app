@@ -1,8 +1,14 @@
+import stripe
+from datetime import datetime, timezone, timedelta
+from typing import Optional
+from fastapi import Depends, Header, HTTPException, Request
+from starlette.concurrency import run_in_threadpool
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Response
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os, re, json, uuid, hashlib, base64, logging, httpx
+import stripe
 from pathlib import Path
 from pydantic import BaseModel
 from typing import List, Optional, Any, Dict
@@ -433,35 +439,223 @@ async def ai_generate(body: AIGenBody, request: Request):
 @api_router.get("/")
 async def root(): return {"message": "LAP QUIZ API"}
 
+
+# ---- STRIPE / TWINT ----
+stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://lapquiz.ch")
+
+PLANS = {
+    "monthly":  {"name": "LAP QUIZ Monatszugang (30 Tage)", "amount": 990,  "days": 30},
+    "lifetime": {"name": "LAP QUIZ Lebenslang",             "amount": 3990, "days": None},
+}
+
+
+class CheckoutBody(BaseModel):
+    plan: str  # "monthly" oder "lifetime"
+
+
+async def get_current_user(
+    authorization: Optional[str] = Header(None),
+    x_session_token: Optional[str] = Header(None),
+):
+    token = x_session_token
+    if not token and authorization and authorization.lower().startswith("bearer "):
+        token = authorization[7:].strip()
+    if not token:
+        raise HTTPException(401, "Nicht eingeloggt")
+    sess = await db.user_sessions.find_one({"session_token": token})
+    if not sess:
+        raise HTTPException(401, "Session ungültig")
+    return {"id": sess["user_id"]}
+
+
+async def is_premium(user_id: str) -> bool:
+    doc = await coll("Premium").find_one({"user_id": user_id})
+    if not doc:
+        return False
+    until = doc.get("premium_until")
+    if until is None:  # lebenslang
+        return True
+    return datetime.fromisoformat(until) > datetime.now(timezone.utc)
+
+
+@api_router.get("/payments/status")
+async def payment_status(user=Depends(get_current_user)):
+    return {"premium": await is_premium(user["id"])}
+
+
+@api_router.post("/payments/checkout")
+async def create_checkout(body: CheckoutBody, user=Depends(get_current_user)):
+    plan = PLANS.get(body.plan)
+    if not plan:
+        raise HTTPException(400, "Unbekannter Plan")
+
+    def _create():
+        return stripe.checkout.Session.create(
+            mode="payment",
+            line_items=[{
+                "price_data": {
+                    "currency": "chf",
+                    "product_data": {"name": plan["name"]},
+                    "unit_amount": plan["amount"],
+                },
+                "quantity": 1,
+            }],
+            metadata={"user_id": user["id"], "plan": body.plan},
+            success_url=f"{FRONTEND_URL}/?paid=1",
+            cancel_url=f"{FRONTEND_URL}/?paid=0",
+        )
+
+    try:
+        session = await run_in_threadpool(_create)
+    except Exception as e:
+        logger.error(f"Stripe checkout error: {e}")
+        raise HTTPException(500, "Zahlung konnte nicht gestartet werden")
+    return {"url": session.url}
+
+
+@api_router.post("/payments/webhook")
+async def stripe_webhook(request: Request, stripe_signature: Optional[str] = Header(None)):
+    payload = await request.body()
+    try:
+        event = stripe.Webhook.construct_event(payload, stripe_signature, STRIPE_WEBHOOK_SECRET)
+    except Exception as e:
+        logger.warning(f"Webhook-Signatur ungültig: {e}")
+        raise HTTPException(400, "Ungültige Signatur")
+
+    if event["type"] == "checkout.session.completed":
+        s = event["data"]["object"]
+        if s.get("payment_status") == "paid":
+            meta = s.get("metadata") or {}
+            user_id = meta.get("user_id")
+            plan = PLANS.get(meta.get("plan"))
+            if user_id and plan:
+                existing = await coll("Premium").find_one({"user_id": user_id})
+                already_lifetime = bool(existing) and existing.get("premium_until") is None
+                if plan["days"] is None or already_lifetime:
+                    until = None  # lebenslang
+                else:
+                    now = datetime.now(timezone.utc)
+                    start = now
+                    if existing and existing.get("premium_until"):
+                        old = datetime.fromisoformat(existing["premium_until"])
+                        if old > now:
+                            start = old  # laufende Zeit verlängern
+                    until = (start + timedelta(days=plan["days"])).isoformat()
+                await coll("Premium").update_one(
+                    {"user_id": user_id},
+                    {"$set": {"user_id": user_id, "premium_until": until,
+                              "plan": meta.get("plan"), "updated_at": now_iso()}},
+                    upsert=True,
+                )
+                logger.info(f"Premium aktiviert: user={user_id} plan={meta.get('plan')}")
+
+    return {"received": True}
+
+
 app.include_router(api_router)
 app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+@app.get("/sitemap.xml", response_class=Response)
+async def generate_sitemap():
+    base_url = "https://lapquiz.ch"
+    
+    # Statische Hauptseiten
+    urls = [
+        f"{base_url}/",
+        f"{base_url}/berufe",
+        f"{base_url}/faecher",
+        f"{base_url}/anzeigen",
+        f"{base_url}/leute",
+        f"{base_url}/login",
+        f"{base_url}/register"
+    ]
+    
+    # 1. Berufe & Fächer hinzufügen (für Google SEO pro Beruf)
+    professions = ["elektro", "gesundheit", "informatiker", "coiffeur", "logistiker", "detailhandel"]
+    for prof in professions:
+        urls.append(f"{base_url}/beruf/{prof}")
+        urls.append(f"{base_url}/faecher?profession={prof}")
 
+    # 2. Dynamische Kleinanzeigen (Anzeigen) aus der Datenbank
+    try:
+        listings = await db["Listing"].find({"active": True}, {"_id": 1}).to_list(length=500)
+        for l in listings:
+            urls.append(f"{base_url}/anzeige/{str(l['_id'])}")
+    except Exception as e:
+        logger.error(f"Sitemap Listings error: {e}")
 
-async def seed():
-    # Seed license codes from env into the DB (so admins can manage them).
-    for code in LICENSE_CODES:
-        if not await db.licenses.find_one({"code": code}):
-            await db.licenses.insert_one({"id": str(uuid.uuid4()), "code": code, "active": True,
-                                          "note": "Standard-Code", "max_uses": 0, "uses": 0, "used_by": [],
-                                          "created_at": now_iso(), "created_by": "system"})
-    # Curated questions & demo marketplace/profiles are shared (global read).
-    if await coll("Question").count_documents({}) == 0:
-        try:
-            from seed_data import SEED_QUESTIONS, SEED_PROFILES, SEED_LISTINGS
-        except Exception as e:
-            logger.warning(f"No seed: {e}"); return
-        def mk(arr, extra): return [{"id": str(uuid.uuid4()), "created_date": now_iso(), **extra, **d} for d in arr]
-        sys = {"created_by_id": "system", "created_by": "system@lapquiz.ch"}
-        if SEED_QUESTIONS: await coll("Question").insert_many(mk(SEED_QUESTIONS, sys))
-        if SEED_LISTINGS: await coll("Listing").insert_many(mk(SEED_LISTINGS, sys))
-        profiles = [{"id": str(uuid.uuid4()), "created_date": now_iso(), "created_by_id": f"peer-{i}", "created_by": f"peer{i}@lapquiz.ch", **d} for i, d in enumerate(SEED_PROFILES)]
-        if profiles: await coll("LiebeProfile").insert_many(profiles)
-        logger.info("Seed complete")
+    # 3. Dynamische Benutzerprofile (Leute) aus der Datenbank
+    try:
+        users = await db["User"].find({}, {"_id": 1}).to_list(length=500)
+        for u in users:
+            urls.append(f"{base_url}/leute/{str(u['_id'])}")
+    except Exception as e:
+        logger.error(f"Sitemap Users error: {e}")
 
-@app.on_event("startup")
-async def startup():
-    try: await seed()
-    except Exception as e: logger.warning(f"seed failed: {e}")
+    # XML-Struktur zusammenbauen
+    xml_content = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml_content.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    
+    for url in urls:
+        xml_content.append("  <url>")
+        xml_content.append(f"    <loc>{url}</loc>")
+        xml_content.append("    <changefreq>daily</changefreq>")
+        xml_content.append("    <priority>0.8</priority>")
+        xml_content.append("  </url>")
+        
+    xml_content.append("</urlset>")
+    
+    return Response(content="\n".join(xml_content), media_type="application/xml")
 
-@app.on_event("shutdown")
-async def shutdown_db_client(): client.close()
+@app.get("/sitemap.xml", response_class=Response)
+async def generate_sitemap():
+    base_url = "https://lapquiz.ch"
+    
+    # Statische Hauptseiten
+    urls = [
+        f"{base_url}/",
+        f"{base_url}/berufe",
+        f"{base_url}/faecher",
+        f"{base_url}/anzeigen",
+        f"{base_url}/leute",
+        f"{base_url}/login",
+        f"{base_url}/register"
+    ]
+    
+    # 1. Berufe & Fächer hinzufügen (für Google SEO pro Beruf)
+    professions = ["elektro", "gesundheit", "informatiker", "coiffeur", "logistiker", "detailhandel"]
+    for prof in professions:
+        urls.append(f"{base_url}/beruf/{prof}")
+        urls.append(f"{base_url}/faecher?profession={prof}")
+
+    # 2. Dynamische Kleinanzeigen (Anzeigen) aus der Datenbank
+    try:
+        listings = await db["Listing"].find({"active": True}, {"_id": 1}).to_list(length=500)
+        for l in listings:
+            urls.append(f"{base_url}/anzeige/{str(l['_id'])}")
+    except Exception as e:
+        logger.error(f"Sitemap Listings error: {e}")
+
+    # 3. Dynamische Benutzerprofile (Leute) aus der Datenbank
+    try:
+        users = await db["User"].find({}, {"_id": 1}).to_list(length=500)
+        for u in users:
+            urls.append(f"{base_url}/leute/{str(u['_id'])}")
+    except Exception as e:
+        logger.error(f"Sitemap Users error: {e}")
+
+    # XML-Struktur zusammenbauen
+    xml_content = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml_content.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    
+    for url in urls:
+        xml_content.append("  <url>")
+        xml_content.append(f"    <loc>{url}</loc>")
+        xml_content.append("    <changefreq>daily</changefreq>")
+        xml_content.append("    <priority>0.8</priority>")
+        xml_content.append("  </url>")
+        
+    xml_content.append("</urlset>")
+    
+    return Response(content="\n".join(xml_content), media_type="application/xml")

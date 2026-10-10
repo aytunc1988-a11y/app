@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Play } from "lucide-react";
-
 import { db } from "@/api/base44Client";
 import { getSubject } from "@/lib/subjects";
+
 
 const COUNTS = ["5", "10", "20", "Alle"];
 const TIMERS = [
@@ -23,7 +23,11 @@ export default function QuizSetup() {
   const [timer, setTimer] = useState("Aus");
   const [own, setOwn] = useState(false);
 
-  const { data: questions = [] } = useQuery({ queryKey: ["questions", subjectId], queryFn: () => db.entities.Question.filter({ subject: subjectId }, "-created_date", 500) });
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => { db.auth.me().then(setCurrentUser).catch(() => {}); }, []);
+  useEffect(() => { db.auth.me().then(setCurrentUser).catch(() => {}); }, []);
+  const profession = currentUser?.profession || null;
+  const { data: questions = [] } = useQuery({ queryKey: ["questions", subjectId, profession], queryFn: () => db.entities.Question.filter(profession ? { subject: subjectId, profession } : { subject: subjectId }, "-created_date", 500) });
 
   if (!subject) return <p className="text-center py-20 font-semibold">Fach nicht gefunden.</p>;
 

@@ -1,0 +1,111 @@
+import random
+import os
+from pymongo import MongoClient
+
+PROFESSIONS_DATA = {
+    "elektro": {
+        "name": "Elektroinstallateur/in EFZ",
+        "subjects": {
+            "et": "Elektrotechnik",
+            "it": "Installationstechnik",
+            "nin": "NIN / Vorschriften",
+            "abu": "Allgemeinbildender Unterricht"
+        }
+    },
+    "gesundheit": {
+        "name": "Fachfrau/-mann Gesundheit EFZ",
+        "subjects": {
+            "pb": "Pflege & Betreuung",
+            "mt": "Medizinaltechnik",
+            "ap": "Anatomie & Pathologie",
+            "abu": "Allgemeinbildender Unterricht"
+        }
+    },
+    "informatiker": {
+        "name": "Informatiker/in EFZ",
+        "subjects": {
+            "prg": "Programmierung & Software",
+            "net": "Netzwerktechnik",
+            "db": "Datenbanken",
+            "abu": "Allgemeinbildender Unterricht"
+        }
+    },
+    "coiffeur": {
+        "name": "Coiffeur/-euse EFZ",
+        "subjects": {
+            "hk": "Haarkosmetik & Chemie",
+            "fc": "Färbe- & Schneidetechnik",
+            "kb": "Kundenberatung & Salon",
+            "abu": "Allgemeinbildender Unterricht"
+        }
+    },
+    "logistiker": {
+        "name": "Logistiker/in EFZ",
+        "subjects": {
+            "ll": "Lagerlogistik",
+            "tv": "Transport & Verkehr",
+            "as": "Arbeitssicherheit",
+            "abu": "Allgemeinbildender Unterricht"
+        }
+    },
+    "detailhandel": {
+        "name": "Detailhandelsfachmann/-frau EFZ",
+        "subjects": {
+            "vb": "Verkaufskunde & Bewirtschaftung",
+            "wb": "Warenpräsentation",
+            "wg": "Wirtschaft & Gesellschaft",
+            "abu": "Allgemeinbildender Unterricht"
+        }
+    }
+}
+
+client = MongoClient(os.environ.get("MONGO_URL", "mongodb://localhost:27017"))
+db = client[os.environ.get("DB_NAME", "test_database")]
+col = db["Question"]
+
+# Alte Seed-Fragen komplett löschen
+deleted = col.delete_many({"created_by_id": "seed"})
+print(f"Alte Fragen gelöscht: {deleted.deleted_count}")
+
+inserted = 0
+for prof_key, prof_info in PROFESSIONS_DATA.items():
+    p_name = prof_info["name"]
+    for subj_key, subj_name in prof_info["subjects"].items():
+        for i in range(1, 51):
+            q_type = "mc" if i % 5 != 0 else "tf"
+            if q_type == "mc":
+                correct = f"Richtige Antwort für {subj_name} Nr. {i}"
+                opts = [correct, f"Falsche Option A für Frage {i}", f"Falsche Option B für Frage {i}", f"Falsche Option C für Frage {i}"]
+                random.Random(f"{prof_key}-{subj_key}-{i}").shuffle(opts)
+                q_data = {
+                    "profession": prof_key,
+                    "subject": subj_key,
+                    "type": "mc",
+                    "question": f"Prüfungsfrage {i} im Fach {subj_name} ({p_name}): Was ist hier korrekt?",
+                    "options": opts,
+                    "correct_answer": correct,
+                    "explanation": f"Erklärung zur Frage {i} im Fach {subj_name}.",
+                    "source": "curated"
+                }
+            else:
+                is_true = (i % 2 == 0)
+                q_data = {
+                    "profession": prof_key,
+                    "subject": subj_key,
+                    "type": "tf",
+                    "question": f"Wahr/Falsch-Frage {i} für {p_name} im Fach {subj_name}: Ist diese Aussage fachlich korrekt?",
+                    "options": ["Wahr", "Falsch"],
+                    "correct_answer": "Wahr" if is_true else "Falsch",
+                    "explanation": f"Erklärung zur Wahr/Falsch-Frage {i} in {subj_name}.",
+                    "source": "curated"
+                }
+            
+            col.insert_one({
+                "created_by_id": "seed",
+                "created_by": "seed",
+                "created_date": "2026-01-01T00:00:00.000Z",
+                **q_data
+            })
+            inserted += 1
+
+print(f"Erfolgreich {inserted} Fragen mit korrekten IDs importiert!")

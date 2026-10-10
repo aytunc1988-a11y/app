@@ -1,3 +1,4 @@
+import BerufDetail from "./pages/BerufDetail";
 import React from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
@@ -40,6 +41,8 @@ function AppRouter() {
   if (location.hash?.includes("session_id=")) return <AuthCallback />;
   return (
     <Routes>
+          <Route path="/beruf/:id" element={<BerufDetail />} />
+
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
