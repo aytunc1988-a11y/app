@@ -10,6 +10,7 @@ export default function Admin() {
   const { user, loading } = useAuth();
   const qc = useQueryClient();
   const [note, setNote] = useState("");
+  const [subject, setSubject] = useState("");
   const [maxUses, setMaxUses] = useState(0);
   const [custom, setCustom] = useState("");
   const [busy, setBusy] = useState(false);
@@ -39,9 +40,9 @@ export default function Admin() {
   const create = async () => {
     setBusy(true);
     try {
-      const lic = await db.admin.createLicense({ code: custom.trim() || null, note, max_uses: Number(maxUses) || 0 });
+      const lic = await db.admin.createLicense({ code: custom.trim() || null, note, max_uses: Number(maxUses) || 0, subject: subject || null });
       toast.success(`Code erstellt: ${lic.code}`);
-      setNote(""); setMaxUses(0); setCustom(""); refresh();
+      setNote(""); setMaxUses(0); setCustom(""); setSubject(""); refresh();
     } catch (e) { toast.error(e?.response?.data?.detail || "Erstellen fehlgeschlagen"); }
     finally { setBusy(false); }
   };
@@ -93,9 +94,9 @@ export default function Admin() {
 
       <div className="brutal bg-[#FDFFB6] p-4 mt-4">
         <h2 className="font-heading text-lg">Neuen Code erstellen</h2>
-        <div className="grid sm:grid-cols-3 gap-2 mt-3">
+        <div className="grid sm:grid-cols-4 gap-2 mt-3">
           <input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="Code (leer = automatisch)" className="border-2 border-black rounded-lg px-3 py-2 font-bold bg-white uppercase" />
-          <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Notiz (optional)" className="border-2 border-black rounded-lg px-3 py-2 font-semibold bg-white" />
+          <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Notiz (optional)" className="border-2 border-black rounded-lg px-3 py-2 font-semibold bg-white" /><select value={subject} onChange={(e) => setSubject(e.target.value)} className="border-2 border-black rounded-lg px-3 py-2 font-semibold bg-white"><option value="">Alle Berufe</option><option value="kaufmann">Kaufmann/-frau EFZ</option><option value="elektro">Elektroinstallateur/in EFZ</option><option value="gesundheit">Fachfrau/-mann Gesundheit EFZ</option><option value="informatik">Informatiker/in EFZ</option><option value="coiffeur">Coiffeur/-euse EFZ</option><option value="logistik">Logistiker/in EFZ</option><option value="detailhandel">Detailhandelsfachmann/-frau EFZ</option><option value="auto">Theorieprüfung Auto</option></select>
           <input type="number" min="0" value={maxUses} onChange={(e) => setMaxUses(e.target.value)} placeholder="Max. Nutzungen (0 = ∞)" className="border-2 border-black rounded-lg px-3 py-2 font-bold bg-white" />
         </div>
         <button onClick={create} disabled={busy} className="brutal-btn bg-black text-white w-full py-2.5 mt-3 flex items-center justify-center gap-2">
@@ -117,7 +118,7 @@ export default function Admin() {
                   <span className={`text-[9px] font-bold border-2 border-black rounded-full px-1.5 ${l.active ? "bg-[#CAFFBF]" : "bg-[#FFADAD]"}`}>{l.active ? "aktiv" : "gesperrt"}</span>
                 </div>
                 <div className="text-xs font-semibold text-muted-foreground mt-0.5 truncate">
-                  {l.note || "–"} · Nutzungen: {l.uses || 0}{l.max_uses ? ` / ${l.max_uses}` : " (∞)"}
+                  {l.note || "–"} · {l.profession ? `Beruf: ${l.profession} · ` : "Alle Berufe · "}Nutzungen: {l.uses || 0}{l.max_uses ? ` / ${l.max_uses}` : " (∞)"}
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">

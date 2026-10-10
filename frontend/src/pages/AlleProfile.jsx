@@ -11,16 +11,17 @@ const AVATAR_COLORS = ["#FDFFB6", "#CAFFBF", "#9BF6FF", "#FFADAD", "#BDB2FF", "#
 export default function AlleProfile() {
   const [filterOpen, setFilterOpen] = useState(false);
   const navigate = useNavigate();
-  const [filters, setFilters] = useState({ minAge: 18, maxAge: 99, gender: "Alle", distance: 100, canton: "Alle", online: false });
+  const [filters, setFilters] = useState({ minAge: 0, maxAge: 99, gender: "Alle", distance: 100, canton: "Alle", online: false });
 
   const { data: profiles = [], isLoading } = useQuery({ queryKey: ["liebeProfiles"], queryFn: () => db.entities.LiebeProfile.list("-created_date", 200) });
 
   const filtered = useMemo(() => {
     return profiles.filter((p) => {
+      if (p.invisible) return false;
       if (filters.online && !p.online) return false;
       if (filters.gender !== "Alle" && p.gender !== filters.gender) return false;
       if (filters.canton !== "Alle" && p.canton !== filters.canton) return false;
-      if (p.age < filters.minAge || p.age > filters.maxAge) return false;
+      if (p.age != null && (p.age < filters.minAge || p.age > filters.maxAge)) return false;
       if (p.distance_km != null && p.distance_km > filters.distance) return false;
       return true;
     });

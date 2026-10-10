@@ -11,6 +11,7 @@ import LearnTabs from "@/components/home/LearnTabs";
 export default function Faecher() {
   const { user } = useCurrentUser();
   const professionId = user?.profession || "kaufmann";
+  const unlockedProfessions = user?.unlocked_professions || [];
   const profession = getProfession(professionId);
   const subjects = professionSubjects(professionId);
 
@@ -60,7 +61,7 @@ export default function Faecher() {
 
       <div className="grid grid-cols-1 gap-2 mt-4">
         {subjects.map((s) => (
-          <SubjectCard key={s.id} subject={s} count={questions.filter((q) => q.subject === s.id).length} accuracy={accuracyFor(s.id)} />
+          <SubjectCard key={s.id} subject={s} count={questions.filter((q) => q.subject === s.id && q.profession === professionId).length} accuracy={accuracyFor(s.id)} locked={!user?.licensed || (unlockedProfessions.length > 0 && !unlockedProfessions.includes(professionId))} />
         ))}
       </div>
     </div>

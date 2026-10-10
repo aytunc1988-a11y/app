@@ -21,7 +21,7 @@ export default function AnzeigeDetail() {
   if (!ad) return <div className="brutal bg-white p-8 mt-6 text-center font-semibold">Anzeige nicht gefunden. <Link to="/anzeigen" className="underline">Zurück</Link></div>;
 
   const prof = getProfession(ad.profession);
-  const isOwn = ad.created_by_id === user?.id;
+  const isOwn = ad.created_by_id === user?.user_id || ad.created_by === user?.email;
 
   const remove = async () => {
     setDeleting(true);

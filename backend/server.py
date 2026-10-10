@@ -109,7 +109,9 @@ def set_cookie(resp, token):
 
 
 def public_user(u):
-    return {k: u.get(k) for k in ["user_id", "email", "name", "picture", "licensed", "role", "profession", "age", "canton", "ort", "profile_picture", "bio"]}
+    base = {k: u.get(k) for k in ["user_id", "email", "name", "picture", "licensed", "role", "profession", "age", "canton", "ort", "profile_picture", "bio", "unlocked_professions"]}
+    base["full_name"] = u.get("full_name") or u.get("name", "")
+    return base
 
 
 async def require_admin(request: Request):
@@ -186,6 +188,8 @@ async def auth_update(request: Request, patch: Dict[str, Any]):
     u = await require_user(request)
     for k in ["user_id", "email", "password_hash", "licensed"]:
         patch.pop(k, None)
+    if "full_name" in patch:
+        patch["name"] = patch.pop("full_name")
     await db.users.update_one({"user_id": u["user_id"]}, {"$set": patch})
     nu = await db.users.find_one({"user_id": u["user_id"]}, {"_id": 0})
     return public_user(nu)
@@ -215,7 +219,9 @@ async def redeem(request: Request, body: RedeemBody):
         raise HTTPException(status_code=400, detail="Lizenzcode-Limit erreicht")
     if u["user_id"] not in used_by:
         await db.licenses.update_one({"code": code}, {"$addToSet": {"used_by": u["user_id"]}, "$inc": {"uses": 1}})
-    await db.users.update_one({"user_id": u["user_id"]}, {"$set": {"licensed": True}})
+    unlocked = set((await db.users.find_one({"user_id": u["user_id"]}, {"_id": 0}) or {}).get("unlocked_professions", []))
+    if lic.get("profession"): unlocked.add(lic["profession"])
+    await db.users.update_one({"user_id": u["user_id"]}, {"$set": {"licensed": True, "unlocked_professions": list(unlocked)}})
     nu = await db.users.find_one({"user_id": u["user_id"]}, {"_id": 0})
     return public_user(nu)
 
@@ -225,6 +231,7 @@ class LicenseCreate(BaseModel):
     code: Optional[str] = None
     note: Optional[str] = None
     max_uses: int = 0
+    subject: Optional[str] = None
 
 
 def gen_code():
@@ -246,7 +253,7 @@ async def admin_create_license(request: Request, body: LicenseCreate):
     if await db.licenses.find_one({"code": code}):
         raise HTTPException(status_code=400, detail="Code existiert bereits")
     lic = {"id": str(uuid.uuid4()), "code": code, "active": True, "note": body.note or "",
-           "max_uses": max(0, int(body.max_uses or 0)), "uses": 0, "used_by": [],
+           "max_uses": max(0, int(body.max_uses or 0)), "profession": body.subject or "", "uses": 0, "used_by": [],
            "created_at": now_iso(), "created_by": admin["email"]}
     await db.licenses.insert_one(dict(lic))
     lic.pop("_id", None)
