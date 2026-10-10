@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Play } from "lucide-react";
+import { ArrowLeft, Play, BookOpen } from "lucide-react";
 import { db } from "@/api/base44Client";
 import { getSubject } from "@/lib/subjects";
 
@@ -24,7 +24,6 @@ export default function QuizSetup() {
   const [own, setOwn] = useState(false);
 
   const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => { db.auth.me().then(setCurrentUser).catch(() => {}); }, []);
   useEffect(() => { db.auth.me().then(setCurrentUser).catch(() => {}); }, []);
   const profession = currentUser?.profession || null;
   const { data: questions = [] } = useQuery({ queryKey: ["questions", subjectId, profession], queryFn: () => db.entities.Question.filter(profession ? { subject: subjectId, profession } : { subject: subjectId }, "-created_date", 500) });
@@ -73,9 +72,14 @@ export default function QuizSetup() {
         </label>
       </div>
 
-      <button onClick={start} className="brutal-btn bg-[#FDFFB6] w-full py-3 mt-3 font-heading flex items-center justify-center gap-2">
-        <Play className="w-5 h-5" /> Session starten
-      </button>
+      <div className="flex gap-2 mt-3">
+        <button onClick={start} className="brutal-btn bg-[#FDFFB6] flex-1 py-3 font-heading flex items-center justify-center gap-2">
+          <Play className="w-5 h-5" /> Quiz starten
+        </button>
+        <button onClick={() => navigate(`/quiz/${subjectId}/karten`)} className="brutal-btn bg-[#CAFFBF] flex-1 py-3 font-heading flex items-center justify-center gap-2">
+          <BookOpen className="w-5 h-5" /> Karteikarten
+        </button>
+      </div>
     </div>
   );
 }
