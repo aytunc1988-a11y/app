@@ -3,8 +3,6 @@ import LandingNav from "@/components/home/LandingNav";
 import Hero from "@/components/home/Hero";
 import PhoneStrip from "@/components/home/PhoneStrip";
 import HowItWorks from "@/components/home/HowItWorks";
-import Features from "@/components/home/Features";
-import Professions from "@/components/home/Professions";
 import Pricing from "@/components/home/Pricing";
 import Faq from "@/components/home/Faq";
 import ContactCTA from "@/components/home/ContactCTA";
@@ -17,13 +15,9 @@ export default function Home() {
       <LandingNav />
       <div className="max-w-[960px] mx-auto pb-8">
         <Hero />
-        <HowItWorks />
         <PhoneStrip />
-        <Features />
-        <Professions />
-        <div id="preise">
-          <Pricing />
-        </div>
+        <HowItWorks />
+        <div id="preise"><Pricing /></div>
         <Faq />
         <ContactCTA />
       </div>
