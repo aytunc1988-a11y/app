@@ -7,10 +7,10 @@ export default function Hero() {
         FÜR JEDEN BERUF · JEDE PRÜFUNG
       </span>
       <h1 className="font-heading text-[2.6rem] leading-[1.08] tracking-tight mb-4">
-        Foto rein.<br />Bestanden raus.
+        Foto rein.<br />Fragen raus.
       </h1>
       <p className="max-w-[520px] mx-auto mb-7 text-[1.05rem] text-[#444] leading-[1.5]">
-        Fotografiere eine Lehrbuchseite oder wähle deinen Beruf — die KI macht daraus Lernfragen. Für LAP-Prüfungen und Berufslehren aller Art.
+        Fotografiere eine Lehrbuchseite oder wähle dein Fach — die KI macht daraus Lernfragen. Für LAP-Prüfungen und Prüfungen aller Art.
       </p>
       <div className="flex gap-3.5 justify-center flex-wrap mb-2.5">
         <a href="#pricing" className="brutal-btn bg-[#f6f3a0] px-6 py-3.5 text-[0.95rem] no-underline">Jetzt kaufen</a>
