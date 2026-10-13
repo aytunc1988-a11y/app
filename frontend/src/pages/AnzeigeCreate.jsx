@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { db } from "@/api/base44Client";
 import { PROFESSIONS, CANTONS } from "@/lib/subjects";
+import { useQuery } from "@tanstack/react-query";
 import useCurrentUser from "@/lib/useCurrentUser";
 
 export default function AnzeigeCreate() {
@@ -14,16 +15,52 @@ export default function AnzeigeCreate() {
   const qc = useQueryClient();
   const isEdit = !!id;
   const { user } = useCurrentUser();
+  const { data: exams = [] } = useQuery({ queryKey: ["exams"], queryFn: () => db.entities.CustomExam.list("-created_date", 500) });
+  const [exportingExam, setExportingExam] = useState(false);
+
+  const attachExam = async (examId) => {
+    if (!examId) return;
+    setExportingExam(true);
+    try {
+      const ex = exams.find(e => e.id === examId);
+      const allQ = await db.entities.UserQuestion.list("-created_date", 3000);
+      const byId = Object.fromEntries(allQ.map((q) => [q.id, q]));
+      const item = {
+        title: ex.title, mode: ex.mode, timer_minutes: ex.timer_minutes || 0,
+        questions: (ex.question_ids || []).map((id) => byId[id]).filter(Boolean)
+          .map(({ id, created_by_id, created_by, created_date, ...q }) => q),
+      };
+      const json = JSON.stringify({ type: "lapquiz_exams", items: [item] }, null, 2);
+      const file = new File([json], ex.title.replace(/[^a-z0-9]/gi,"_")+".json", { type: "application/json" });
+      const { file_url } = await db.integrations.Core.UploadPublicFile({ file });
+      setAttachment({ url: file_url, name: ex.title + ".json" });
+      set("title", ex.title);
+      set("description", "Prüfungsdaten: " + ex.title + " (" + (ex.question_ids||[]).length + " Fragen)");
+    } catch(e) { toast.error("Export fehlgeschlagen"); }
+    finally { setExportingExam(false); }
+  };
   const [form, setForm] = useState({ title: "", description: "", profession: user?.profession || "kaufmann", canton: user?.canton || "", ort: user?.ort || "", price: "" });
   const [image, setImage] = useState("");
   const [attachment, setAttachment] = useState({ url: "", name: "" });
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const uploadDoc = async (file) => {
-    if (!file) return;
-    const url = await db.fileToDataUrl(file);
-    setAttachment({ url, name: file.name });
+  const uploadDoc = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    if (files.length === 1) {
+      const url = await db.fileToDataUrl(files[0]);
+      setAttachment({ url, name: files[0].name });
+      return;
+    }
+    try {
+      const uploaded = [];
+      for (const file of files) {
+        const { file_url } = await db.integrations.Core.UploadPublicFile({ file });
+        uploaded.push({ url: file_url, name: file.name });
+      }
+      setAttachment({ url: JSON.stringify(uploaded), name: uploaded.map(u => u.name).join(", ") });
+    } catch { toast.error("Upload fehlgeschlagen"); }
   };
 
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
@@ -83,9 +120,19 @@ export default function AnzeigeCreate() {
           <label className="text-xs font-bold uppercase tracking-widest">Datei anhängen (z.B. Prüfungsunterlagen – PDF/Bild)</label>
           <label className="brutal-btn bg-white w-full py-3 mt-1 flex items-center justify-center gap-2 cursor-pointer text-sm">
             <Camera className="w-4 h-4" /> {attachment.name ? "Datei ändern" : "Datei wählen"}
-            <input type="file" accept="application/pdf,image/*" className="hidden" onChange={(e) => uploadDoc(e.target.files?.[0])} />
+            <input type="file" accept="application/pdf,image/*,application/json" multiple className="hidden" onChange={uploadDoc} />
           </label>
           {attachment.name && <div className="brutal bg-[#CAFFBF] p-2 mt-2 text-sm font-bold truncate">📎 {attachment.name}</div>}
+          {exams.length > 0 && (
+            <div className="mt-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Eigene Prüfung anhängen</label>
+              <select onChange={(e) => attachExam(e.target.value)} className="w-full mt-1 border-2 border-black rounded-lg px-3 py-2 font-bold bg-white text-sm" defaultValue="">
+                <option value="">– Prüfung wählen –</option>
+                {exams.map(e => <option key={e.id} value={e.id}>{e.title} ({(e.question_ids||[]).length} Fragen)</option>)}
+              </select>
+              {exportingExam && <p className="text-xs font-semibold mt-1">Exportiere…</p>}
+            </div>
+          )}
         </div>
         <div>
           <label className="text-xs font-bold uppercase tracking-widest">Titel</label>

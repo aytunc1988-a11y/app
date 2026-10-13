@@ -10,14 +10,24 @@ export default function ConversationList({ conversations, activeKey, onSelect })
         const initials = (c.name || "?").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
         const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
         return (
-          <button key={c.key} onClick={() => onSelect(c.key)} className={`w-full flex items-center gap-2 p-2 text-left transition-colors ${activeKey === c.key ? "bg-[#FDFFB6]" : "hover:bg-black/5"}`}>
-            <div className="w-9 h-9 rounded-full border-2 border-black grid place-items-center font-heading shrink-0 overflow-hidden" style={{ background: color }}>
-              {c.image ? <img src={c.image} alt="" className="w-full h-full object-cover" /> : initials}
+          <button key={c.key} onClick={() => onSelect(c.key)} className={"w-full flex items-center gap-2 p-2 text-left transition-colors " + (activeKey === c.key ? "bg-[#FDFFB6]" : "hover:bg-black/5")}>
+            <div className="relative">
+              <div className="w-9 h-9 rounded-full border-2 border-black grid place-items-center font-heading shrink-0 overflow-hidden" style={{ background: color }}>
+                {c.image ? <img src={c.image} alt="" className="w-full h-full object-cover" /> : initials}
+              </div>
+              {c.unread > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#FFADAD] border-2 border-black rounded-full text-[9px] font-bold grid place-items-center">
+                  {c.unread > 9 ? "9+" : c.unread}
+                </span>
+              )}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="font-bold truncate text-sm">{c.name || "Unbekannt"}</div>
-              <div className="text-xs text-muted-foreground truncate">{c.subtitle || c.lastText || ""}</div>
+              <div className={"truncate text-sm " + (c.unread > 0 ? "font-black" : "font-bold")}>{c.name || "Unbekannt"}</div>
+              <div className={"text-xs truncate " + (c.unread > 0 ? "font-bold text-black" : "text-muted-foreground")}>{c.subtitle || c.lastText || ""}</div>
             </div>
+            {c.unread > 0 && (
+              <span className="shrink-0 w-2 h-2 rounded-full bg-black" />
+            )}
           </button>
         );
       })}

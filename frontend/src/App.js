@@ -20,6 +20,8 @@ import Faecher from "@/pages/Faecher";
 import Berufe from "@/pages/Berufe";
 import QuizSetup from "@/pages/QuizSetup";
 import Flashcards from "./pages/Flashcards";
+import ExamFlashcards from "./pages/ExamFlashcards";
+import ExamMarketplace from "./pages/ExamMarketplace";
 import QuizRun from "@/pages/QuizRun";
 import ExamsList from "@/pages/ExamsList";
 import ExamCreate from "@/pages/ExamCreate";
@@ -66,6 +68,8 @@ function AppRouter() {
             <Route path="/quiz/:subject" element={<QuizSetup />} />
             <Route path="/quiz/:subject/start" element={<QuizRun />} />
             <Route path="/quiz/:subject/karten" element={<Flashcards />} />
+            <Route path="/pruefung/:examId/karten" element={<ExamFlashcards />} />
+            <Route path="/marktplatz" element={<ExamMarketplace />} />
             <Route path="/pruefungen" element={<ExamsList />} />
             <Route path="/pruefung/neu" element={<ExamCreate />} />
             <Route path="/pruefung/:examId" element={<ExamRun />} />

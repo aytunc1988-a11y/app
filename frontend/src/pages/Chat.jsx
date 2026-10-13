@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageCircle, Tag, Trash2 } from "lucide-react";
 
 import { db } from "@/api/base44Client";
+import { toast } from "sonner";
 import useCurrentUser from "@/lib/useCurrentUser";
 import ConversationList from "@/components/chat/ConversationList";
 import ChatThread from "@/components/chat/ChatThread";
@@ -61,7 +62,12 @@ export default function Chat() {
         const profile = profiles.find((p) => p.created_by_id === c.peer);
         const name = profile?.full_name || (tab === "anzeigen" ? "Verkäufer:in" : "Leute-Chat");
         const subtitle = tab === "anzeigen" ? (listings.find((l) => l.id === c.listingId)?.title || "Anzeige") : (c.lastText || "");
-        return { key: c.key, name, subtitle, image: profile?.image_url || "", lastText: c.lastText, created_date: c.created_date };
+        const unread = messages.filter((m) =>
+          !m.read && m.recipient_id === user?.user_id &&
+          m.created_by_id === c.peer &&
+          (m.listing_id || null) === (c.listingId || null)
+        ).length;
+        return { key: c.key, name, subtitle, image: profile?.image_url || "", lastText: c.lastText, created_date: c.created_date, unread };
       })
       .sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
   }, [conversations, tab, profiles, listings]);
@@ -88,6 +94,19 @@ export default function Chat() {
     return messages.filter((m) => !m.read && m.recipient_id === user.user_id).length;
   }, [messages, user]);
 
+  // Ungelesene Nachrichten als gelesen markieren
+  useEffect(() => {
+    if (!active || !user || !messages.length) return;
+    const toMark = messages.filter((m) =>
+      !m.read && m.recipient_id === user.user_id &&
+      m.created_by_id === active.peer &&
+      (m.listing_id || null) === (active.listingId || null)
+    );
+    if (!toMark.length) return;
+    Promise.all(toMark.map((m) => db.entities.Message.update(m.id, { read: true })))
+      .then(() => qc.invalidateQueries({ queryKey: ["messages"] }));
+  }, [activeKey, messages.length]);
+
   const deleteConversation = async () => {
     if (!active || !user) return;
     const toDelete = messages.filter((m) => {
@@ -112,6 +131,27 @@ export default function Chat() {
   };
 
   const activeName = active ? resolvePeerName(active.peer, active.listingId) : "";
+
+  const handleImportExam = async (data) => {
+    try {
+      const allQ = await db.entities.UserQuestion.list("-created_date", 3000);
+      const existingQuestions = Object.fromEntries(allQ.map(q => [JSON.stringify({q:q.question,a:q.correct_answer}), q.id]));
+      for (const item of (data.items || [])) {
+        const questionIds = [];
+        for (const q of (item.questions || [])) {
+          const key = JSON.stringify({q:q.question,a:q.correct_answer});
+          if (existingQuestions[key]) {
+            questionIds.push(existingQuestions[key]);
+          } else {
+            const created = await db.entities.UserQuestion.create(q);
+            questionIds.push(created.id);
+          }
+        }
+        await db.entities.CustomExam.create({ title: item.title, mode: item.mode || "exam", timer_minutes: item.timer_minutes || 0, question_ids: questionIds });
+      }
+      toast.success("Prüfung erfolgreich importiert!");
+    } catch(e) { toast.error("Import fehlgeschlagen"); }
+  };
 
   return (
     <div>
@@ -140,7 +180,7 @@ export default function Chat() {
                   <span className="truncate">{activeName}</span>
                   <button onClick={() => { if(window.confirm("Konversation löschen?")) deleteConversation(); }} className="ml-auto p-1 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
-                <ChatThread messages={threadMessages} peerName={activeName} onSend={send} onDelete={deleteMessage} />
+                <ChatThread onImportExam={handleImportExam} messages={threadMessages} peerName={activeName} onSend={send} onDelete={deleteMessage} />
               </>
             ) : (
               <div className="flex-1 grid place-items-center text-xs font-semibold text-muted-foreground p-6 text-center">Wähle links eine Unterhaltung – oder schreib jemanden direkt aus einem Profil oder einer Anzeige an.</div>

@@ -1,7 +1,6 @@
 import React from "react";
 import LandingNav from "@/components/home/LandingNav";
 import Hero from "@/components/home/Hero";
-import MiniDemo from "@/components/home/MiniDemo";
 import PhoneStrip from "@/components/home/PhoneStrip";
 import HowItWorks from "@/components/home/HowItWorks";
 import Features from "@/components/home/Features";
@@ -18,9 +17,8 @@ export default function Home() {
       <LandingNav />
       <div className="max-w-[960px] mx-auto pb-8">
         <Hero />
-        <MiniDemo />
-        <PhoneStrip />
         <HowItWorks />
+        <PhoneStrip />
         <Features />
         <Professions />
         <div id="preise">
