@@ -14,12 +14,14 @@ const BERUFE = [
 ];
 
 const SLIDES = [
-  { step: "1", title: "Foto machen", color: "bg-[#FDFFB6]", desc: "Fotografiere eine Seite aus deinem Lehrbuch, Skript oder deinen Notizen.",
-    visual: <div className="w-full h-48 bg-[#FDFFB6] border-2 border-black rounded-xl flex flex-col items-center justify-center gap-3"><span className="text-6xl">📸</span><span className="font-bold text-sm">Lehrbuch fotografieren</span><div className="flex gap-1">{["Rechnungswesen","W&G","IKA"].map(t=><span key={t} className="text-[10px] border border-black rounded px-1.5 py-0.5 bg-white font-semibold">{t}</span>)}</div></div> },
-  { step: "2", title: "Fragen erhalten", color: "bg-[#CAFFBF]", desc: "Die KI erstellt daraus passende Prüfungsfragen zu genau diesem Stoff.",
-    visual: <div className="w-full h-48 bg-[#CAFFBF] border-2 border-black rounded-xl flex flex-col items-center justify-center gap-3 p-4"><span className="text-5xl">🤖</span><div className="w-full space-y-1.5">{["Multiple Choice","Wahr/Falsch","Lückentext"].map((t,i)=><div key={t} className="bg-white border border-black rounded px-2 py-1 text-xs font-semibold flex items-center gap-2"><span className="w-4 h-4 rounded-full bg-black text-white text-[9px] flex items-center justify-center font-bold">{i+1}</span>{t}</div>)}</div></div> },
-  { step: "3", title: "Sofort Feedback", color: "bg-[#9BF6FF]", desc: "Sieh direkt welche Antworten richtig sind und wo du noch üben kannst.",
-    visual: <div className="w-full h-48 bg-[#9BF6FF] border-2 border-black rounded-xl flex flex-col items-center justify-center gap-2 p-4"><span className="text-5xl">✅</span><div className="w-full space-y-1.5"><div className="bg-[#CAFFBF] border border-black rounded px-2 py-1 text-xs font-bold">✓ Richtige Antwort erklärt</div><div className="bg-[#FFADAD] border border-black rounded px-2 py-1 text-xs font-bold">✗ Falsch – Erklärung anzeigen</div><div className="bg-white border border-black rounded px-2 py-1 text-xs font-semibold">📊 Fortschritt gespeichert</div></div></div> },
+  { step: "1", title: "Beruf wählen", color: "bg-[#FDFFB6]", desc: "Wähle deine Berufslehre — passende Fächer und Fragen sofort verfügbar.",
+    visual: <div className="w-full h-48 bg-[#FDFFB6] border-2 border-black rounded-xl flex flex-col items-center justify-center gap-3 p-4"><span className="text-5xl">🎓</span><div className="flex flex-wrap gap-1 justify-center">{["Kaufmann EFZ","Elektro","Gesundheit","Informatik","Coiffeur","Logistik"].map(t=><span key={t} className="text-[10px] border border-black rounded px-1.5 py-0.5 bg-white font-semibold">{t}</span>)}</div><span className="text-xs font-bold mt-1">Alle Fächer sofort verfügbar</span></div> },
+  { step: "2", title: "Foto machen", color: "bg-[#CAFFBF]", desc: "Fotografiere eine Lehrbuchseite — die KI erkennt den Inhalt automatisch.",
+    visual: <div className="w-full h-48 bg-[#CAFFBF] border-2 border-black rounded-xl flex flex-col items-center justify-center gap-3"><span className="text-6xl">📸</span><span className="font-bold text-sm">Lehrbuchseite fotografieren</span><span className="text-xs px-4 text-center text-[#555]">KI erkennt Inhalt automatisch</span></div> },
+  { step: "3", title: "Fragen erhalten", color: "bg-[#9BF6FF]", desc: "Die KI generiert passende MC-, Wahr/Falsch- und Lückentextfragen zu deinem Stoff.",
+    visual: <div className="w-full h-48 bg-[#9BF6FF] border-2 border-black rounded-xl flex flex-col items-center justify-center gap-3 p-4"><span className="text-5xl">🤖</span><div className="w-full space-y-1.5">{["Multiple Choice","Wahr/Falsch","Lückentext"].map((t,i)=><div key={t} className="bg-white border border-black rounded px-2 py-1 text-xs font-semibold flex items-center gap-2"><span className="w-4 h-4 rounded-full bg-black text-white text-[9px] flex items-center justify-center font-bold">{i+1}</span>{t}</div>)}</div></div> },
+  { step: "4", title: "Sofort Feedback", color: "bg-[#BDB2FF]", desc: "Sieh ob deine Antwort stimmt — mit Erklärung. Fortschritt wird gespeichert.",
+    visual: <div className="w-full h-48 bg-[#BDB2FF] border-2 border-black rounded-xl flex flex-col items-center justify-center gap-2 p-4"><span className="text-5xl">✅</span><div className="w-full space-y-1.5"><div className="bg-[#CAFFBF] border border-black rounded px-2 py-1 text-xs font-bold">✓ Richtige Antwort erklärt</div><div className="bg-[#FFADAD] border border-black rounded px-2 py-1 text-xs font-bold">✗ Falsch – Erklärung anzeigen</div><div className="bg-white border border-black rounded px-2 py-1 text-xs font-semibold">📊 Fortschritt gespeichert</div></div></div> },
 ];
 
 const ALL_QUESTIONS = [
@@ -43,7 +45,7 @@ export default function HowItWorks() {
   const [correct, setCorrect] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setSlide(s => (s + 1) % SLIDES.length), 3500);
+    const t = setInterval(() => setSlide(s => (s + 1) % 4), 3500);
     return () => clearInterval(t);
   }, []);
 
@@ -63,11 +65,11 @@ export default function HowItWorks() {
       {/* 1. BERUFE */}
       <section className="py-12 px-5 border-t-2 border-black">
         <p className="text-xs font-bold uppercase tracking-widest text-[#555] mb-2">JEDER BERUF WÄHLBAR</p>
-        <h2 className="text-2xl font-black mb-2 leading-tight">Für welchen Beruf lernst du?</h2>
-        <p className="text-[#555] mb-5 text-sm">Egal welche Berufslehre — LAP QUIZ deckt sie ab.</p>
-        <div className="flex flex-wrap gap-2">
+        <h2 className="text-2xl font-black mb-2 leading-tight">Dein Beruf. Deine Prüfung.</h2>
+        <p className="text-[#555] mb-5 text-sm">LAP QUIZ kennt deinen Lehrplan — wähle deinen Beruf und lege sofort los. Alle Fächer vorstrukturiert, passende Fragen inklusive.</p>
+        <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-2">
           {BERUFE.map((b) => (
-            <span key={b.label} className={"border-2 border-black rounded-full py-2 px-4 text-sm font-semibold flex items-center gap-1.5 " + b.color}>
+            <span key={b.label} className={"border-2 border-black rounded-lg py-1.5 px-2 text-[10px] sm:text-sm sm:rounded-full sm:px-4 font-semibold flex items-center gap-1 justify-center " + b.color}>
               {b.emoji} {b.label}
             </span>
           ))}
@@ -77,7 +79,7 @@ export default function HowItWorks() {
       {/* 2. SO FUNKTIONIERT ES */}
       <section className="px-5 py-12 border-t-2 border-black">
         <p className="text-xs font-bold uppercase tracking-widest text-[#555] mb-2">SO FUNKTIONIERT LAP QUIZ</p>
-        <h2 className="text-2xl font-black mb-6 leading-tight">Vom Lernstoff zur Prüfungsfrage – in Sekunden.</h2>
+        <h2 className="text-2xl font-black mb-6 leading-tight">In 4 Schritten zur bestandenen LAP.</h2>
         <div className="grid md:grid-cols-2 gap-6 items-start">
           <div>
             {SLIDES[slide].visual}
