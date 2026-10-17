@@ -8,7 +8,7 @@ import { PROFESSIONS, CANTONS } from "@/lib/subjects";
 import useCurrentUser from "@/lib/useCurrentUser";
 import ListingCard from "@/components/anzeigen/ListingCard";
 
-const selectCls = "border-2 border-black rounded-lg px-2 py-1.5 font-bold bg-white text-xs w-full";
+const selectCls = "border-2 border-black rounded-lg px-3 py-2.5 font-semibold bg-white text-sm w-full";
 
 export default function Anzeigen() {
   const { user } = useCurrentUser();
@@ -40,16 +40,16 @@ export default function Anzeigen() {
   }), [listings, prof, canton, mine, user]);
 
   return (
-    <div>
-      <div className="flex items-center justify-between gap-2">
+    <div className="modern-page modern-listings">
+      <div className="modern-listing-header flex items-center justify-between gap-2">
         <h1 className="font-heading text-xl sm:text-3xl">Anzeigen</h1>
         <div className="flex items-center gap-2">
-          <button onClick={() => setMine((m) => !m)} className={`brutal-btn px-2 py-1 text-xs ${mine ? "bg-[#FDFFB6]" : "bg-white"}`}>Meine Inserate</button>
-          <Link to="/anzeigen/neu" className="brutal-btn bg-[#FDFFB6] px-2 py-1 flex items-center gap-1 text-xs"><Plus className="w-3.5 h-3.5" /> Inserat</Link>
+          <button onClick={() => setMine((m) => !m)} aria-pressed={mine} className={`brutal-btn px-2.5 py-2 text-xs sm:text-sm ${mine ? "bg-[#FDFFB6]" : "bg-white"}`}>Meine Inserate</button>
+          <Link to="/anzeigen/neu" className="brutal-btn bg-[#FDFFB6] px-3 py-2 flex items-center gap-1.5 text-xs sm:text-sm whitespace-nowrap"><Plus className="w-4 h-4" /> Inserat</Link>
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_1fr_auto] gap-2 mt-2">
+      <div className="modern-listing-filters grid grid-cols-[1fr_1fr_auto] gap-2 mt-4">
         <select value={prof} onChange={(e) => setProf(e.target.value)} className={selectCls}>
           <option value="Alle">Alle Berufe</option>
           {PROFESSIONS.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}

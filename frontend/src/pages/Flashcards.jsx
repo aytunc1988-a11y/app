@@ -152,11 +152,11 @@ export default function Flashcards() {
     try { localStorage.removeItem("fc_pause_" + subjectId); } catch(e) {}
   };
 
-  if (!subject) return <p className="text-center py-20 font-semibold">Fach nicht gefunden.</p>;
-  if (!questions) return <div className="grid place-items-center py-24"><div className="w-10 h-10 border-4 border-black border-t-[#CAFFBF] rounded-full animate-spin" /></div>;
+  if (!subject) return <p className="modern-page text-center py-20 font-semibold">Fach nicht gefunden.</p>;
+  if (!questions) return <div className="modern-page grid place-items-center py-24"><div className="w-10 h-10 border-4 border-black border-t-[#CAFFBF] rounded-full animate-spin" /></div>;
 
   if (!questions.length) return (
-    <div className="text-center py-20">
+    <div className="modern-page text-center py-20">
       <p className="font-heading text-2xl">Keine Fragen</p>
       <Link to="/faecher" className="brutal-btn bg-[#FDFFB6] px-5 py-3 inline-block mt-6">Zurück</Link>
     </div>
@@ -167,7 +167,7 @@ export default function Flashcards() {
 
   if (phase === "done") {
     return (
-      <div>
+      <div className="modern-page modern-flashcards">
         <button onClick={() => navigate("/faecher")} className="font-heading text-lg flex items-center gap-2 mb-4">
           <ArrowLeft className="w-5 h-5" /> Fächer
         </button>
@@ -210,7 +210,7 @@ export default function Flashcards() {
 
   if (paused) {
     return (
-      <div>
+      <div className="modern-page modern-flashcards">
         <button onClick={() => navigate("/faecher")} className="font-heading text-lg flex items-center gap-2 mb-4">
           <ArrowLeft className="w-5 h-5" /> Fächer
         </button>
@@ -231,7 +231,7 @@ export default function Flashcards() {
   const typeLabel = TYPE_LABELS[q.type] || q.type;
 
   return (
-    <div>
+    <div className="modern-page modern-flashcards">
       <div className="flex items-center justify-between mb-4">
         <button onClick={() => navigate("/faecher")} className="font-heading text-lg flex items-center gap-2">
           <ArrowLeft className="w-5 h-5" /> {subject.name}
@@ -260,7 +260,12 @@ export default function Flashcards() {
         <span className="text-[10px] font-semibold text-muted-foreground">Runde: Karte {idx + 1} von {questions.length}</span>
       </div>
 
-      <div onClick={() => !flipped && setFlipped(true)} className={"brutal p-6 min-h-[240px] flex flex-col items-center justify-center text-center transition-all " + (flipped ? "bg-[#CAFFBF]" : "bg-white cursor-pointer")}>
+      <div role="button" tabIndex={0} aria-disabled={flipped} aria-expanded={flipped} aria-label={flipped ? "Antwort aufgedeckt" : "Karte aufdecken"} onClick={() => !flipped && setFlipped(true)} onKeyDown={(event) => {
+        if (!flipped && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          setFlipped(true);
+        }
+      }} className={"brutal w-full text-inherit p-6 min-h-[240px] flex flex-col items-center justify-center text-center transition-all " + (flipped ? "bg-[#CAFFBF]" : "bg-white cursor-pointer")}>
         {!flipped ? (
           <>
             <p className="font-heading text-lg sm:text-xl leading-snug">{q.question}</p>

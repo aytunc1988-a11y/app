@@ -62,7 +62,7 @@ export default function AppLayout() {
     return () => { clearInterval(t); window.removeEventListener("beforeunload", setOffline); setOffline(); };
   }, [user?.user_id]);
   return (
-    <div className="min-h-screen pb-24 md:pb-10" style={{ fontFamily: "Space Grotesk, Inter, sans-serif" }}>
+    <div className="modern-app-shell min-h-screen pb-24 md:pb-10" style={{ fontFamily: "Space Grotesk, Inter, sans-serif" }}>
       <header className="sticky top-0 z-20 bg-background/90 backdrop-blur border-b-2 border-black">
         <div className="max-w-5xl mx-auto px-3 md:px-4 h-12 md:h-16 flex items-center justify-between gap-3">
           <Link to="/faecher" className="font-heading text-xl tracking-tight shrink-0">

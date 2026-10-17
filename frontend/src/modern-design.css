@@ -1,0 +1,262 @@
+.modern-landing {
+  color: #172b2b;
+  background: #f6f8f7;
+  font-family: Inter, "Space Grotesk", sans-serif !important;
+}
+
+.modern-landing .font-heading,
+.modern-page .font-heading {
+  font-family: "Space Grotesk", Inter, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.modern-landing nav.sticky {
+  border: 0;
+  border-bottom: 1px solid #e1e8e5;
+  background: rgb(246 248 247 / 90%);
+  box-shadow: 0 3px 16px rgb(25 55 48 / 4%);
+}
+
+.modern-landing [class*="border-black"],
+.modern-page [class*="border-black"] {
+  border-color: #dfe7e3;
+}
+
+.modern-landing [class*="border-b-2"],
+.modern-landing [class*="border-t-2"] {
+  border-width: 1px;
+}
+
+.modern-landing [class*="shadow-["] {
+  box-shadow: 0 8px 28px rgb(26 48 44 / 8%);
+}
+
+.modern-landing [class~="bg-black"],
+.modern-page [class~="bg-black"] {
+  background-color: #183b35;
+}
+
+.modern-landing [class*="bg-[#FDFFB6]"],
+.modern-landing [class*="bg-[#f6f3a0]"],
+.modern-page [class*="bg-[#FDFFB6]"] {
+  background-color: #e4f3e9;
+}
+
+.modern-landing [class*="bg-[#CAFFBF]"],
+.modern-page [class*="bg-[#CAFFBF]"] {
+  background-color: #e5f2ec;
+}
+
+.modern-landing [class*="bg-[#9BF6FF]"],
+.modern-page [class*="bg-[#9BF6FF]"] {
+  background-color: #e8f2f7;
+}
+
+.modern-landing [class*="bg-[#FFADAD]"],
+.modern-page [class*="bg-[#FFADAD]"] {
+  background-color: #f9ece9;
+}
+
+.modern-landing [class*="bg-[#BDB2FF]"],
+.modern-page [class*="bg-[#BDB2FF]"] {
+  background-color: #f0eef8;
+}
+
+.modern-landing [class*="bg-[#FFD6A5]"],
+.modern-page [class*="bg-[#FFD6A5]"] {
+  background-color: #f7f0e7;
+}
+
+.modern-landing .brutal-btn,
+.modern-page .brutal-btn {
+  border: 1px solid #d7e1dc;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgb(25 55 48 / 8%);
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.modern-landing .brutal-btn:hover,
+.modern-page .brutal-btn:hover {
+  box-shadow: 0 8px 18px rgb(25 55 48 / 12%);
+}
+
+.modern-landing .brutal,
+.modern-page .brutal {
+  border: 1px solid #e0e7e3;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgb(26 48 44 / 7%);
+}
+
+.modern-landing section[class*="border-t-2"] {
+  border-color: #e1e8e5;
+}
+
+.modern-landing input,
+.modern-landing button,
+.modern-landing a,
+.modern-page input,
+.modern-page select,
+.modern-page button,
+.modern-page a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.modern-landing :focus-visible,
+.modern-page :focus-visible,
+.modern-app-shell :focus-visible {
+  outline: 3px solid #28735f;
+  outline-offset: 3px;
+}
+
+.modern-landing .sticky.bottom-0 {
+  border: 0;
+  border-top: 1px solid #dfe7e3;
+  background: rgb(246 248 247 / 96%);
+  box-shadow: 0 -6px 24px rgb(26 48 44 / 6%);
+}
+
+.modern-app-shell {
+  background: #f6f8f7;
+  color: #172b2b;
+}
+
+.modern-app-shell > header {
+  border: 0;
+  border-bottom: 1px solid #e1e8e5;
+  background: rgb(246 248 247 / 92%);
+  box-shadow: 0 3px 16px rgb(25 55 48 / 4%);
+}
+
+.modern-app-shell > header .brutal-btn,
+.modern-app-shell > nav.brutal {
+  border: 1px solid #e0e7e3;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgb(26 48 44 / 10%);
+}
+
+.modern-app-shell > header nav a {
+  border-radius: 12px;
+  border-width: 1px;
+}
+
+.modern-app-shell > header nav a[class*="border-black"] {
+  border-color: #d7e1dc;
+  box-shadow: 0 2px 8px rgb(25 55 48 / 6%);
+}
+
+.modern-app-shell > nav.brutal {
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+.modern-app-shell main {
+  padding-top: 1.5rem;
+}
+
+.modern-page {
+  color: #172b2b;
+}
+
+.modern-page .brutal {
+  border: 1px solid #e0e7e3;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgb(26 48 44 / 7%);
+}
+
+.modern-page .brutal-btn {
+  border: 1px solid #d7e1dc;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgb(25 55 48 / 8%);
+}
+
+.modern-page .brutal-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 18px rgb(25 55 48 / 12%);
+}
+
+.modern-page input,
+.modern-page select {
+  border: 1px solid #d7e1dc;
+  border-radius: 12px;
+  min-height: 44px;
+}
+
+.modern-page [role="progressbar"] {
+  border-color: #d7e1dc;
+}
+
+.modern-quiz-setup > .brutal:first-of-type {
+  background: linear-gradient(135deg, #e5f2ec, #f3f7f4);
+}
+
+.modern-quiz-setup > .brutal:nth-of-type(2) {
+  padding: clamp(1.1rem, 4vw, 1.75rem);
+}
+
+.modern-quiz-run .brutal {
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
+
+.modern-professions > .grid > button {
+  border: 1px solid #e0e7e3;
+  border-radius: 18px;
+  box-shadow: 0 5px 18px rgb(26 48 44 / 6%);
+}
+
+.modern-professions > .grid > button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgb(26 48 44 / 11%);
+}
+
+.modern-listing-filters select {
+  min-width: 0;
+}
+
+.modern-listings .brutal {
+  border-radius: 18px;
+}
+
+.modern-listings .grid > a.brutal {
+  min-height: 88px;
+  box-shadow: 0 5px 18px rgb(26 48 44 / 6%);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.modern-listings .grid > a.brutal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgb(26 48 44 / 11%);
+}
+
+@media (max-width: 640px) {
+  .modern-listing-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .modern-listing-header > div:last-child {
+    width: 100%;
+  }
+
+  .modern-listing-header > div:last-child > :first-child {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .modern-listing-filters {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .modern-listing-filters select:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modern-landing *,
+  .modern-page *,
+  .modern-app-shell * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

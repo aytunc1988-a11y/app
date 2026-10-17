@@ -29,7 +29,7 @@ export default function Faecher() {
   };
 
   return (
-    <div>
+    <div className="modern-page modern-learning">
       <LearnTabs />
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs sm:text-sm font-bold uppercase tracking-widest text-muted-foreground">LAP-Vorbereitung</p>

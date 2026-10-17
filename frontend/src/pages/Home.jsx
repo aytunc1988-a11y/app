@@ -11,7 +11,7 @@ import StickyCta from "@/components/home/StickyCta";
 
 export default function Home() {
   return (
-    <div className="min-h-screen pb-20 md:pb-0" style={{ fontFamily: "Inter, Arial, sans-serif" }}>
+    <div className="modern-landing min-h-screen pb-20 md:pb-0">
       <LandingNav />
       <div className="max-w-[960px] mx-auto pb-8">
       {/* Berufe ganz oben */}

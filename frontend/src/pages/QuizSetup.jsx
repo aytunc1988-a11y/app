@@ -28,7 +28,7 @@ export default function QuizSetup() {
   const profession = currentUser?.profession || null;
   const { data: questions = [] } = useQuery({ queryKey: ["questions", subjectId, profession], queryFn: () => db.entities.Question.filter(profession ? { subject: subjectId, profession } : { subject: subjectId }, "-created_date", 500) });
 
-  if (!subject) return <p className="text-center py-20 font-semibold">Fach nicht gefunden.</p>;
+  if (!subject) return <p className="modern-page text-center py-20 font-semibold">Fach nicht gefunden.</p>;
 
   const start = () => {
     const qs = new URLSearchParams({ count, timer, own: own ? "1" : "0" });
@@ -36,7 +36,7 @@ export default function QuizSetup() {
   };
 
   return (
-    <div>
+    <div className="modern-page modern-quiz-setup">
       <button onClick={() => navigate("/faecher")} className="font-heading text-lg flex items-center gap-2 mb-5"><ArrowLeft className="w-5 h-5" /> Fächer</button>
 
       <div className="brutal bg-[#FDFFB6] p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
@@ -50,18 +50,18 @@ export default function QuizSetup() {
       <div className="brutal bg-white p-4 sm:p-5 mt-3 space-y-4">
         <div>
           <label className="text-xs font-bold uppercase tracking-widest">Anzahl Fragen</label>
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-2" role="group" aria-label="Anzahl Fragen">
             {COUNTS.map((c) => (
-              <button key={c} onClick={() => setCount(c)} className={`brutal-btn px-3 py-1.5 text-sm w-14 sm:w-16 ${count === c ? "bg-black text-white" : "bg-white"}`}>{c}</button>
+              <button key={c} onClick={() => setCount(c)} aria-pressed={count === c} className={`brutal-btn px-3 py-1.5 text-sm w-14 sm:w-16 ${count === c ? "bg-black text-white" : "bg-white"}`}>{c}</button>
             ))}
           </div>
         </div>
 
         <div>
           <label className="text-xs font-bold uppercase tracking-widest">Timer</label>
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-2" role="group" aria-label="Timer">
             {TIMERS.map((t) => (
-              <button key={t.id} onClick={() => setTimer(t.id)} className={`brutal-btn px-3 py-1.5 text-sm ${timer === t.id ? "bg-black text-white" : "bg-white"}`}>{t.label}</button>
+              <button key={t.id} onClick={() => setTimer(t.id)} aria-pressed={timer === t.id} className={`brutal-btn px-3 py-1.5 text-sm ${timer === t.id ? "bg-black text-white" : "bg-white"}`}>{t.label}</button>
             ))}
           </div>
         </div>

@@ -1,6 +1,7 @@
 import BerufDetail from "./pages/BerufDetail";
 import React from "react";
 import "@/App.css";
+import "@/modern-design.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import { AuthProvider } from "@/lib/AuthContext";
