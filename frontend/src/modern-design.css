@@ -1627,6 +1627,9 @@
 
 .App[data-theme="dark"] .modern-profession-detail .modern-profession-hero h1,
 .App[data-theme="dark"] .modern-profession-detail .modern-profession-hero p,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-qualification h2,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-qualification p,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-qualification-area,
 .App[data-theme="dark"] .modern-profession-detail .modern-profession-subjects h2,
 .App[data-theme="dark"] .modern-profession-detail .modern-profession-subjects p,
 .App[data-theme="dark"] .modern-profession-detail .modern-profession-subject,
@@ -1642,10 +1645,20 @@
 }
 
 .App[data-theme="dark"] .modern-profession-detail .modern-profession-subjects,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-qualification,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-qualification-area,
 .App[data-theme="dark"] .modern-profession-detail .modern-profession-subject,
 .App[data-theme="dark"] .modern-profession-detail .modern-profession-benefits {
   border-color: #273231;
   background: #11191a;
+}
+
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-qualification p {
+  color: #b6c3bb;
+}
+
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-qualification a {
+  color: #d5ff86;
 }
 
 .App[data-theme="dark"] .modern-profession-detail .modern-profession-subjects p {

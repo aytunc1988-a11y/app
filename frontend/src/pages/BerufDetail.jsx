@@ -7,6 +7,7 @@ export default function BerufDetail() {
   const { id } = useParams();
   const profession = getProfession(id);
   const subjects = professionSubjects(id);
+  const qualificationAreas = profession?.qualificationAreas || [];
 
   useEffect(() => {
     if (profession) {
@@ -49,21 +50,51 @@ export default function BerufDetail() {
             </div>
           </div>
 
-          <div className="modern-profession-subjects bg-white border-4 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] space-y-4">
-            <h2 className="text-2xl font-heading font-black">Lernbereiche zur Prüfungsvorbereitung</h2>
-            <p className="text-sm font-bold text-gray-700">
-              Die Kürzel entsprechen den bereitgestellten Berufskategorien. Verbindlich sind die aktuellen Qualifikationsverfahren und Bildungspläne des jeweiligen Berufs.
-            </p>
-            {profession.sourceUrl && (
-              <a
-                href={profession.sourceUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-black underline underline-offset-4"
-              >
-                Offizieller SBFI-Berufseintrag <ExternalLink className="h-4 w-4" />
-              </a>
+          <section className="modern-profession-qualification bg-white border-4 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] space-y-4">
+            <h2 className="text-2xl font-heading font-black">
+              {qualificationAreas.length ? 'Gesetzliche Qualifikationsbereiche' : 'Prüfungsart'}
+            </h2>
+            {qualificationAreas.length > 0 && (
+              <ul className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {qualificationAreas.map((area) => (
+                  <li key={area} className="modern-profession-qualification-area p-4 border-2 border-black rounded-xl bg-gray-50 font-black">
+                    {area}
+                  </li>
+                ))}
+              </ul>
             )}
+            <p className="text-sm font-bold text-gray-700">
+              {profession.qualificationNote || 'Diese Bereiche sind in der aktuellen Bildungsverordnung festgelegt. Prüfungsform und Gewichtung stehen in der Verordnung.'}
+            </p>
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
+              {profession.regulationUrl && (
+                <a
+                  href={profession.regulationUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-black underline underline-offset-4"
+                >
+                  Bildungsverordnung (Fedlex) <ExternalLink className="h-4 w-4" />
+                </a>
+              )}
+              {profession.sourceUrl && (
+                <a
+                  href={profession.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-black underline underline-offset-4"
+                >
+                  SBFI-Berufseintrag <ExternalLink className="h-4 w-4" />
+                </a>
+              )}
+            </div>
+          </section>
+
+          <div className="modern-profession-subjects bg-white border-4 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] space-y-4">
+            <h2 className="text-2xl font-heading font-black">Lernfächer in LAP QUIZ</h2>
+            <p className="text-sm font-bold text-gray-700">
+              Diese Lernkategorien helfen beim Üben in LAP QUIZ. Sie ersetzen nicht die für deinen Lehrbeginn gültige Bildungsverordnung oder den offiziellen Bildungsplan.
+            </p>
             <div className="grid md:grid-cols-2 gap-4">
               {subjects.map((subject) => (
                 <div key={subject.id} className="modern-profession-subject p-4 border-2 border-black rounded-xl bg-gray-50 flex items-center justify-between">
