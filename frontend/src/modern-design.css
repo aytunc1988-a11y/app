@@ -255,6 +255,108 @@
   }
 }
 
+/* Shared finishing styles keep pages outside the redesigned flows consistent. */
+.modern-app-shell {
+  background: linear-gradient(180deg, #f8fafc 0%, #f3f5f7 100%);
+}
+
+.modern-app-header {
+  border-bottom: 1px solid #e2e8f0;
+  background-color: rgb(255 255 255 / 92%);
+}
+
+.modern-app-header nav a {
+  border-color: transparent;
+  border-radius: 0.75rem;
+  box-shadow: none;
+  color: #475569;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.modern-app-header nav a:hover {
+  border-color: transparent;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.modern-app-header nav a[aria-current="page"] {
+  border-color: transparent;
+  background: #eff6ff;
+  box-shadow: none;
+  color: #1d4ed8;
+}
+
+.modern-app-main h1 {
+  color: #0f172a;
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.modern-app-main .brutal {
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgb(15 23 42 / 6%);
+}
+
+.modern-app-main .brutal-btn {
+  border: 1px solid #dbe2ea;
+  border-radius: 0.8rem;
+  box-shadow: 0 2px 5px rgb(15 23 42 / 5%);
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.modern-app-main .brutal-btn:hover:not(:disabled) {
+  box-shadow: 0 5px 14px rgb(15 23 42 / 10%);
+}
+
+.modern-app-main input:not([type="checkbox"]):not([type="radio"]),
+.modern-app-main select,
+.modern-app-main textarea {
+  border-color: #cbd5e1;
+  border-radius: 0.75rem;
+}
+
+.modern-app-main input:focus-visible,
+.modern-app-main select:focus-visible,
+.modern-app-main textarea:focus-visible,
+.modern-app-main button:focus-visible,
+.modern-app-main a:focus-visible,
+.modern-app-header a:focus-visible,
+.modern-mobile-nav a:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+.modern-mobile-nav {
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 30px rgb(15 23 42 / 14%);
+}
+
+.modern-mobile-nav a[aria-current="page"] {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.modern-auth-shell {
+  background:
+    radial-gradient(ellipse at 15% 10%, rgb(219 234 254 / 70%), transparent 38%),
+    linear-gradient(145deg, #f8fafc, #eef2f7);
+}
+
+.modern-auth-card {
+  border-color: #e2e8f0;
+  border-radius: 1.25rem;
+  box-shadow: 0 20px 50px rgb(15 23 42 / 10%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modern-app-header nav a,
+  .modern-app-main .brutal-btn {
+    transition: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .modern-landing *,
   .modern-page *,
