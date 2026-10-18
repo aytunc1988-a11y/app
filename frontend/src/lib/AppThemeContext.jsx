@@ -6,7 +6,7 @@ const AppThemeContext = createContext(null);
 
 function readStoredTheme() {
   try {
-    return window.localStorage.getItem(STORAGE_KEY) === "dark" ? "dark" : "light";
+    return window.localStorage.getItem(STORAGE_KEY) === "light" ? "light" : "dark";
   } catch {
     return "light";
   }
@@ -27,7 +27,7 @@ export function AppThemeProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (user) setTheme(user.theme === "dark" ? "dark" : "light");
+    if (user?.theme === "light" || user?.theme === "dark") setTheme(user.theme);
   }, [user, setTheme]);
 
   useEffect(() => {
