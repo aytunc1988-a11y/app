@@ -357,6 +357,483 @@
   }
 }
 
+.modern-listings-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  border: 1px solid #dce7e2;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at 90% 10%, rgb(214 235 224 / 75%), transparent 33%),
+    linear-gradient(130deg, #fff 4%, #f1f7f3 100%);
+  box-shadow: 0 12px 36px rgb(15 23 42 / 5%);
+}
+
+.modern-listings-hero-copy h1 {
+  margin-top: 0.55rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.05;
+}
+
+.modern-listings-hero-copy > p {
+  margin-top: 0.55rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.modern-listings-eyebrow,
+.modern-profile-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #477966;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.modern-listings-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.modern-listings-hero-actions .modern-my-listings,
+.modern-listings-hero-actions .modern-create-listing {
+  display: inline-flex;
+  min-height: 2.9rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.modern-listing-filter-panel {
+  margin-top: 1.25rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 6px 20px rgb(15 23 42 / 4%);
+}
+
+.modern-listing-filter-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.modern-listing-filter-icon {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 0.8rem;
+  background: #edf5f0;
+  color: #477966;
+}
+
+.modern-listing-filter-heading h2,
+.modern-profile-section-heading h2 {
+  color: #172b2b;
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+
+.modern-listing-filter-heading p,
+.modern-profile-section-heading p {
+  margin-top: 0.12rem;
+  color: #718096;
+  font-size: 0.78rem;
+}
+
+.modern-listing-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.modern-listing-filters {
+  align-items: end;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+}
+
+.modern-listing-filters label > span {
+  display: block;
+  margin: 0 0 0.35rem 0.1rem;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 750;
+}
+
+.modern-listing-filters .modern-listing-select {
+  min-height: 2.9rem;
+  border: 1px solid #dce4e8;
+  border-radius: 0.8rem;
+  background-color: #f8fafc;
+  font-weight: 600;
+}
+
+.modern-listing-reset {
+  display: inline-flex;
+  min-height: 2.9rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.modern-listing-reset:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.modern-listings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.modern-listing-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.2rem;
+  background: #fff;
+  box-shadow: 0 5px 18px rgb(15 23 42 / 5%);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.modern-listing-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgb(15 23 42 / 10%);
+}
+
+.modern-listing-card.is-inactive {
+  opacity: 0.68;
+}
+
+.modern-listing-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.modern-listing-card-image {
+  position: relative;
+  display: grid;
+  height: 10rem;
+  overflow: hidden;
+  place-items: center;
+  background: linear-gradient(135deg, #e7f1eb, #f5f8f6);
+}
+
+.modern-listing-card-image > span:first-child {
+  font-size: 3.25rem;
+  filter: drop-shadow(0 5px 8px rgb(15 23 42 / 10%));
+}
+
+.modern-listing-card-image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 260ms ease;
+}
+
+.modern-listing-card:hover .modern-listing-card-image img {
+  transform: scale(1.035);
+}
+
+.modern-listing-profession,
+.modern-listing-paused {
+  position: absolute;
+  top: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgb(255 255 255 / 60%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 92%);
+  padding: 0.35rem 0.65rem;
+  color: #334155;
+  font-size: 0.68rem;
+  font-weight: 750;
+  backdrop-filter: blur(8px);
+}
+
+.modern-listing-profession { left: 0.75rem; }
+.modern-listing-paused { right: 0.75rem; }
+
+.modern-listing-card-content {
+  padding: 1rem 1.1rem 1.05rem;
+}
+
+.modern-listing-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.modern-listing-location {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.35rem;
+  color: #64748b;
+  font-size: 0.74rem;
+}
+
+.modern-listing-price {
+  flex: 0 0 auto;
+  color: #1c5543;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.modern-listing-card-content h3 {
+  margin-top: 0.6rem;
+  color: #172b2b;
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.modern-listing-description {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 0.35rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.modern-listing-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.9rem;
+  color: #477966;
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.modern-listing-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  padding: 0.7rem 0.9rem;
+  border-top: 1px solid #edf1f3;
+}
+
+.modern-listing-action {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid #dce4e8;
+  border-radius: 0.7rem;
+  background: #fff;
+  color: #475569;
+}
+
+.modern-listing-action:hover { background: #f1f5f9; }
+.modern-listing-action.is-destructive { color: #b42318; }
+
+.modern-listings-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.25rem;
+  padding: 3.5rem 1.5rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 1.25rem;
+  background: rgb(255 255 255 / 70%);
+  text-align: center;
+}
+
+.modern-listings-empty-icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border-radius: 1rem;
+  background: #edf5f0;
+  color: #477966;
+}
+
+.modern-listings-empty h2 { font-weight: 750; }
+.modern-listings-empty p { margin-bottom: 0.5rem; color: #64748b; font-size: 0.85rem; }
+
+.modern-profile-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.modern-profile-heading h1 {
+  margin-top: 0.4rem;
+  font-size: clamp(2rem, 5vw, 2.7rem);
+  line-height: 1.1;
+}
+
+.modern-profile-heading > div:first-child > p:last-child {
+  margin-top: 0.45rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.modern-profile-secure,
+.modern-profile-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  background: #eaf4ee;
+  color: #37715a;
+  font-size: 0.72rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.modern-profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #dce7e2;
+  border-radius: 1.25rem;
+  background: linear-gradient(120deg, #fff, #f2f7f4);
+  box-shadow: 0 8px 24px rgb(15 23 42 / 5%);
+}
+
+.modern-profile-avatar,
+.modern-profile-photo-frame {
+  display: grid;
+  flex: 0 0 auto;
+  overflow: hidden;
+  place-items: center;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #e5f2ec;
+  color: #477966;
+  box-shadow: 0 0 0 1px #dce7e2, 0 5px 16px rgb(15 23 42 / 10%);
+}
+
+.modern-profile-avatar { width: 4.5rem; height: 4.5rem; }
+.modern-profile-identity-copy { min-width: 0; }
+.modern-profile-identity-copy > span { color: #718096; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.14em; }
+.modern-profile-identity-copy h2 { overflow: hidden; margin-top: 0.12rem; color: #172b2b; font-size: 1.2rem; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.modern-profile-identity-copy p { overflow: hidden; color: #64748b; font-size: 0.78rem; text-overflow: ellipsis; white-space: nowrap; }
+.modern-profile-identity-copy > div { display: flex; align-items: center; gap: 0.25rem; margin-top: 0.3rem; color: #64748b; font-size: 0.72rem; }
+.modern-profile-complete { margin-left: auto; }
+
+.modern-profile-form-card {
+  margin-top: 1.1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 8px 26px rgb(15 23 42 / 5%);
+}
+
+.modern-profile-section-heading { margin-bottom: 1.25rem; }
+.modern-profile-form { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1.5rem; }
+.modern-profile-photo { display: flex; align-items: center; flex-direction: column; gap: 0.75rem; }
+.modern-profile-photo-frame { width: 7rem; height: 7rem; border-radius: 1.4rem; }
+.modern-profile-photo-frame > img { width: 100%; height: 100%; object-fit: cover; }
+.modern-profile-upload { display: inline-flex; min-height: 2.5rem; align-items: center; justify-content: center; padding: 0.5rem 0.75rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
+.modern-profile-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.modern-profile-field { display: flex; min-width: 0; flex-direction: column; gap: 0.4rem; }
+.modern-profile-field-wide { grid-column: 1 / -1; }
+.modern-profile-label { color: #475569; font-size: 0.7rem; font-weight: 750; }
+.modern-profile-input { width: 100%; min-height: 2.8rem; border: 1px solid #dce4e8; border-radius: 0.75rem; background: #f8fafc; padding: 0.65rem 0.8rem; color: #172b2b; font-size: 0.88rem; font-weight: 550; }
+.modern-profile-field textarea.modern-profile-input { min-height: 6rem; resize: vertical; }
+.modern-profile-readonly p { display: flex; min-height: 2.8rem; align-items: center; overflow: hidden; border: 1px solid #edf1f3; border-radius: 0.75rem; background: #f8fafc; padding: 0.65rem 0.8rem; color: #718096; font-size: 0.85rem; text-overflow: ellipsis; white-space: nowrap; }
+
+.modern-profile-privacy {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background: #f8fafc;
+}
+
+.modern-profile-privacy-icon { display: grid; width: 2.5rem; height: 2.5rem; flex: 0 0 auto; place-items: center; border-radius: 0.75rem; background: #eaf4ee; color: #477966; }
+.modern-profile-privacy-copy { display: flex; flex-direction: column; gap: 0.15rem; }
+.modern-profile-privacy-copy strong { color: #172b2b; font-size: 0.85rem; }
+.modern-profile-privacy-copy span { color: #64748b; font-size: 0.74rem; }
+.modern-profile-switch { position: relative; width: 2.9rem; height: 1.65rem; flex: 0 0 auto; margin-left: auto; border: 0; border-radius: 999px; background: #cbd5e1; transition: background-color 160ms ease; }
+.modern-profile-switch > span { position: absolute; top: 0.2rem; left: 0.2rem; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgb(15 23 42 / 20%); transition: transform 160ms ease; }
+.modern-profile-switch.is-on { background: #477966; }
+.modern-profile-switch.is-on > span { transform: translateX(1.25rem); }
+.modern-profile-save-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid #edf1f3; }
+.modern-profile-save-row > span { color: #718096; font-size: 0.72rem; }
+.modern-profile-save { display: inline-flex; min-height: 2.9rem; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 1rem; background: #183b35; color: white; font-size: 0.85rem; font-weight: 750; }
+.modern-profile-save:hover:not(:disabled) { background: #24574b; }
+
+@media (max-width: 640px) {
+  .modern-listings-hero { align-items: stretch; flex-direction: column; }
+  .modern-listings-hero-actions { justify-content: stretch; }
+  .modern-listings-hero-actions > * { flex: 1; }
+  .modern-listing-filter-heading { flex-wrap: wrap; }
+  .modern-listing-filter-heading > div:nth-child(2) { flex: 1; }
+  .modern-listing-count { margin-left: 3.25rem; }
+  .modern-listing-filters { grid-template-columns: minmax(0, 1fr) auto; }
+  .modern-listing-filters label:first-child { grid-column: 1 / -1; }
+  .modern-listing-reset { grid-column: 2; }
+  .modern-listings-grid { grid-template-columns: minmax(0, 1fr); }
+  .modern-listing-card-image { height: 12rem; }
+  .modern-profile-heading { align-items: flex-start; }
+  .modern-profile-secure { display: none; }
+  .modern-profile-identity { flex-wrap: wrap; }
+  .modern-profile-complete { font-size: 0; gap: 0; padding: 0.45rem; }
+  .modern-profile-complete svg { width: 1rem; height: 1rem; }
+  .modern-profile-form { grid-template-columns: 1fr; gap: 1.25rem; }
+  .modern-profile-photo { align-items: center; flex-direction: row; }
+  .modern-profile-photo-frame { width: 5rem; height: 5rem; }
+  .modern-profile-save-row { align-items: stretch; flex-direction: column; }
+  .modern-profile-save { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modern-listing-card,
+  .modern-listing-card-image img,
+  .modern-profile-switch,
+  .modern-profile-switch > span {
+    transition: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .modern-landing *,
   .modern-page *,
