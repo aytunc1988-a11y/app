@@ -39,20 +39,20 @@ export default function Berufe() {
         {PROFESSIONS.map((p) => {
           const selected = (user?.profession || "kaufmann") === p.id;
           return (
-            <button key={p.id} onClick={() => choose(p.id)} disabled={saving === p.id} aria-pressed={selected} className={`brutal p-3 text-left transition-all ${selected ? "bg-[#FDFFB6]" : "bg-white"}`}>
+            <button key={p.id} onClick={() => choose(p.id)} disabled={saving === p.id} aria-pressed={selected} className={`modern-profession-choice brutal p-3 text-left transition-all ${selected ? "is-selected" : ""}`}>
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className={`w-9 h-9 shrink-0 grid place-items-center border-2 border-black rounded-lg font-heading text-lg ${p.bg}`}>{p.emoji}</span>
+                  <span className="modern-profession-icon w-9 h-9 shrink-0 grid place-items-center border-2 border-black rounded-lg font-heading text-lg">{p.emoji}</span>
                   <span className="font-heading text-sm leading-tight">{p.name}</span>
                 </div>
-                <span className={`w-6 h-6 shrink-0 rounded-full border-2 border-black grid place-items-center ${selected ? "bg-black" : "bg-white"}`}>
+                <span className="modern-profession-selection w-6 h-6 shrink-0 rounded-full border-2 border-black grid place-items-center">
                   {saving === p.id ? <Loader2 className="w-3 h-3 animate-spin" /> : selected ? <span className="w-2.5 h-2.5 rounded-full bg-[#FDFFB6]" /> : null}
                 </span>
               </div>
               <div className="flex flex-wrap gap-1 mt-3">
                 {p.subjects.map((sid) => {
                   const s = getSubject(sid);
-                  return s ? <span key={sid} className={`text-[10px] font-bold border-2 border-black rounded-full px-2 py-0.5 ${s.bg}`}>{s.short}</span> : null;
+                  return s ? <span key={sid} className="modern-profession-subject-pill text-[10px] font-bold border-2 border-black rounded-full px-2 py-0.5">{s.short}</span> : null;
                 })}
               </div>
             </button>

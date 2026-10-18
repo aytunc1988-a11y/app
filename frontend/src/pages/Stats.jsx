@@ -48,7 +48,7 @@ export default function Stats() {
             <article key={s.id} className="modern-stats-subject">
               <div className="modern-stats-subject-top">
                 <div className="modern-stats-subject-info">
-                  <span className={`modern-subject-icon ${s.bg}`}>{s.emoji}</span>
+                  <span className={`modern-subject-icon ${s.bg}`}><span className="modern-subject-icon-glyph">{s.emoji}</span></span>
                   <div><h3>{s.name}</h3><p>{a.c}/{a.q} richtig <i /> {formatDuration(a.t)}</p></div>
                 </div>
                 <strong>{a.q ? `${a.pct}%` : "–"}</strong>

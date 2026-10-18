@@ -1218,6 +1218,517 @@
   outline-color: #c7fa58;
 }
 
+.App[data-theme="dark"] .modern-subject-icon {
+  border: 1px solid #3a4c3c !important;
+  background: #1a2620 !important;
+  color: #c7fa58;
+}
+
+.modern-subject-icon {
+  border: 1px solid #d5e2da !important;
+}
+
+.modern-subject-icon-glyph {
+  display: inline-grid;
+  place-items: center;
+  line-height: 1;
+}
+
+.App[data-theme="dark"] .modern-subject-icon-glyph {
+  filter: grayscale(1) brightness(1.35);
+}
+
+.App[data-theme="dark"] .modern-pricing-card {
+  border-color: #273231;
+  background: #11191a;
+  color: #eef3e8;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 22%);
+}
+
+.App[data-theme="dark"] .modern-pricing-card :is(h3, div, span) {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-pricing-card > div:nth-of-type(2) {
+  color: #b6c3bb;
+}
+
+.App[data-theme="dark"] .modern-pricing-card .brutal-btn {
+  border-color: #c7fa58;
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-pricing-featured {
+  border-color: #c7fa58;
+  background: linear-gradient(145deg, #19251d, #11191a);
+}
+
+.App[data-theme="dark"] .modern-pricing-featured > div:first-child {
+  border: 1px solid #c7fa58;
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-pricing-featured > :is(h3, div, span) {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-pricing-featured .brutal-btn {
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-person-card {
+  border-color: #273231 !important;
+  background: #11191a !important;
+  box-shadow: 0 10px 28px rgb(0 0 0 / 22%);
+}
+
+.App[data-theme="dark"] .modern-person-profile {
+  border-color: #273231;
+  background: #11191a;
+  box-shadow: 0 12px 36px rgb(0 0 0 / 28%);
+}
+
+.App[data-theme="dark"] .modern-person-detail .modern-detail-back {
+  border-color: #34413e;
+  background: #17211c;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-people-hero {
+  border-color: #273231;
+  background:
+    radial-gradient(circle at 90% 10%, rgb(130 176 66 / 14%), transparent 35%),
+    linear-gradient(130deg, #151e1e, #0f1717);
+}
+
+.App[data-theme="dark"] .modern-people-results h2,
+.App[data-theme="dark"] .modern-person-card-content h3,
+.App[data-theme="dark"] .modern-person-profile-body h1,
+.App[data-theme="dark"] .modern-person-bio h2 {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-people-results p,
+.App[data-theme="dark"] .modern-person-card-content > p,
+.App[data-theme="dark"] .modern-person-card-content > span,
+.App[data-theme="dark"] .modern-person-profile-meta,
+.App[data-theme="dark"] .modern-person-profile-location,
+.App[data-theme="dark"] .modern-person-profile-privacy,
+.App[data-theme="dark"] .modern-person-bio p {
+  color: #b6c3bb;
+}
+
+.App[data-theme="dark"] .modern-people-results > span {
+  border: 1px solid #34413e;
+  background: #1a2620;
+  color: #d5ff86;
+}
+
+.App[data-theme="dark"] .modern-person-cover,
+.App[data-theme="dark"] .modern-person-profile-cover {
+  background: linear-gradient(135deg, #202c24, #11191a);
+}
+
+.App[data-theme="dark"] .modern-person-cover-image,
+.App[data-theme="dark"] .modern-person-profile-cover-image {
+  filter: blur(14px) brightness(0.55);
+}
+
+.App[data-theme="dark"] .modern-person-cover::after,
+.App[data-theme="dark"] .modern-person-profile-cover::after {
+  background: linear-gradient(180deg, transparent, rgb(0 0 0 / 35%));
+}
+
+.App[data-theme="dark"] .modern-person-avatar,
+.App[data-theme="dark"] .modern-person-profile-avatar {
+  border-color: #11191a;
+  background: #1a2620 !important;
+  color: #c7fa58;
+  box-shadow: 0 0 0 1px #3a4c3c;
+}
+
+.App[data-theme="dark"] .modern-person-online,
+.App[data-theme="dark"] .modern-person-profile-status {
+  border-color: #34413e;
+  background: #11191a;
+  color: #d5ff86;
+}
+
+.App[data-theme="dark"] .modern-person-profession,
+.App[data-theme="dark"] .modern-person-bio {
+  border-color: #273231;
+  background: #17211c;
+  color: #d5ff86;
+}
+
+.App[data-theme="dark"] .modern-person-bio p {
+  color: #d5ded7;
+}
+
+.App[data-theme="dark"] .modern-person-message,
+.App[data-theme="dark"] .modern-person-profile-message {
+  border-color: #c7fa58;
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-landing [class*="bg-[#c7ecb0]"],
+.App[data-theme="dark"] .modern-landing [class*="bg-[#c8f0b4]"] {
+  border-color: #3a4c3c;
+  background: #17231d;
+  color: #d5ff86;
+}
+
+.modern-demo-option.is-correct {
+  border-color: #31724c;
+  background-color: #e0f3d7;
+  color: #173b25;
+}
+
+.modern-demo-option.is-selected {
+  border-color: #568b4d;
+  background-color: #eef6ec;
+  color: #203b2a;
+}
+
+.modern-demo-option.is-incorrect {
+  border-color: #a33e46;
+  background-color: #fde7e7;
+  color: #702b31;
+}
+
+.modern-demo-gap {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.modern-demo-gap > span:first-child {
+  color: #51665a;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.modern-demo-gap input {
+  min-height: 3rem;
+  border: 1px solid #9bb7a6;
+  border-radius: 0.75rem;
+  background: #fff;
+  padding: 0.65rem 0.8rem;
+  color: #172b2b;
+  font: inherit;
+}
+
+.modern-demo-gap input:focus-visible {
+  outline: 3px solid #8fce36;
+  outline-offset: 2px;
+}
+
+.modern-demo-gap-result {
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.modern-demo-gap-result.is-correct {
+  color: #31724c;
+}
+
+.modern-demo-gap-result.is-incorrect {
+  color: #a33e46;
+}
+
+.modern-demo-answer-badge {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.modern-demo-explanation {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  border: 1px solid #c6d9cb;
+  border-left: 4px solid #568b4d;
+  border-radius: 0.9rem;
+  background: #eef6ec;
+  padding: 1rem;
+  color: #203b2a;
+}
+
+.modern-demo-explanation-icon {
+  display: grid;
+  width: 1.65rem;
+  height: 1.65rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #315f3a;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.modern-demo-explanation h4 {
+  margin: 0 0 0.25rem;
+  color: #173b25;
+  font-size: 0.8rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.modern-demo-explanation p {
+  color: #294332;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.modern-home-profession {
+  text-decoration: none;
+  transition: transform 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
+
+.modern-home-profession:hover {
+  transform: translateY(-2px);
+}
+
+.modern-home-profession:focus-visible {
+  outline: 3px solid #8fce36;
+  outline-offset: 3px;
+}
+
+.modern-professions .modern-profession-icon {
+  border-color: #d5e2da;
+  background: #eef4f0;
+  color: #315f4f;
+}
+
+.modern-professions .modern-profession-subject-pill {
+  border-color: #d5e2da;
+  background: #eef4f0;
+  color: #315f4f;
+}
+
+.modern-professions .modern-profession-choice {
+  border-color: #dfe7e3;
+  background: #fff;
+  color: #172b2b;
+}
+
+.modern-professions .modern-profession-choice:hover {
+  border-color: #9bb7a6;
+  background: #f4f8f5;
+}
+
+.modern-professions .modern-profession-choice.is-selected {
+  border-color: #598e43;
+  background: #e9f4e5;
+}
+
+.modern-professions .modern-profession-selection {
+  border-color: #a7b7ae;
+  background: #fff;
+  color: #14200c;
+}
+
+.modern-professions .modern-profession-choice.is-selected .modern-profession-selection {
+  border-color: #183b35;
+  background: #183b35;
+}
+
+.modern-profession-detail {
+  min-height: 100vh;
+  background: #f6f8f7;
+}
+
+.modern-profession-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid #d5e2da;
+  border-radius: 0.75rem;
+  background: #fff;
+  padding: 0.65rem 0.9rem;
+  color: #183b35;
+  font-size: 0.85rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.modern-profession-back:hover {
+  border-color: #8bad92;
+  background: #eef4f0;
+}
+
+.modern-profession-back:focus-visible {
+  outline: 3px solid #8fce36;
+  outline-offset: 3px;
+}
+
+.App[data-theme="dark"] .modern-home-profession {
+  border-color: #34413e;
+  background: #17211c;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-home-profession:hover {
+  border-color: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-profession-choice.is-selected {
+  border-color: #c7fa58;
+  background: linear-gradient(145deg, #1b2a20, #11191a);
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-professions .modern-profession-selection {
+  border-color: #52615a;
+  background: #0d1414;
+}
+
+.App[data-theme="dark"] .modern-profession-choice.is-selected .modern-profession-selection {
+  border-color: #c7fa58;
+  background: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-profession-icon,
+.App[data-theme="dark"] .modern-profession-subject-pill {
+  border-color: #34413e;
+  background: #1a2620;
+  color: #d5ff86;
+}
+
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-hero {
+  border-color: #34413e;
+  background: linear-gradient(145deg, #19251d, #11191a);
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-profession-detail {
+  background: #0a1010;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-profession-back {
+  border-color: #34413e;
+  background: #11191a;
+  color: #d5ff86;
+}
+
+.App[data-theme="dark"] .modern-profession-back:hover {
+  border-color: #c7fa58;
+  background: #17231d;
+}
+
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-hero h1,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-hero p,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-subjects h2,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-subjects p,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-subject,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-benefits,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-benefits h2,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-benefits li {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-hero > span {
+  border-color: #34413e;
+  background: #1a2620;
+}
+
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-subjects,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-subject,
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-benefits {
+  border-color: #273231;
+  background: #11191a;
+}
+
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-subjects p {
+  color: #b6c3bb;
+}
+
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-practice {
+  border-color: #52615a;
+  background: #1a2620;
+  color: #d5ff86;
+}
+
+.App[data-theme="dark"] .modern-profession-detail .modern-profession-cta {
+  border-color: #c7fa58;
+  background: #1a2620;
+  color: #d5ff86;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 25%);
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-option.is-correct,
+.App[data-theme="dark"] .modern-landing .modern-demo-answer-badge.is-correct {
+  border-color: #c7fa58;
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-option.is-incorrect {
+  border-color: #d46870;
+  background: #782e36;
+  color: #fff;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-option.is-selected {
+  border-color: #c7fa58;
+  background: #17231d;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-answer-badge {
+  color: inherit;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-explanation {
+  border-color: #405342;
+  border-left-color: #c7fa58;
+  background: #17231d;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-explanation-icon {
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-explanation h4,
+.App[data-theme="dark"] .modern-landing .modern-demo-explanation p {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-gap > span:first-child {
+  color: #c1cdc5;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-gap input {
+  border-color: #405342;
+  background: #0d1414;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-gap-result.is-correct {
+  color: #d5ff86;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-gap-result.is-incorrect {
+  color: #ff9ca3;
+}
+
+.App[data-theme="dark"] .modern-landing .modern-demo-check:not(:disabled) {
+  border-color: #c7fa58;
+  background: #c7fa58;
+  color: #14200c;
+}
+
 .modern-listings-hero {
   display: flex;
   align-items: flex-end;

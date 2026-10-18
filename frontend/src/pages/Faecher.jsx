@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { db } from "@/api/base44Client";
 import { formatDuration, professionSubjects, getProfession } from "@/lib/subjects";
@@ -10,7 +10,9 @@ import LearnTabs from "@/components/home/LearnTabs";
 
 export default function Faecher() {
   const { user } = useCurrentUser();
-  const professionId = user?.profession || "kaufmann";
+  const [searchParams] = useSearchParams();
+  const requestedProfession = getProfession(searchParams.get("profession"));
+  const professionId = requestedProfession?.id || user?.profession || "kaufmann";
   const unlockedProfessions = user?.unlocked_professions || [];
   const profession = getProfession(professionId);
   const subjects = professionSubjects(professionId);

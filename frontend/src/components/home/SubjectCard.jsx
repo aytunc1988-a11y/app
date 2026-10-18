@@ -7,7 +7,7 @@ export default function SubjectCard({ subject, count, accuracy, locked }) {
     return (
       <div className="modern-subject-card is-locked">
         <span className={`modern-subject-icon ${subject.bg}`}>
-          {subject.emoji}
+          <span className="modern-subject-icon-glyph">{subject.emoji}</span>
         </span>
         <div className="modern-subject-copy">
           <div>{subject.name}</div>
@@ -22,7 +22,7 @@ export default function SubjectCard({ subject, count, accuracy, locked }) {
   return (
     <Link to={`/quiz/${subject.id}`} className="modern-subject-card">
       <span className={`modern-subject-icon ${subject.bg}`}>
-        {subject.emoji}
+        <span className="modern-subject-icon-glyph">{subject.emoji}</span>
       </span>
       <div className="modern-subject-copy">
         <div>{subject.name}</div>
