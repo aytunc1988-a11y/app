@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { SlidersHorizontal } from "lucide-react";
+import { ArrowUpRight, MapPin, MessageCircle, Search, SlidersHorizontal, Sparkles } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 
 import { db } from "@/api/base44Client";
@@ -47,39 +47,57 @@ export default function AlleProfile() {
   }, [profiles, filters]);
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <h1 className="font-heading text-xl sm:text-3xl">Alle Profile</h1>
-        <button onClick={() => setFilterOpen(true)} className="brutal-btn bg-white px-2.5 py-1.5 flex items-center gap-2 text-xs">
-          <SlidersHorizontal className="w-4 h-4" /> Filtern
+    <div className="modern-page modern-people">
+      <section className="modern-people-hero">
+        <div>
+          <span className="modern-listings-eyebrow"><Sparkles className="h-3.5 w-3.5" /> DEINE COMMUNITY</span>
+          <h1 className="font-heading text-2xl sm:text-4xl">Lerne Leute kennen</h1>
+          <p>Entdecke Lernende in deiner Nähe und vernetze dich.</p>
+        </div>
+        <button onClick={() => setFilterOpen(true)} className="brutal-btn modern-people-filter">
+          <SlidersHorizontal className="h-4 w-4" /> Filter
         </button>
+      </section>
+      <div className="modern-people-results">
+        <div><h2>Profile entdecken</h2><p>Finde deine Lerncommunity.</p></div>
+        <span><Search className="h-3.5 w-3.5" /> {isLoading ? "…" : `${filtered.length} ${filtered.length === 1 ? "Profil" : "Profile"}`}</span>
       </div>
 
       {isLoading ? (
         <div className="grid place-items-center py-20"><div className="w-8 h-8 border-4 border-black border-t-[#FDFFB6] rounded-full animate-spin" /></div>
       ) : filtered.length === 0 ? (
-        <p className="text-center py-20 font-semibold text-muted-foreground">Keine Profile gefunden.</p>
+        <div className="modern-listings-empty">
+          <div className="modern-listings-empty-icon"><Search className="h-6 w-6" /></div>
+          <h2>Keine Profile gefunden</h2>
+          <p>Ändere deine Filter, um mehr Lernende zu entdecken.</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-3 gap-2 mt-3">
+        <div className="modern-people-grid">
           {filtered.map((p, i) => {
             const initials = (p.full_name || "?").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
             const dist = (myPos && p.lat && p.lng) ? calcDist(myPos.lat, myPos.lng, p.lat, p.lng) : null;
             const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
             return (
-              <div key={p.id} className="brutal bg-white p-2 flex flex-col items-center text-center">
-                <Link to={`/leute/${p.id}`} className="flex flex-col items-center text-center w-full">
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-full border-2 border-black grid place-items-center font-heading text-base" style={{ background: color }}>
-                      {p.image_url ? <img src={p.image_url} alt={p.full_name} className="w-full h-full rounded-full object-cover" /> : initials}
+              <article key={p.id} className="modern-person-card">
+                <Link to={`/leute/${p.id}`} className="modern-person-card-link">
+                  <div className="modern-person-cover" style={{ "--person-accent": color }}>
+                    {p.image_url && <img src={p.image_url} alt="" className="modern-person-cover-image" />}
+                    <div className="modern-person-avatar" style={{ background: color }}>
+                      {p.image_url ? <img src={p.image_url} alt={p.full_name || "Profil"} className="h-full w-full rounded-full object-cover" /> : initials}
                     </div>
-                    {p.online && <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#CAFFBF] border-2 border-black" />}
+                    {p.online && <span className="modern-person-online"><span /> Jetzt online</span>}
                   </div>
-                  <div className="font-bold mt-1 truncate w-full text-xs">{p.full_name}</div>
-                  <div className="text-[10px] font-semibold text-muted-foreground">{p.age} · {p.canton || "CH"}</div>
-                  <div className="text-[10px] font-bold">{dist != null ? `${dist} km` : (p.canton && user?.canton ? (p.canton === user.canton ? "Gleicher Kanton" : p.canton) : "")}</div>
+                  <div className="modern-person-card-content">
+                    <h3>{p.full_name || "Unbekannt"}</h3>
+                    <p>{p.age ? `${p.age} Jahre` : "Lernende:r"}{p.canton ? ` · ${p.canton}` : ""}</p>
+                    <span><MapPin className="h-3.5 w-3.5" /> {dist != null ? `${dist} km entfernt` : (p.canton && user?.canton ? (p.canton === user.canton ? "Dein Kanton" : p.canton) : "Schweiz")}</span>
+                  </div>
+                  <ArrowUpRight className="modern-person-open h-4 w-4" />
                 </Link>
-                <button onClick={() => navigate(`/chat?tab=leute&to=${p.created_by_id}`)} className="brutal-btn bg-[#FDFFB6] w-full py-1 text-[11px] mt-1.5">Nachricht</button>
-              </div>
+                <button onClick={() => navigate(`/chat?tab=leute&to=${p.created_by_id}`)} className="brutal-btn modern-person-message">
+                  <MessageCircle className="h-4 w-4" /> Nachricht
+                </button>
+              </article>
             );
           })}
         </div>

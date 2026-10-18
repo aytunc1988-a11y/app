@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { MessageCircle, Tag, Trash2 } from "lucide-react";
+import { ArrowLeft, LockKeyhole, MessageCircle, MessagesSquare, Tag, Trash2 } from "lucide-react";
 
 import { db } from "@/api/base44Client";
 import { toast } from "sonner";
@@ -154,36 +154,44 @@ export default function Chat() {
   };
 
   return (
-    <div>
-      <h1 className="font-heading text-xl sm:text-3xl">Chat</h1>
-      <div className="brutal bg-white mt-2 overflow-hidden">
-        <div className="flex border-b-2 border-black">
+    <div className="modern-page modern-chat">
+      <header className="modern-chat-heading">
+        <div><span>DEINE NACHRICHTEN</span><h1 className="font-heading text-2xl sm:text-4xl">Chat</h1><p>Bleib mit deiner Lerncommunity in Kontakt.</p></div>
+        <div className="modern-chat-private"><LockKeyhole className="h-4 w-4" /> Privat</div>
+      </header>
+      <div className="modern-chat-panel">
+        <div className="modern-chat-tabs" role="tablist" aria-label="Unterhaltungen">
           {[
             { id: "anzeigen", label: "Anzeigen", icon: Tag },
-            { id: "leute", label: "Leute", icon: MessageCircle },
+            { id: "leute", label: "Leute", icon: MessagesSquare },
           ].map((t) => (
-            <button key={t.id} onClick={() => { setTab(t.id); setActiveKey(null); setParams({}); }} className={`flex-1 py-2 text-sm font-heading flex items-center justify-center gap-2 ${tab === t.id ? "bg-[#FDFFB6]" : "bg-white"}`}>
+            <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => { setTab(t.id); setActiveKey(null); setParams({}); }} className={`modern-chat-tab ${tab === t.id ? "is-active" : ""}`}>
               <t.icon className="w-4 h-4" /> {t.label}{t.id === "leute" && unread > 0 && <span className="bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{unread}</span>}
             </button>
           ))}
         </div>
 
-        <div className="grid md:grid-cols-[260px_1fr] h-[calc(100dvh-15rem)] md:h-[60vh]">
-          <div className={`border-r-2 border-black overflow-y-auto ${active ? "hidden md:block" : ""}`}>
+        <div className="modern-chat-layout">
+          <div className={`modern-chat-conversations ${active ? "hidden md:block" : ""}`}>
             <ConversationList conversations={tabConversations} activeKey={activeKey} onSelect={setActiveKey} />
           </div>
-          <div className={`flex flex-col min-h-0 ${active ? "" : "hidden md:flex"}`}>
+          <div className={`modern-chat-thread ${active ? "" : "hidden md:flex"}`}>
             {active ? (
               <>
-                <div className="border-b-2 border-black px-3 py-1.5 font-bold text-sm truncate flex items-center gap-2">
-                  <button onClick={() => setActiveKey(null)} className="md:hidden p-1 -ml-1 text-lg leading-none">‹</button>
-                  <span className="truncate">{activeName}</span>
-                  <button onClick={() => { if(window.confirm("Konversation löschen?")) deleteConversation(); }} className="ml-auto p-1 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                <div className="modern-chat-thread-heading">
+                  <button onClick={() => setActiveKey(null)} className="modern-chat-back md:hidden" aria-label="Zurück zu allen Unterhaltungen"><ArrowLeft className="h-4 w-4" /></button>
+                  <div className="modern-chat-peer-avatar">{activeName.split(" ").map((word) => word[0]).slice(0, 2).join("").toUpperCase()}</div>
+                  <div className="min-w-0"><strong className="truncate">{activeName}</strong><span>Unterhaltung</span></div>
+                  <button onClick={() => { if(window.confirm("Konversation löschen?")) deleteConversation(); }} className="modern-chat-delete ml-auto" aria-label="Konversation löschen"><Trash2 className="w-4 h-4" /></button>
                 </div>
                 <ChatThread onImportExam={handleImportExam} messages={threadMessages} peerName={activeName} onSend={send} onDelete={deleteMessage} />
               </>
             ) : (
-              <div className="flex-1 grid place-items-center text-xs font-semibold text-muted-foreground p-6 text-center">Wähle links eine Unterhaltung – oder schreib jemanden direkt aus einem Profil oder einer Anzeige an.</div>
+              <div className="modern-chat-empty">
+                <div><MessagesSquare className="h-7 w-7" /></div>
+                <h2>Deine Unterhaltungen</h2>
+                <p>Wähle einen Chat aus der Liste oder schreib jemanden direkt über ein Profil oder Inserat an.</p>
+              </div>
             )}
           </div>
         </div>
