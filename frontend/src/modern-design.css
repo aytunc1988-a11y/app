@@ -357,6 +357,653 @@
   }
 }
 
+/* Optional video-inspired dark theme. */
+.App[data-theme="dark"] {
+  color-scheme: dark;
+  color: #eef3e8;
+  background: #0b1011;
+  --background: 195 20% 7%;
+  --foreground: 85 24% 94%;
+  --card: 195 18% 11%;
+  --card-foreground: 85 24% 94%;
+  --popover: 195 18% 11%;
+  --popover-foreground: 85 24% 94%;
+  --primary: 81 94% 64%;
+  --primary-foreground: 195 20% 7%;
+  --secondary: 195 16% 16%;
+  --secondary-foreground: 85 24% 94%;
+  --muted: 195 16% 16%;
+  --muted-foreground: 195 9% 66%;
+  --accent: 81 94% 64%;
+  --accent-foreground: 195 20% 7%;
+  --border: 195 13% 22%;
+  --input: 195 13% 22%;
+  --ring: 81 94% 64%;
+}
+
+.App[data-theme="dark"] .modern-app-shell,
+.App[data-theme="dark"] .modern-landing,
+.App[data-theme="dark"] .modern-auth-shell {
+  color: #eef3e8;
+  background: #0b1011;
+}
+
+.App[data-theme="dark"] .modern-app-header,
+.App[data-theme="dark"] .modern-landing nav.sticky {
+  border-color: #222c2b;
+  background: rgb(12 18 19 / 94%);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 24%);
+}
+
+.App[data-theme="dark"] .modern-app-header nav a,
+.App[data-theme="dark"] .modern-app-header .font-heading {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-app-header nav a:hover {
+  background: #192322;
+  color: #d3ff75;
+}
+
+.App[data-theme="dark"] .modern-app-header nav a[aria-current="page"],
+.App[data-theme="dark"] .modern-mobile-nav a[aria-current="page"] {
+  color: #14200c;
+  background: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-app-shell > nav.brutal,
+.App[data-theme="dark"] .modern-mobile-nav {
+  border-color: #273231;
+  background: #11191a;
+  box-shadow: 0 12px 34px rgb(0 0 0 / 48%);
+}
+
+.App[data-theme="dark"] .modern-page,
+.App[data-theme="dark"] .modern-app-main,
+.App[data-theme="dark"] .modern-app-main h1,
+.App[data-theme="dark"] .modern-page h1,
+.App[data-theme="dark"] .modern-page h2,
+.App[data-theme="dark"] .modern-page h3,
+.App[data-theme="dark"] .modern-page strong,
+.App[data-theme="dark"] .modern-page label,
+.App[data-theme="dark"] .modern-page p {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-page p,
+.App[data-theme="dark"] .modern-page .modern-listings-hero-copy > p,
+.App[data-theme="dark"] .modern-page .modern-listing-filters label > span,
+.App[data-theme="dark"] .modern-page .modern-profile-section-heading p {
+  color: #a3b0a8;
+}
+
+.App[data-theme="dark"] .modern-page .brutal,
+.App[data-theme="dark"] .modern-page [class*="-card"],
+.App[data-theme="dark"] .modern-page article,
+.App[data-theme="dark"] .modern-listing-filter-panel,
+.App[data-theme="dark"] .modern-listings-hero,
+.App[data-theme="dark"] .modern-profile-identity {
+  border-color: #273231;
+  background-color: #11191a;
+  color: #eef3e8;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 22%);
+}
+
+.App[data-theme="dark"] .modern-listings-hero {
+  background:
+    radial-gradient(circle at 90% 10%, rgb(130 176 66 / 15%), transparent 34%),
+    linear-gradient(130deg, #151e1e 4%, #0f1717 100%);
+}
+
+.App[data-theme="dark"] .modern-listing-count,
+.App[data-theme="dark"] .modern-profile-secure,
+.App[data-theme="dark"] .modern-profile-complete,
+.App[data-theme="dark"] .modern-profile-filter-icon,
+.App[data-theme="dark"] .modern-listing-filter-icon {
+  border-color: #303c37;
+  background-color: #1a2620;
+  color: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-page input:not([type="checkbox"]):not([type="radio"]),
+.App[data-theme="dark"] .modern-page select,
+.App[data-theme="dark"] .modern-page textarea,
+.App[data-theme="dark"] .modern-listing-filters .modern-listing-select {
+  border-color: #34413e;
+  background-color: #0d1415;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-page input::placeholder,
+.App[data-theme="dark"] .modern-page textarea::placeholder {
+  color: #83918a;
+}
+
+.App[data-theme="dark"] .modern-landing [class*="bg-[#FDFFB6]"],
+.App[data-theme="dark"] .modern-landing [class*="bg-[#f6f3a0]"],
+.App[data-theme="dark"] .modern-page [class*="bg-[#FDFFB6]"],
+.App[data-theme="dark"] .modern-page [class*="bg-[#CAFFBF]"],
+.App[data-theme="dark"] .modern-page [class*="bg-[#f6f3a0]"] {
+  border-color: #c7fa58;
+  background-color: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-landing [class~="bg-black"],
+.App[data-theme="dark"] .modern-page [class~="bg-black"] {
+  background-color: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-landing [class*="bg-[#9BF6FF]"],
+.App[data-theme="dark"] .modern-page [class*="bg-[#9BF6FF]"],
+.App[data-theme="dark"] .modern-landing [class*="bg-[#BDB2FF]"],
+.App[data-theme="dark"] .modern-page [class*="bg-[#BDB2FF]"],
+.App[data-theme="dark"] .modern-landing [class*="bg-[#FFD6A5]"],
+.App[data-theme="dark"] .modern-page [class*="bg-[#FFD6A5]"],
+.App[data-theme="dark"] .modern-landing [class*="bg-[#FFADAD]"],
+.App[data-theme="dark"] .modern-page [class*="bg-[#FFADAD]"] {
+  border-color: #303c37;
+  background-color: #1b2624;
+  color: #dbe9df;
+}
+
+.App[data-theme="dark"] .modern-page .brutal-btn,
+.App[data-theme="dark"] .modern-app-main .brutal-btn {
+  border-color: #34413e;
+  background-color: #182221;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-page .brutal-btn:hover:not(:disabled),
+.App[data-theme="dark"] .modern-app-main .brutal-btn:hover:not(:disabled) {
+  border-color: #c7fa58;
+  background-color: #202d26;
+  color: #d5ff86;
+}
+
+.App[data-theme="dark"] .modern-profile-save,
+.App[data-theme="dark"] .modern-create-listing,
+.App[data-theme="dark"] .modern-profile-save:hover {
+  border-color: #c7fa58;
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-profile-eyebrow,
+.App[data-theme="dark"] .modern-listings-eyebrow {
+  color: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-landing :focus-visible,
+.App[data-theme="dark"] .modern-page :focus-visible,
+.App[data-theme="dark"] .modern-app-shell :focus-visible {
+  outline-color: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-theme-option {
+  border-color: #34413e;
+  background: #0d1415;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-theme-option.is-selected {
+  border-color: #c7fa58;
+  box-shadow: 0 0 0 2px rgb(199 250 88 / 20%);
+}
+
+.App[data-theme="dark"] .modern-theme-option-copy span,
+.App[data-theme="dark"] .modern-theme-note {
+  color: #a3b0a8;
+}
+
+.App[data-theme="dark"] .modern-theme-radio {
+  border-color: #718078;
+}
+
+.App[data-theme="dark"] .modern-theme-option.is-selected .modern-theme-radio {
+  border-color: #c7fa58;
+  background: #c7fa58;
+  box-shadow: inset 0 0 0 3px #0d1415;
+}
+
+.App[data-theme="dark"] .modern-auth-card {
+  border-color: #273231;
+  background: #11191a;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-app-shell aside[role="status"] {
+  border-color: #34413e;
+  background: #17231d;
+  color: #d8e8dc;
+}
+
+.App[data-theme="dark"] :is([class~="bg-white"], [class~="bg-slate-50"], [class~="bg-gray-50"], [class~="bg-slate-100"], [class~="bg-gray-100"]) {
+  background-color: #11191a;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] :is([class~="text-black"], [class~="text-slate-900"], [class~="text-slate-800"], [class~="text-gray-900"], [class~="text-gray-800"]) {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] :is([class~="text-slate-600"], [class~="text-slate-500"], [class~="text-gray-600"], [class~="text-gray-500"]) {
+  color: #a3b0a8;
+}
+
+.App[data-theme="dark"] :is([class*="border-slate-"], [class*="border-gray-"]) {
+  border-color: #273231;
+}
+
+.App[data-theme="dark"] button,
+.App[data-theme="dark"] a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.modern-profile-theme-card {
+  margin-top: 1rem;
+  padding: clamp(1.1rem, 4vw, 1.6rem);
+  border: 1px solid #e0e7e3;
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 8px 28px rgb(26 48 44 / 7%);
+}
+
+.modern-theme-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.modern-theme-option {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.85rem;
+  border: 1px solid #dce4e8;
+  border-radius: 1rem;
+  background: #f8faf9;
+  color: #172b2b;
+  text-align: left;
+  cursor: pointer;
+}
+
+.modern-theme-option.is-selected {
+  border-color: #28735f;
+  box-shadow: 0 0 0 2px rgb(40 115 95 / 12%);
+}
+
+.modern-theme-swatch {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 0.85rem;
+}
+
+.modern-theme-swatch svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.modern-theme-swatch-light {
+  background: #f6f8f7;
+  color: #28735f;
+}
+
+.modern-theme-swatch-dark {
+  background: #11191a;
+  color: #c7fa58;
+}
+
+.modern-theme-option-copy {
+  display: grid;
+  min-width: 0;
+  gap: 0.15rem;
+}
+
+.modern-theme-option-copy strong {
+  font-size: 0.85rem;
+}
+
+.modern-theme-option-copy span,
+.modern-theme-note {
+  color: #718096;
+  font-size: 0.72rem;
+}
+
+.modern-theme-radio {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 auto;
+  margin-left: auto;
+  border: 1px solid #aab8b1;
+  border-radius: 50%;
+}
+
+.modern-theme-option.is-selected .modern-theme-radio {
+  border: 4px solid #28735f;
+}
+
+.modern-theme-note {
+  margin-top: 0.8rem;
+}
+
+@media (max-width: 540px) {
+  .modern-theme-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.App[data-theme="dark"] .brutal {
+  border-color: #273231;
+  background-color: #11191a;
+  color: #eef3e8;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 22%);
+}
+
+.App[data-theme="dark"] :is([class~="bg-white"], [class~="bg-slate-50"], [class~="bg-gray-50"], [class~="bg-slate-100"], [class~="bg-gray-100"]) {
+  background-color: #11191a;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] [class*="bg-[#FDFFB6]"] {
+  border-color: #c7fa58;
+  background-color: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] :is([class*="bg-[#CAFFBF]"], [class*="bg-[#9BF6FF]"], [class*="bg-[#FFADAD]"], [class*="bg-[#BDB2FF]"], [class*="bg-[#FFD6A5]"]) {
+  border-color: #303c37;
+  background-color: #1b2624;
+  color: #dbe9df;
+}
+
+.App[data-theme="dark"] .modern-page :is(.modern-profile-identity, .modern-profile-privacy, .modern-profile-readonly p, .modern-profile-avatar, .modern-profile-photo-frame, .modern-profile-privacy-icon, [class*="-card"], [class*="-panel"]) {
+  border-color: #273231;
+  background-color: #11191a;
+  background-image: none;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-profile-identity-copy > span,
+.App[data-theme="dark"] .modern-profile-label,
+.App[data-theme="dark"] .modern-profile-identity-copy h2,
+.App[data-theme="dark"] .modern-profile-identity-copy p,
+.App[data-theme="dark"] .modern-profile-identity-copy > div,
+.App[data-theme="dark"] .modern-profile-privacy-copy strong,
+.App[data-theme="dark"] .modern-profile-privacy-copy span,
+.App[data-theme="dark"] .modern-profile-save-row > span {
+  color: #c1cdc5;
+}
+
+.App[data-theme="dark"] .modern-profile-avatar,
+.App[data-theme="dark"] .modern-profile-photo-frame,
+.App[data-theme="dark"] .modern-profile-privacy-icon {
+  border-color: #34413e;
+  background-color: #1a2620;
+  color: #c7fa58;
+  box-shadow: none;
+}
+
+.App[data-theme="dark"] .modern-profile-readonly p {
+  border-color: #34413e;
+  background-color: #0d1415;
+  color: #aebbb3;
+}
+
+.App[data-theme="dark"] .modern-profile-switch {
+  background-color: #52605a;
+}
+
+.App[data-theme="dark"] .modern-profile-switch.is-on {
+  background-color: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-profile-switch > span {
+  background-color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-profile-save-row {
+  border-color: #273231;
+}
+
+.App[data-theme="dark"] .modern-page :is(p, small, [class*="meta"], [class*="description"], [class*="location"], [class*="count"], [class*="results"]) {
+  color: #b6c3bb;
+}
+
+.App[data-theme="dark"] .modern-page a:not(.brutal-btn) {
+  color: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-listing-price,
+.App[data-theme="dark"] .modern-listing-detail-price,
+.App[data-theme="dark"] .modern-listing-card-price {
+  color: #c7fa58;
+}
+
+.App[data-theme="dark"] :is(.modern-learning-hero, .modern-exams-hero, .modern-stats-hero) {
+  border-color: #273231;
+  background:
+    radial-gradient(circle at 90% 5%, rgb(130 176 66 / 14%), transparent 36%),
+    linear-gradient(130deg, #151e1e, #0f1717);
+}
+
+.App[data-theme="dark"] :is(.modern-learning-stat, .modern-learning-stat:nth-child(1), .modern-learning-stat:nth-child(3)) {
+  border-color: #273231;
+  background: #11191a;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-learning-stat > div,
+.App[data-theme="dark"] .modern-subject-copy > div,
+.App[data-theme="dark"] .modern-exam-title,
+.App[data-theme="dark"] .modern-stats-subject-top > strong {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-learning-stat > span,
+.App[data-theme="dark"] .modern-subject-copy > span,
+.App[data-theme="dark"] .modern-exam-meta,
+.App[data-theme="dark"] .modern-exams-hero > div:first-child > p {
+  color: #b6c3bb;
+}
+
+.App[data-theme="dark"] .modern-subject-card,
+.App[data-theme="dark"] .modern-exam-card,
+.App[data-theme="dark"] .modern-learn-tabs {
+  border-color: #273231;
+  background: #11191a;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-learn-tabs a {
+  color: #c0ccc4;
+}
+
+.App[data-theme="dark"] .modern-learn-tabs a[aria-current="page"],
+.App[data-theme="dark"] .modern-subject-action:not(.is-locked),
+.App[data-theme="dark"] .modern-exam-create-button {
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-learn-tabs a:hover {
+  background: #202d26;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-subject-action.is-locked {
+  background: #26322e;
+  color: #b6c3bb;
+}
+
+.App[data-theme="dark"] .modern-learning-profession {
+  border-color: #34413e;
+  background: #11191a;
+  color: #d5e1d9;
+}
+
+.App[data-theme="dark"] .modern-exam-card-icon,
+.App[data-theme="dark"] .modern-exam-mode,
+.App[data-theme="dark"] .modern-exam-list-heading > span {
+  background: #1a2620;
+  color: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-exam-mode.is-exam {
+  background: #2b2421;
+  color: #ffc3a9;
+}
+
+.App[data-theme="dark"] .modern-exam-icon-action {
+  border-color: #34413e;
+  background: #0d1415;
+  color: #c1cdc5;
+}
+
+.App[data-theme="dark"] .modern-stats-progress {
+  background: #26322e;
+}
+
+.App[data-theme="dark"] .modern-stats-progress-value {
+  background: linear-gradient(90deg, #8dbd49, #c7fa58);
+}
+
+.App[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+.App[data-theme="dark"] select,
+.App[data-theme="dark"] textarea {
+  border-color: #34413e;
+  background-color: #0d1415;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] input::placeholder,
+.App[data-theme="dark"] textarea::placeholder {
+  color: #a3b0a8;
+}
+
+.App[data-theme="dark"] .modern-landing :is(h1, h2, h3, p),
+.App[data-theme="dark"] .modern-auth-card :is(h1, h2, h3, p, label) {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-landing :is(p, small, [class*="description"]),
+.App[data-theme="dark"] .modern-auth-card :is(p, small) {
+  color: #b6c3bb;
+}
+
+.App[data-theme="dark"] :is(.modern-chat-panel, .modern-chat-tabs, .modern-chat-conversations, .modern-chat-thread, .modern-chat-thread[style]) {
+  border-color: #273231;
+  background-color: #11191a;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-chat-private,
+.App[data-theme="dark"] .modern-chat-empty > div,
+.App[data-theme="dark"] .modern-chat-peer-avatar {
+  background: #1a2620;
+  color: #c7fa58;
+}
+
+.App[data-theme="dark"] .modern-chat-tabs {
+  border-bottom-color: #273231;
+}
+
+.App[data-theme="dark"] .modern-chat-tab {
+  color: #c1cdc5;
+}
+
+.App[data-theme="dark"] .modern-chat-tab.is-active,
+.App[data-theme="dark"] .modern-chat-conversation.is-active {
+  background: #253321;
+  color: #d5ff86;
+}
+
+.App[data-theme="dark"] .modern-chat-tab > span {
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-chat-conversations {
+  border-right-color: #273231;
+  background: #0d1415;
+}
+
+.App[data-theme="dark"] .modern-chat-conversation {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-chat-conversation:hover {
+  background: #182221;
+}
+
+.App[data-theme="dark"] .modern-chat-conversation-copy > div:first-child,
+.App[data-theme="dark"] .modern-chat-thread-heading strong,
+.App[data-theme="dark"] .modern-chat-empty h2 {
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-chat-conversation-subtitle,
+.App[data-theme="dark"] .modern-chat-thread-heading span,
+.App[data-theme="dark"] .modern-chat-message-author,
+.App[data-theme="dark"] .modern-chat-no-messages {
+  color: #b6c3bb;
+}
+
+.App[data-theme="dark"] .modern-chat-message-list {
+  background: linear-gradient(180deg, #0d1415, #11191a);
+}
+
+.App[data-theme="dark"] .modern-chat-bubble {
+  border-color: #34413e;
+  background: #1b2624;
+  color: #eef3e8;
+}
+
+.App[data-theme="dark"] .modern-chat-bubble.is-mine {
+  border-color: #c7fa58;
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-chat-composer {
+  border-top-color: #273231;
+  background: #11191a;
+}
+
+.App[data-theme="dark"] .modern-chat-attach,
+.App[data-theme="dark"] .modern-chat-delete,
+.App[data-theme="dark"] .modern-chat-back {
+  border-color: #34413e;
+  background: #182221;
+  color: #c1cdc5;
+}
+
+.App[data-theme="dark"] .modern-chat-send,
+.App[data-theme="dark"] .modern-person-profile-message,
+.App[data-theme="dark"] .modern-person-message {
+  background: #c7fa58;
+  color: #14200c;
+}
+
+.App[data-theme="dark"] .modern-person-card,
+.App[data-theme="dark"] .modern-people-filter-dialog {
+  border-color: #273231 !important;
+  background: #11191a !important;
+  color: #eef3e8;
+}
+
+@media (max-width: 640px) {
+  .App[data-theme="dark"] .modern-chat-thread {
+    background: #11191a;
+  }
+}
+
 .modern-listings-hero {
   display: flex;
   align-items: flex-end;

@@ -109,7 +109,7 @@ def set_cookie(resp, token):
 
 
 def public_user(u):
-    base = {k: u.get(k) for k in ["user_id", "email", "name", "picture", "licensed", "role", "profession", "age", "canton", "ort", "profile_picture", "bio", "unlocked_professions"]}
+    base = {k: u.get(k) for k in ["user_id", "email", "name", "picture", "licensed", "role", "profession", "age", "canton", "ort", "profile_picture", "bio", "theme", "unlocked_professions"]}
     base["full_name"] = u.get("full_name") or u.get("name", "")
     return base
 
@@ -190,6 +190,8 @@ async def auth_update(request: Request, patch: Dict[str, Any]):
         patch.pop(k, None)
     if "full_name" in patch:
         patch["name"] = patch.pop("full_name")
+    if "theme" in patch and patch["theme"] not in ("light", "dark"):
+        raise HTTPException(status_code=422, detail="Ungültiges Theme")
     await db.users.update_one({"user_id": u["user_id"]}, {"$set": patch})
     nu = await db.users.find_one({"user_id": u["user_id"]}, {"_id": 0})
     return public_user(nu)

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Camera, Check, Loader2, MapPin, ShieldCheck, UserRound } from "lucide-react";
+import { Camera, Check, Loader2, MapPin, Moon, ShieldCheck, Sun, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
 import { base44 as db } from "@/api/base44Client";
 import { CANTONS } from "@/lib/subjects";
 import useCurrentUser from "@/lib/useCurrentUser";
 import { useAuth } from "@/lib/AuthContext";
+import { useAppTheme } from "@/lib/AppThemeContext";
 import { Image as UiImage } from "@/components/ui/image";
 
 const LABEL = "modern-profile-label";
@@ -15,6 +16,7 @@ const INPUT = "modern-profile-input";
 export default function Profile() {
   const { user } = useCurrentUser();
   const { refreshUser } = useAuth();
+  const { theme, setTheme } = useAppTheme();
   const qc = useQueryClient();
   const [form, setForm] = useState({
     full_name: user?.full_name || user?.name || "",
@@ -26,9 +28,32 @@ export default function Profile() {
     profile_picture: user?.profile_picture || "",
   });
   const [saving, setSaving] = useState(false);
+  const [savingTheme, setSavingTheme] = useState(false);
   const [uploading, setUploading] = useState(false);
 
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+  const chooseTheme = async (value) => {
+    if (value === theme || savingTheme) return;
+    setTheme(value);
+    setSavingTheme(true);
+    try {
+      await db.auth.updateMe({ theme: value });
+      await refreshUser();
+      toast.success("App-Design gespeichert");
+    } catch {
+      toast.error("App-Design konnte nicht im Profil gespeichert werden. Die Auswahl bleibt auf diesem Gerät aktiv.");
+    } finally {
+      setSavingTheme(false);
+    }
+  };
+
+  const handleThemeKeyDown = (event) => {
+    if (!["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"].includes(event.key)) return;
+    event.preventDefault();
+    const nextTheme = theme === "light" ? "dark" : "light";
+    chooseTheme(nextTheme);
+    document.getElementById(`profile-theme-${nextTheme}`)?.focus();
+  };
 
   useEffect(() => {
     if (user) setForm({
@@ -199,6 +224,29 @@ export default function Profile() {
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} {saving ? "Wird gespeichert…" : "Änderungen speichern"}
           </button>
         </div>
+      </section>
+      <section className="modern-profile-theme-card" aria-labelledby="profile-theme-heading">
+        <div className="modern-profile-section-heading">
+          <div>
+            <h2 id="profile-theme-heading">App-Design</h2>
+            <p>Wähle die Darstellung, die dir am besten gefällt.</p>
+          </div>
+        </div>
+        <div className="modern-theme-options" role="radiogroup" aria-labelledby="profile-theme-heading">
+          <button id="profile-theme-light" type="button" role="radio" tabIndex={theme === "light" ? 0 : -1} aria-checked={theme === "light"} disabled={savingTheme} onKeyDown={handleThemeKeyDown} onClick={() => chooseTheme("light")}
+            className={`modern-theme-option ${theme === "light" ? "is-selected" : ""}`}>
+            <span className="modern-theme-swatch modern-theme-swatch-light" aria-hidden="true"><Sun /></span>
+            <span className="modern-theme-option-copy"><strong>Hell</strong><span>Das aktuelle LAPQUIZ-Design</span></span>
+            <span className="modern-theme-radio" aria-hidden="true" />
+          </button>
+          <button id="profile-theme-dark" type="button" role="radio" tabIndex={theme === "dark" ? 0 : -1} aria-checked={theme === "dark"} disabled={savingTheme} onKeyDown={handleThemeKeyDown} onClick={() => chooseTheme("dark")}
+            className={`modern-theme-option ${theme === "dark" ? "is-selected" : ""}`}>
+            <span className="modern-theme-swatch modern-theme-swatch-dark" aria-hidden="true"><Moon /></span>
+            <span className="modern-theme-option-copy"><strong>Neon Night</strong><span>Dunkel mit leuchtend grünen Akzenten</span></span>
+            <span className="modern-theme-radio" aria-hidden="true" />
+          </button>
+        </div>
+        <p className="modern-theme-note">Die Auswahl wird sofort angewendet und direkt in deinem Profil gespeichert.</p>
       </section>
     </div>
   );
