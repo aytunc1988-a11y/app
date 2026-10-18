@@ -1,9 +1,12 @@
 import BerufDetail from "./pages/BerufDetail";
 import React from "react";
 import "@/App.css";
+import "@/modern-design.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
+import { enablePreviewFromLocation } from "@/lib/previewMode";
 import { AuthProvider } from "@/lib/AuthContext";
+import { AppThemeProvider } from "@/lib/AppThemeContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import AppLayout from "@/components/AppLayout";
 import AuthCallback from "@/components/AuthCallback";
@@ -84,15 +87,18 @@ function AppRouter() {
 }
 
 function App() {
+  enablePreviewFromLocation();
   return (
     <div className="App">
       <AuthProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <AppRouter />
-          <Toaster position="top-center" />
-          <ShadToaster />
-        </BrowserRouter>
+        <AppThemeProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <AppRouter />
+            <Toaster position="top-center" />
+            <ShadToaster />
+          </BrowserRouter>
+        </AppThemeProvider>
       </AuthProvider>
     </div>
   );

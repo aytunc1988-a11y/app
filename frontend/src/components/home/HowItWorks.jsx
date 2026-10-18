@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const BERUFE = [
-  { label: "Kaufmann/-frau EFZ", emoji: "📊", color: "bg-[#FDFFB6]" },
-  { label: "Elektroinstallateur/in EFZ", emoji: "⚡", color: "bg-[#FFD6A5]" },
-  { label: "Fachfrau/-mann Gesundheit EFZ", emoji: "🩺", color: "bg-[#FFADAD]" },
-  { label: "Informatiker/in EFZ", emoji: "💻", color: "bg-[#9BF6FF]" },
-  { label: "Coiffeur/-euse EFZ", emoji: "✂️", color: "bg-[#BDB2FF]" },
-  { label: "Logistiker/in EFZ", emoji: "📦", color: "bg-[#CAFFBF]" },
-  { label: "Detailhandelsfachmann/-frau EFZ", emoji: "🛍️", color: "bg-[#FFD6A5]" },
-  { label: "Theorieprüfung Auto (Kat. B)", emoji: "🚗", color: "bg-[#9BF6FF]" },
-  { label: "+ dein Beruf", emoji: "🎓", color: "bg-white" },
-];
-
 const SLIDES = [
     { step: "1", title: "Foto machen", color: "bg-[#CAFFBF]", desc: "Fotografiere eine Lehrbuchseite — die KI erkennt den Inhalt automatisch.",
     visual: <div className="w-full h-48 bg-[#CAFFBF] border-2 border-black rounded-xl flex flex-col items-center justify-center gap-3"><span className="text-6xl">📸</span><span className="font-bold text-sm">Lehrbuchseite fotografieren</span><span className="text-xs px-4 text-center text-[#555]">KI erkennt Inhalt automatisch</span></div> },
@@ -23,22 +11,43 @@ const SLIDES = [
 ];
 
 const ALL_QUESTIONS = [
-  { q: "Was solltest du tun, bevor du ein elektrisches Gerät reparierst?", options: ["Das Gehäuse sofort öffnen","Das Gerät von der Stromversorgung trennen","Die Lautstärke prüfen"], correct: 1, feedback: "Vor Arbeiten an einem elektrischen Gerät muss es von der Stromversorgung getrennt sein." },
-  { q: "Was hilft bei einem Gespräch mit Kund:innen zuerst?", options: ["Aktiv zuhören und Bedürfnisse erkennen","Sofort das teuerste Produkt anbieten","Das Gespräch möglichst kurz halten"], correct: 0, feedback: "Aktives Zuhören ist die Basis jeder guten Kundenberatung." },
-  { q: "Welches Dokument zeigt den Gewinn eines Unternehmens?", options: ["Die Bilanz","Die Erfolgsrechnung","Der Lohnausweis"], correct: 1, feedback: "Die Erfolgsrechnung zeigt Erträge und Aufwände – und damit den Gewinn oder Verlust." },
-  { q: "Was versteht man unter Bruttolohn?", options: ["Lohn nach allen Abzügen","Lohn vor allen Abzügen","Nur der Grundlohn"], correct: 1, feedback: "Der Bruttolohn ist das Gehalt vor Abzug von Steuern und Sozialversicherungsbeiträgen." },
-  { q: "Was ist ein Aktivkonto in der Buchhaltung?", options: ["Ein Konto auf der Passivseite","Ein Konto das Vermögenswerte zeigt","Ein Konto nur für Erträge"], correct: 1, feedback: "Aktivkonten stehen auf der linken Seite der Bilanz und zeigen Vermögenswerte." },
-  { q: "Was bedeutet NIN im Elektrobereich?", options: ["Niederspannungs-Installations-Norm","Nationaler Installations-Nachweis","Neue Industrie-Norm"], correct: 0, feedback: "NIN steht für Niederspannungs-Installations-Norm und regelt elektrische Installationen in der Schweiz." },
+  { type: "mc", q: "Welche beiden Seiten gehören zur Bilanz?", options: ["Aktiven","Passiven","Aufwand","Ertrag","Lohnabrechnung"], correct: [0, 1], feedback: "Die Bilanz stellt die Aktiven den Passiven gegenüber. Aufwand und Ertrag gehören in die Erfolgsrechnung." },
+  { type: "mc", q: "Was ist vor einer Reparatur an einem elektrischen Gerät wichtig?", options: ["Das Gehäuse sofort öffnen","Das Gerät von der Stromversorgung trennen","Die Lautstärke prüfen","Ein anderes Kabel anschliessen"], correct: [1], feedback: "Vor Arbeiten an einem elektrischen Gerät muss es von der Stromversorgung getrennt sein." },
+  { type: "mc", q: "Was hilft bei einem Gespräch mit Kund:innen?", options: ["Aktiv zuhören","Bedürfnisse mit Fragen klären","Sofort das teuerste Produkt anbieten","Einwände ignorieren"], correct: [0, 1], feedback: "Aktives Zuhören und passende Fragen helfen, die Bedürfnisse von Kund:innen zu erkennen." },
+  { type: "mc", q: "Was versteht man unter Bruttolohn?", options: ["Lohn nach allen Abzügen","Lohn vor allen Abzügen","Nur der Grundlohn","Der Nettolohn plus Spesen"], correct: [1], feedback: "Der Bruttolohn ist das Gehalt vor Abzug von Steuern und Sozialversicherungsbeiträgen." },
+  { type: "mc", q: "Was bedeutet NIN im Elektrobereich?", options: ["Niederspannungs-Installations-Norm","Nationaler Installations-Nachweis","Neue Industrie-Norm","Norm für Netzwerkinstallationen","Nationale Informationsnorm"], correct: [0], feedback: "NIN steht für Niederspannungs-Installations-Norm und regelt elektrische Installationen in der Schweiz." },
+  { type: "tf", q: "Aktivkonten zeigen Vermögenswerte eines Unternehmens.", options: ["Wahr", "Falsch"], correct: [0], feedback: "Aktivkonten stehen auf der linken Seite der Bilanz und zeigen Vermögenswerte." },
+  { type: "tf", q: "Der Nettolohn ist der Lohn vor allen Abzügen.", options: ["Wahr", "Falsch"], correct: [1], feedback: "Der Nettolohn ist der Betrag nach den Abzügen. Der Bruttolohn steht vor den Abzügen." },
+  { type: "tf", q: "Vor Arbeiten an einem elektrischen Gerät muss die Stromzufuhr getrennt werden.", options: ["Wahr", "Falsch"], correct: [0], feedback: "Das Gerät muss vor Reparaturarbeiten sicher von der Stromversorgung getrennt werden." },
+  { type: "gap", q: "Die Erfolgsrechnung zeigt Erträge und Aufwände – und damit den ___ oder Verlust.", answers: ["gewinn"], feedback: "Der Saldo aus Erträgen und Aufwänden ergibt den Gewinn oder Verlust." },
+  { type: "gap", q: "Vor der Reparatur muss ein elektrisches Gerät von der Stromversorgung ___ werden.", answers: ["getrennt"], feedback: "Das Trennen von der Stromversorgung verhindert, dass während der Reparatur Strom fliesst." },
+  { type: "gap", q: "Aktivkonten zeigen die ___ eines Unternehmens.", answers: ["vermögenswerte", "vermoegenswerte"], feedback: "Aktiven sind die Vermögenswerte eines Unternehmens und werden auf der Aktivseite der Bilanz aufgeführt." },
 ];
 
 function shuffle(a) { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }
 
+function createQuestionSet(previousQuestions = []) {
+  const previousByType = new Map(previousQuestions.map((question) => [question.type, question.q]));
+  const types = ["mc", "tf", "gap"];
+  const selected = types.map((type) => {
+    const questions = ALL_QUESTIONS.filter((question) => question.type === type);
+    const alternatives = questions.filter((question) => question.q !== previousByType.get(type));
+    const pool = alternatives.length ? alternatives : questions;
+    return pool[Math.floor(Math.random() * pool.length)];
+  });
+  return shuffle(selected);
+}
+
+const normalizeAnswer = (answer) => answer.trim().toLocaleLowerCase("de-CH");
+
 export default function HowItWorks() {
   const navigate = useNavigate();
   const [slide, setSlide] = useState(0);
-  const [questions, setQuestions] = useState(() => shuffle(ALL_QUESTIONS).slice(0, 3));
+  const [questions, setQuestions] = useState(() => createQuestionSet());
   const [qIdx, setQIdx] = useState(0);
-  const [picked, setPicked] = useState(null);
+  const [picked, setPicked] = useState([]);
+  const [gapAnswer, setGapAnswer] = useState("");
+  const [checked, setChecked] = useState(false);
   const [done, setDone] = useState(false);
   const [correct, setCorrect] = useState(0);
 
@@ -47,16 +56,42 @@ export default function HowItWorks() {
     return () => clearInterval(t);
   }, []);
 
-  const answer = (i) => { if (picked !== null) return; setPicked(i); if (i === questions[qIdx].correct) setCorrect(c => c + 1); };
+  const q = questions[qIdx];
+  const canCheck = q.type === "gap" ? gapAnswer.trim().length > 0 : picked.length > 0;
+  const answer = (i) => {
+    if (checked) return;
+    setPicked((current) => {
+      if (q.type === "tf") return [i];
+      return current.includes(i) ? current.filter((value) => value !== i) : [...current, i];
+    });
+  };
+
+  const checkAnswer = () => {
+    if (checked || !canCheck) return;
+    const isCorrect = q.type === "gap"
+      ? q.answers.some((answer) => normalizeAnswer(answer) === normalizeAnswer(gapAnswer))
+      : picked.length === q.correct.length && q.correct.every((answer) => picked.includes(answer));
+    setChecked(true);
+    if (isCorrect) setCorrect((count) => count + 1);
+  };
 
   const next = () => {
     if (qIdx + 1 >= questions.length) { setDone(true); return; }
-    setQIdx(q => q + 1); setPicked(null);
+    setQIdx((index) => index + 1);
+    setPicked([]);
+    setGapAnswer("");
+    setChecked(false);
   };
 
-  const reset = () => { setQuestions(shuffle(ALL_QUESTIONS).slice(0, 3)); setQIdx(0); setPicked(null); setDone(false); setCorrect(0); };
-
-  const q = questions[qIdx];
+  const reset = () => {
+    setQuestions((previousQuestions) => createQuestionSet(previousQuestions));
+    setQIdx(0);
+    setPicked([]);
+    setGapAnswer("");
+    setChecked(false);
+    setDone(false);
+    setCorrect(0);
+  };
 
   return (
     <>
@@ -113,33 +148,74 @@ export default function HowItWorks() {
         ) : (
           <div className="border-2 border-black rounded-2xl bg-white p-6 shadow-[5px_5px_0_#000]">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#555]">Multiple Choice</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#555]">
+                {q.type === "mc" ? "Multiple Choice · alle zutreffenden wählen" : q.type === "tf" ? "Wahr/Falsch" : "Lückentext"}
+              </span>
               <span className="text-sm font-bold">{qIdx + 1} / {questions.length}</span>
             </div>
             <div className="h-2 border-2 border-black rounded-full bg-[#f0f0f0] overflow-hidden mb-5">
-              <div className="h-full bg-black transition-all duration-300" style={{ width: (qIdx / questions.length * 100) + "%" }} />
+              <div className="h-full bg-black transition-all duration-300" style={{ width: ((qIdx + (checked ? 1 : 0)) / questions.length * 100) + "%" }} />
             </div>
             <h3 className="font-extrabold text-lg mb-4 leading-snug">{q.q}</h3>
-            <div className="grid gap-2">
-              {q.options.map((opt, i) => {
-                let bg = "bg-white hover:bg-[#f8f8f8]";
-                if (picked !== null && i === q.correct) bg = "bg-[#CAFFBF]";
-                if (picked !== null && picked === i && i !== q.correct) bg = "bg-[#FFADAD]";
-                return (
-                  <button key={i} disabled={picked !== null} onClick={() => answer(i)}
-                    className={"border-2 border-black rounded-xl p-3.5 text-left font-semibold text-sm transition-all shadow-[3px_3px_0_#000] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] " + bg}>
-                    {String.fromCharCode(65+i)}) {opt}
-                  </button>
-                );
-              })}
-            </div>
-            {picked !== null && (
-              <>
-                <p className="mt-4 text-sm bg-[#f7f1e6] border-2 border-black rounded-xl p-4 leading-relaxed">{q.feedback}</p>
-                <button onClick={next} className="mt-3 w-full border-2 border-black rounded-xl py-3 bg-[#FDFFB6] font-bold shadow-[3px_3px_0_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                  {qIdx + 1 >= questions.length ? "Ergebnis anzeigen →" : "Weiter →"}
-                </button>
-              </>
+            {q.type === "gap" ? (
+              <label className="modern-demo-gap">
+                <span>Deine Antwort</span>
+                <input
+                  value={gapAnswer}
+                  onChange={(event) => setGapAnswer(event.target.value)}
+                  disabled={checked}
+                  aria-label="Antwort für den Lückentext"
+                />
+                {checked && (
+                  <span className={`modern-demo-gap-result ${q.answers.some((answer) => normalizeAnswer(answer) === normalizeAnswer(gapAnswer)) ? "is-correct" : "is-incorrect"}`}>
+                    {q.answers.some((answer) => normalizeAnswer(answer) === normalizeAnswer(gapAnswer)) ? "✓ Richtig" : `Richtige Antwort: ${q.answers[0]}`}
+                  </span>
+                )}
+              </label>
+            ) : (
+              <div className="grid gap-2">
+                {q.options.map((opt, i) => {
+                  const selected = picked.includes(i);
+                  const isRight = q.correct.includes(i);
+                  const stateClass = checked ? (isRight ? "is-correct" : selected ? "is-incorrect" : "") : selected ? "is-selected" : "";
+                  return (
+                    <button
+                      key={opt}
+                      type="button"
+                      disabled={checked}
+                      onClick={() => answer(i)}
+                      aria-pressed={selected}
+                      className={`modern-demo-option ${stateClass} border-2 border-black rounded-xl p-3.5 text-left font-semibold text-sm transition-all shadow-[3px_3px_0_#000] active:shadow-none active:translate-x-[3px] active:translate-y-[3px]`}
+                    >
+                      {q.type === "mc" && `${String.fromCharCode(65 + i)}) `}{opt}
+                      {checked && isRight && <span className="modern-demo-answer-badge is-correct">{selected ? "✓ Richtig gewählt" : "✓ Richtige Antwort"}</span>}
+                      {checked && selected && !isRight && <span className="modern-demo-answer-badge is-incorrect">✕ Falsch gewählt</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            {checked && (
+              <div className="modern-demo-explanation" aria-live="polite">
+                <span className="modern-demo-explanation-icon" aria-hidden="true">?</span>
+                <div>
+                  <h4>Erklärung</h4>
+                  <p>{q.feedback}</p>
+                </div>
+              </div>
+            )}
+            {!checked ? (
+              <button
+                onClick={checkAnswer}
+                disabled={!canCheck}
+                className="modern-demo-check mt-3 w-full border-2 border-black rounded-xl py-3 bg-[#FDFFB6] font-bold shadow-[3px_3px_0_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Antwort prüfen
+              </button>
+            ) : (
+              <button onClick={next} className="mt-3 w-full border-2 border-black rounded-xl py-3 bg-[#FDFFB6] font-bold shadow-[3px_3px_0_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
+                {qIdx + 1 >= questions.length ? "Ergebnis anzeigen →" : "Weiter →"}
+              </button>
             )}
           </div>
         )}

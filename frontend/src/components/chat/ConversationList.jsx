@@ -5,28 +5,28 @@ const AVATAR_COLORS = ["#FDFFB6", "#CAFFBF", "#9BF6FF", "#FFADAD", "#BDB2FF", "#
 export default function ConversationList({ conversations, activeKey, onSelect }) {
   if (!conversations.length) return <div className="p-6 text-center font-semibold text-muted-foreground text-sm">Noch keine Unterhaltungen.</div>;
   return (
-    <div className="divide-y-2 divide-black">
+    <div className="modern-chat-conversation-list">
       {conversations.map((c, i) => {
         const initials = (c.name || "?").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
         const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
         return (
-          <button key={c.key} onClick={() => onSelect(c.key)} className={"w-full flex items-center gap-2 p-2 text-left transition-colors " + (activeKey === c.key ? "bg-[#FDFFB6]" : "hover:bg-black/5")}>
+          <button key={c.key} onClick={() => onSelect(c.key)} aria-pressed={activeKey === c.key} className={"modern-chat-conversation " + (activeKey === c.key ? "is-active" : "")}>
             <div className="relative">
-              <div className="w-9 h-9 rounded-full border-2 border-black grid place-items-center font-heading shrink-0 overflow-hidden" style={{ background: color }}>
+              <div className="modern-chat-conversation-avatar" style={{ background: color }}>
                 {c.image ? <img src={c.image} alt="" className="w-full h-full object-cover" /> : initials}
               </div>
               {c.unread > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#FFADAD] border-2 border-black rounded-full text-[9px] font-bold grid place-items-center">
+                <span className="modern-chat-unread">
                   {c.unread > 9 ? "9+" : c.unread}
                 </span>
               )}
             </div>
-            <div className="min-w-0 flex-1">
+            <div className="modern-chat-conversation-copy">
               <div className={"truncate text-sm " + (c.unread > 0 ? "font-black" : "font-bold")}>{c.name || "Unbekannt"}</div>
-              <div className={"text-xs truncate " + (c.unread > 0 ? "font-bold text-black" : "text-muted-foreground")}>{c.subtitle || c.lastText || ""}</div>
+              <div className={"modern-chat-conversation-subtitle " + (c.unread > 0 ? "has-unread" : "")}>{c.subtitle || c.lastText || ""}</div>
             </div>
             {c.unread > 0 && (
-              <span className="shrink-0 w-2 h-2 rounded-full bg-black" />
+              <span className="modern-chat-unread-dot" />
             )}
           </button>
         );

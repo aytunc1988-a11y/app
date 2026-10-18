@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Plus, Camera, Upload, Download } from "lucide-react";
+import { Plus, Camera, Upload, Download, FileText, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { db } from "@/api/base44Client";
@@ -67,38 +67,46 @@ export default function ExamsList() {
   };
 
   return (
-    <div>
+    <div className="modern-page modern-exams">
       <LearnTabs />
-      <div className="flex items-center justify-between gap-2">
-        <h1 className="font-heading text-xl sm:text-3xl">Prüfungen</h1>
-        <div className="flex items-center gap-2">
-          <button onClick={exportExams} className="brutal-btn bg-white px-2.5 py-1 text-xs flex items-center gap-1"><Download className="w-3.5 h-3.5" /> Export</button>
-          <button onClick={() => fileRef.current?.click()} className="brutal-btn bg-[#CAFFBF] px-2.5 py-1 text-xs flex items-center gap-1"><Upload className="w-3.5 h-3.5" /> Import</button>
+      <section className="modern-exams-hero">
+        <div>
+          <span className="modern-learning-eyebrow"><Sparkles className="h-3.5 w-3.5" /> DEIN LERNBEREICH</span>
+          <h1 className="font-heading">Prüfungen</h1>
+          <p>Erstelle eigene Prüfungen oder lerne mit deinen Fragen.</p>
+        </div>
+        <div className="modern-exams-tools">
+          <button onClick={exportExams} disabled={!exams.length} className="brutal-btn modern-exam-tool bg-white"><Download className="h-4 w-4" /> Export</button>
+          <button onClick={() => fileRef.current?.click()} className="brutal-btn modern-exam-tool bg-white"><Upload className="h-4 w-4" /> Import</button>
           <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={(e) => importExams(e.target.files?.[0])} />
         </div>
-      </div>
+      </section>
 
-      <div className="grid grid-cols-2 gap-2 mt-3">
+      <div className="modern-exam-tabs" role="tablist" aria-label="Prüfungen verwalten">
         {SUB.map((t) => (
-          <button key={t.id} onClick={() => setSub(t.id)} className={`flex items-center justify-center gap-1 text-xs font-bold py-2 rounded-lg border-2 border-black transition-all ${sub === t.id ? "bg-[#FDFFB6] shadow-[2px_2px_0_0_#000]" : "bg-white"}`}>
+          <button key={t.id} role="tab" aria-selected={sub === t.id} onClick={() => setSub(t.id)} className={`modern-exam-tab ${sub === t.id ? "is-active" : ""}`}>
             <t.icon className="w-3.5 h-3.5" /> {t.label}
           </button>
         ))}
       </div>
 
       {sub === "neu" ? (
-        <div className="mt-3">
-          <p className="font-semibold text-muted-foreground text-xs">Stelle dir eigene Prüfungen zusammen – Lern- oder Prüfungsmodus.</p>
-          <Link to="/pruefung/neu" className="brutal-btn bg-[#FDFFB6] w-full mt-2 py-3 font-heading flex items-center justify-center gap-2 text-sm">
-            <Plus className="w-4 h-4" /> Neue Prüfung
-          </Link>
+        <div className="modern-exam-content">
+          <div className="modern-exam-create">
+            <div className="modern-exam-create-icon"><FileText className="h-5 w-5" /></div>
+            <div><h2>Deine nächste Prüfung</h2><p>Stelle Fragen zusammen und übe in deinem eigenen Tempo.</p></div>
+            <Link to="/pruefung/neu" className="brutal-btn modern-exam-create-button bg-[#FDFFB6]">
+              <Plus className="h-4 w-4" /> Neue Prüfung
+            </Link>
+          </div>
+          <div className="modern-exam-list-heading"><h2>Deine Prüfungen</h2><span>{exams.length} {exams.length === 1 ? "Prüfung" : "Prüfungen"}</span></div>
 
           {isLoading ? (
             <div className="grid place-items-center py-12"><div className="w-8 h-8 border-4 border-black border-t-[#FDFFB6] rounded-full animate-spin" /></div>
           ) : exams.length === 0 ? (
-            <div className="brutal bg-white p-4 mt-3 text-center font-semibold text-sm">Noch keine Prüfungen erstellt.</div>
+            <div className="modern-exams-empty"><div><FileText className="h-6 w-6" /></div><h2>Noch keine Prüfungen</h2><p>Erstelle deine erste eigene Prüfung oder importiere eine bestehende Datei.</p></div>
           ) : (
-            <div className="space-y-3 mt-3">
+            <div className="modern-exam-list">
               {exams.map((e, i) => <ExamCard key={e.id} exam={e} index={i} onDelete={() => remove(e.id)} />)}
             </div>
           )}

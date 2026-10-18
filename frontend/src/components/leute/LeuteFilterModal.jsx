@@ -13,7 +13,7 @@ export default function LeuteFilterModal({ open, onOpenChange, filters, onApply 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="brutal max-w-md">
+      <DialogContent className="modern-people-filter-dialog brutal max-w-md">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="font-heading text-2xl">Filter</DialogTitle>

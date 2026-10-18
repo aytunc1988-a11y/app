@@ -86,17 +86,17 @@ export default function QuizRun() {
     }
   }, [submitted, saved, questions, answered, correct, elapsed, subjectId, qc]);
 
-  if (!subject) return <p className="text-center py-20 font-semibold">Fach nicht gefunden.</p>;
-  if (!questions) return <div className="grid place-items-center py-24"><div className="w-10 h-10 border-4 border-black border-t-[#FDFFB6] rounded-full animate-spin" /></div>;
+  if (!subject) return <p className="modern-page text-center py-20 font-semibold">Fach nicht gefunden.</p>;
+  if (!questions) return <div className="modern-page grid place-items-center py-24"><div className="w-10 h-10 border-4 border-black border-t-[#FDFFB6] rounded-full animate-spin" /></div>;
   if (!questions.length) return (
-    <div className="text-center py-20">
+    <div className="modern-page text-center py-20">
       <p className="font-heading text-2xl">Keine Fragen</p>
       <p className="font-semibold text-muted-foreground mt-2">Für dieses Fach sind noch keine Fragen vorhanden.</p>
       <Link to="/faecher" className="brutal-btn bg-[#FDFFB6] px-5 py-3 inline-block mt-6">Zurück</Link>
     </div>
   );
 
-  if (submitted) return <SessionSummary subject={subject} answered={answered} correct={correct} seconds={elapsed} timeUp={timeUp} onRestart={() => setSeed((s) => s + 1)} />;
+  if (submitted) return <div className="modern-page modern-quiz-run"><SessionSummary subject={subject} answered={answered} correct={correct} seconds={elapsed} timeUp={timeUp} onRestart={() => setSeed((s) => s + 1)} /></div>;
 
   const q = questions[idx];
   const currentAnswer = answers[q.id] ?? null;
@@ -104,13 +104,13 @@ export default function QuizRun() {
   const clockValue = countdown ? countdown - elapsed : elapsed;
 
   return (
-    <div>
+    <div className="modern-page modern-quiz-run">
       <div className="flex items-center justify-between gap-3">
-        <button onClick={() => navigate(`/quiz/${subjectId}`)} className="p-2 border-2 border-black rounded-lg bg-white hover:bg-[#FFADAD] transition-all"><X className="w-5 h-5" /></button>
-        <div className="flex-1 h-4 border-2 border-black rounded-full bg-white overflow-hidden">
+        <button onClick={() => navigate(`/quiz/${subjectId}`)} aria-label="Quiz beenden" className="p-2 border-2 border-black rounded-lg bg-white hover:bg-[#FFADAD] transition-all"><X className="w-5 h-5" /></button>
+        <div className="flex-1 h-3 border-2 border-black rounded-full bg-white overflow-hidden" role="progressbar" aria-label="Quizfortschritt" aria-valuemin={0} aria-valuemax={questions.length} aria-valuenow={idx} aria-valuetext={`${idx} von ${questions.length} Fragen abgeschlossen`}>
           <div className="h-full bg-[#CAFFBF] border-r-2 border-black transition-all duration-500" style={{ width: `${(idx / questions.length) * 100}%` }} />
         </div>
-        <div className={`border-2 border-black rounded-lg px-3 py-1.5 font-bold tabular-nums ${countdown && clockValue < 60 ? "bg-[#FFADAD]" : "bg-white"}`}>
+        <div role="timer" aria-label={countdown ? "Verbleibende Zeit" : "Bisherige Lernzeit"} aria-live="off" className={`border-2 border-black rounded-lg px-3 py-1.5 font-bold tabular-nums ${countdown && clockValue < 60 ? "bg-[#FFADAD]" : "bg-white"}`}>
           <Clock className="w-4 h-4 inline mr-1" />{formatClock(clockValue)}
         </div>
       </div>
