@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet } from "react-router-dom";
 import { Home, BarChart3, LogOut, FileText, Users, UserCircle, ShoppingBag, MessageCircle, KeyRound } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { db } from "@/api/base44Client";
+import { disableLocalPreview } from "@/lib/previewMode";
 
 const NAV_DESKTOP = [
   { to: "/faecher", label: "Fächer", icon: Home },
@@ -22,7 +23,7 @@ const BOTTOM = [
 ];
 
 export default function AppLayout() {
-  const { logout, user } = useAuth();
+  const { logout, user, previewMode } = useAuth();
   const [unread, setUnread] = useState(0);
   useEffect(() => {
     if (!user?.user_id) return;
@@ -86,6 +87,14 @@ export default function AppLayout() {
           </div>
         </div>
       </header>
+      {previewMode && (
+        <aside role="status" className="bg-[#e5f2ec] border-b border-[#d7e1dc] px-4 py-2 text-sm font-semibold">
+          <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+            <span>Vorschau ohne Anmeldung · Daten und Änderungen sind nur in diesem Browser sichtbar.</span>
+            <button onClick={() => { disableLocalPreview(); window.location.href = "/"; }} className="underline underline-offset-2 whitespace-nowrap">Vorschau beenden</button>
+          </div>
+        </aside>
+      )}
       <main className="max-w-3xl mx-auto px-3 py-3 md:px-6 md:py-8"><Outlet /></main>
       <nav className="md:hidden fixed bottom-4 left-3 right-3 z-20 brutal bg-white grid grid-cols-5 py-2">
         {BOTTOM.map((n) => (

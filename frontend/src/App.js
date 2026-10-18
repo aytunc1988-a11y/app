@@ -4,6 +4,7 @@ import "@/App.css";
 import "@/modern-design.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
+import { enablePreviewFromLocation } from "@/lib/previewMode";
 import { AuthProvider } from "@/lib/AuthContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import AppLayout from "@/components/AppLayout";
@@ -85,6 +86,7 @@ function AppRouter() {
 }
 
 function App() {
+  enablePreviewFromLocation();
   return (
     <div className="App">
       <AuthProvider>

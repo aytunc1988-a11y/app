@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { KeyRound, Loader2, MessageCircle } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
 import { db } from "@/api/base44Client";
@@ -8,17 +8,19 @@ import { toast } from "sonner";
 const Spinner = () => <div className="min-h-screen grid place-items-center"><div className="w-10 h-10 border-4 border-black border-t-[#FDFFB6] rounded-full animate-spin" /></div>;
 
 export function RequireAuth() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, previewMode } = useAuth();
+  const { pathname } = useLocation();
   if (loading || isAuthenticated === null) return <Spinner />;
+  if (previewMode) return pathname.startsWith("/admin") ? <Navigate to="/" replace /> : <Outlet />;
   if (!isAuthenticated) return <Navigate to="/login?returnTo=/faecher" replace />;
   return <Outlet />;
 }
 
 export function RequireLicense() {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, previewMode } = useAuth();
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
-  if (user && user.licensed) return <Outlet />;
+  if (previewMode || (user && user.licensed)) return <Outlet />;
   const redeem = async () => {
     if (!code.trim()) return;
     setBusy(true);

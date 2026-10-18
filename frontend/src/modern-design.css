@@ -227,6 +227,11 @@
 }
 
 @media (max-width: 640px) {
+  .modern-app-shell aside[role="status"] > div {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .modern-listing-header {
     align-items: stretch;
     flex-direction: column;
