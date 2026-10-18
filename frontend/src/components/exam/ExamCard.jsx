@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Trash2, Clock, Play, BookOpen, Download } from "lucide-react";
+import { Trash2, Clock, Play, BookOpen, Download, FileText } from "lucide-react";
 import { db } from "@/api/base44Client";
 import { toast } from "sonner";
 
@@ -25,10 +25,11 @@ export default function ExamCard({ exam, index, onDelete }) {
   };
 
   return (
-    <div className="brutal bg-white p-5 flex items-center justify-between gap-3">
-      <Link to={"/pruefung/" + exam.id} className="min-w-0 flex-1">
+    <article className="modern-exam-card">
+      <div className="modern-exam-card-icon"><FileText className="h-5 w-5" /></div>
+      <Link to={"/pruefung/" + exam.id} className="modern-exam-card-content">
         <div className="flex items-center gap-2">
-          <span className={"text-[10px] font-bold uppercase tracking-widest border-2 border-black rounded-md px-1.5 py-0.5 " + (isExam ? "bg-[#FFADAD]" : "bg-[#CAFFBF]")}>
+          <span className={"modern-exam-mode " + (isExam ? "is-exam" : "is-learning")}>
             {isExam ? "Prüfung" : "Lernen"}
           </span>
           {isExam && exam.timer_minutes ? (
@@ -37,23 +38,23 @@ export default function ExamCard({ exam, index, onDelete }) {
             </span>
           ) : null}
         </div>
-        <div className="font-heading text-lg mt-1 truncate">{exam.title}</div>
-        <div className="text-xs font-semibold text-muted-foreground mt-0.5">{(exam.question_ids || []).length} Fragen</div>
+        <div className="modern-exam-title">{exam.title}</div>
+        <div className="modern-exam-meta">{(exam.question_ids || []).length} Fragen</div>
       </Link>
-      <div className="flex items-center gap-2 shrink-0">
-        <Link to={"/pruefung/" + exam.id + "/karten"} className="brutal-btn bg-[#CAFFBF] px-3 py-2 flex items-center gap-1 text-sm" title="Karteikarten">
+      <div className="modern-exam-card-actions">
+        <Link to={"/pruefung/" + exam.id + "/karten"} className="brutal-btn modern-exam-icon-action" title="Karteikarten" aria-label="Karteikarten öffnen">
           <BookOpen className="w-4 h-4" />
         </Link>
-        <Link to={"/pruefung/" + exam.id} className="brutal-btn bg-[#FDFFB6] px-3 py-2 flex items-center gap-1 text-sm">
-          <Play className="w-4 h-4" /> Start
+        <Link to={"/pruefung/" + exam.id} className="brutal-btn modern-exam-start">
+          <Play className="h-4 w-4" /> Starten
         </Link>
-        <button onClick={exportSingle} className="p-2 border-2 border-black rounded-lg hover:bg-[#9BF6FF] transition-colors" title="Exportieren">
+        <button onClick={exportSingle} className="modern-exam-icon-action" title="Exportieren" aria-label="Prüfung exportieren">
           <Download className="w-4 h-4" />
         </button>
-        <button onClick={onDelete} className="p-2 border-2 border-black rounded-lg hover:bg-[#FFADAD] transition-colors">
+        <button onClick={onDelete} className="modern-exam-icon-action is-destructive" aria-label="Prüfung löschen">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
-    </div>
+    </article>
   );
 }

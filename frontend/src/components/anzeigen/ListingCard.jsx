@@ -15,11 +15,13 @@ export default function ListingCard({ listing, mine, onDelete, onToggle }) {
     <article className={`modern-listing-card ${inactive ? "is-inactive" : ""}`}>
       <Link to={`/anzeigen/${listing.id}`} className="modern-listing-card-link">
         <div className="modern-listing-card-image">
-          {listing.image_url ? (
-            <UiImage src={listing.image_url} fittingType="cover" className="h-full w-full" />
-          ) : (
-            <span aria-hidden="true">{prof?.emoji || "🏷️"}</span>
-          )}
+          <div className="modern-listing-card-media">
+            {listing.image_url ? (
+              <UiImage src={listing.image_url} fittingType="cover" className="h-full w-full" />
+            ) : (
+              <span aria-hidden="true">{prof?.emoji || "🏷️"}</span>
+            )}
+          </div>
           <span className="modern-listing-profession">{prof?.short || "Anzeige"}</span>
           {inactive && <span className="modern-listing-paused">Pausiert</span>}
         </div>

@@ -536,7 +536,7 @@
 
 .modern-listing-card-link {
   display: flex;
-  min-height: 10rem;
+  min-height: 7.2rem;
   color: inherit;
   text-decoration: none;
 }
@@ -544,27 +544,38 @@
 .modern-listing-card-image {
   position: relative;
   display: grid;
-  width: 12rem;
-  min-height: 10rem;
-  flex: 0 0 12rem;
+  width: 7rem;
+  min-height: 7.2rem;
+  flex: 0 0 7rem;
   overflow: hidden;
   place-items: center;
+  padding: 0.7rem;
+  background: #fff;
+}
+
+.modern-listing-card-media {
+  display: grid;
+  width: 5.4rem;
+  height: 5.4rem;
+  overflow: hidden;
+  place-items: center;
+  border-radius: 0.85rem;
   background: linear-gradient(135deg, #e7f1eb, #f5f8f6);
 }
 
-.modern-listing-card-image > span:first-child {
-  font-size: 3.25rem;
-  filter: drop-shadow(0 5px 8px rgb(15 23 42 / 10%));
+.modern-listing-card-media > span {
+  font-size: 2.1rem;
+  filter: drop-shadow(0 4px 7px rgb(15 23 42 / 10%));
 }
 
-.modern-listing-card-image img {
+.modern-listing-card-media img {
   height: 100%;
   width: 100%;
   object-fit: cover;
   transition: transform 260ms ease;
 }
 
-.modern-listing-card:hover .modern-listing-card-image img {
+.modern-listing-card:hover .modern-listing-card-media img {
   transform: scale(1.035);
 }
 
@@ -594,7 +605,8 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding: 1rem 1.1rem 1.05rem;
+  padding: 0.8rem 1rem;
+  border-left: 1px solid #f1f3f4;
 }
 
 .modern-listing-card-topline {
@@ -644,7 +656,7 @@
   align-items: center;
   gap: 0.25rem;
   margin-top: auto;
-  padding-top: 0.8rem;
+  padding-top: 0.4rem;
   color: #477966;
   font-size: 0.75rem;
   font-weight: 750;
@@ -652,11 +664,11 @@
 
 .modern-listing-card-actions {
   display: flex;
-  justify-content: flex-end;
+  align-self: stretch;
+  justify-content: center;
   gap: 0.45rem;
   align-items: center;
-  padding: 0.7rem 0.9rem;
-  border-left: 1px solid #edf1f3;
+  padding: 0.55rem 0.65rem;
 }
 
 .modern-listing-action {
@@ -812,6 +824,234 @@
 .modern-profile-save { display: inline-flex; min-height: 2.9rem; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 1rem; background: #183b35; color: white; font-size: 0.85rem; font-weight: 750; }
 .modern-profile-save:hover:not(:disabled) { background: #24574b; }
 
+.modern-learn-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.35rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 4px 14px rgb(15 23 42 / 4%);
+}
+
+.modern-learn-tabs a {
+  display: inline-flex;
+  min-height: 2.6rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.modern-learn-tabs a[aria-current="page"] { background: #edf5f0; color: #315f4f; box-shadow: none; }
+.modern-learn-tabs a:hover { background: #f8fafc; color: #172b2b; }
+
+.modern-learning-hero,
+.modern-exams-hero,
+.modern-stats-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid #dce7e2;
+  border-radius: 1.5rem;
+  background: radial-gradient(circle at 90% 5%, rgb(214 235 224 / 75%), transparent 34%), linear-gradient(130deg, #fff, #f1f7f3);
+  box-shadow: 0 12px 36px rgb(15 23 42 / 5%);
+}
+
+.modern-learning-hero h1,
+.modern-exams-hero h1,
+.modern-stats-hero h1 {
+  margin-top: 0.45rem;
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  line-height: 1.1;
+}
+
+.modern-learning-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #477966;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.modern-learning-profession {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  border: 1px solid #dce7e2;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 85%);
+  padding: 0.45rem 0.75rem;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.modern-learning-profession > span { font-size: 1rem; }
+.modern-learning-change { display: inline-flex; min-height: 2.7rem; align-items: center; justify-content: center; padding: 0.6rem 0.85rem; font-size: 0.75rem; font-weight: 750; text-decoration: none; white-space: nowrap; }
+
+.modern-learning-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.modern-learning-stat {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 5px 18px rgb(15 23 42 / 4%);
+}
+
+.modern-learning-stat:nth-child(1) { background: #edf5f0; }
+.modern-learning-stat:nth-child(3) { background: #f8f1ef; }
+.modern-learning-stat > div { overflow: hidden; color: #172b2b; font-size: clamp(1.15rem, 3vw, 1.55rem); font-weight: 800; letter-spacing: -0.04em; text-overflow: ellipsis; white-space: nowrap; }
+.modern-learning-stat > span { color: #64748b; font-size: 0.72rem; font-weight: 650; }
+
+.modern-learning-subjects {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 1.1rem;
+}
+
+.modern-subject-card {
+  display: flex;
+  min-height: 4.5rem;
+  align-items: center;
+  gap: 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background: #fff;
+  padding: 0.75rem 0.9rem;
+  color: #172b2b;
+  text-decoration: none;
+  box-shadow: 0 5px 18px rgb(15 23 42 / 4%);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.modern-subject-card:hover:not(.is-locked) { transform: translateY(-2px); box-shadow: 0 12px 24px rgb(15 23 42 / 8%); }
+.modern-subject-card.is-locked { opacity: 0.62; }
+.modern-subject-icon { display: grid; width: 2.8rem; height: 2.8rem; flex: 0 0 auto; place-items: center; border: 0; border-radius: 0.85rem; font-size: 1.25rem; }
+.modern-subject-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 0.2rem; }
+.modern-subject-copy > div { overflow: hidden; color: #172b2b; font-size: 0.88rem; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.modern-subject-copy > span { color: #718096; font-size: 0.72rem; }
+.modern-subject-action { display: inline-flex; min-height: 2.5rem; flex: 0 0 auto; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 0.75rem; background: #edf5f0; padding: 0.55rem 0.8rem; color: #315f4f; font-size: 0.75rem; font-weight: 750; }
+.modern-subject-action.is-locked { background: #f1f5f9; color: #64748b; }
+
+.modern-exams-hero { align-items: center; }
+.modern-exams-hero > div:first-child > p { margin-top: 0.4rem; color: #64748b; font-size: 0.85rem; }
+.modern-exams-tools { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.modern-exam-tool { display: inline-flex; min-height: 2.6rem; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.55rem 0.75rem; color: #475569; font-size: 0.75rem; font-weight: 700; }
+.modern-exam-tool:disabled { cursor: not-allowed; opacity: 0.45; }
+.modern-exam-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.4rem; margin-top: 1rem; padding: 0.35rem; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; }
+.modern-exam-tab { display: inline-flex; min-height: 2.65rem; align-items: center; justify-content: center; gap: 0.45rem; border: 0; border-radius: 0.75rem; background: transparent; color: #64748b; font-size: 0.77rem; font-weight: 700; }
+.modern-exam-tab.is-active { background: #edf5f0; color: #315f4f; }
+.modern-exam-content { margin-top: 1rem; }
+.modern-exam-create { display: flex; align-items: center; gap: 0.85rem; padding: 1rem; border: 1px solid #dce7e2; border-radius: 1.1rem; background: linear-gradient(110deg, #fff, #f1f7f3); }
+.modern-exam-create-icon { display: grid; width: 2.8rem; height: 2.8rem; flex: 0 0 auto; place-items: center; border-radius: 0.85rem; background: #eaf4ee; color: #477966; }
+.modern-exam-create > div:nth-child(2) { min-width: 0; flex: 1; }
+.modern-exam-create h2 { color: #172b2b; font-size: 0.85rem; font-weight: 750; }
+.modern-exam-create p { margin-top: 0.2rem; color: #718096; font-size: 0.7rem; }
+.modern-exam-create-button { display: inline-flex; min-height: 2.6rem; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.55rem 0.8rem; color: #315f4f; font-size: 0.74rem; font-weight: 750; text-decoration: none; white-space: nowrap; }
+.modern-exam-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin: 1.3rem 0 0.65rem; }
+.modern-exam-list-heading h2 { color: #172b2b; font-size: 0.98rem; font-weight: 750; }
+.modern-exam-list-heading > span { border-radius: 999px; background: #f1f5f9; padding: 0.4rem 0.65rem; color: #64748b; font-size: 0.7rem; font-weight: 700; }
+.modern-exam-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.modern-exam-card { display: flex; min-width: 0; align-items: center; gap: 0.85rem; padding: 0.85rem; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; box-shadow: 0 5px 18px rgb(15 23 42 / 4%); }
+.modern-exam-card-icon { display: grid; width: 2.8rem; height: 2.8rem; flex: 0 0 auto; place-items: center; border-radius: 0.85rem; background: #edf5f0; color: #477966; }
+.modern-exam-card-content { min-width: 0; flex: 1; color: inherit; text-decoration: none; }
+.modern-exam-mode { border-radius: 999px; background: #edf5f0; padding: 0.3rem 0.55rem; color: #477966; font-size: 0.64rem; font-weight: 750; }
+.modern-exam-mode.is-exam { background: #f8f1ef; color: #a85d51; }
+.modern-exam-title { overflow: hidden; margin-top: 0.35rem; color: #172b2b; font-size: 0.9rem; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.modern-exam-meta { margin-top: 0.15rem; color: #718096; font-size: 0.7rem; }
+.modern-exam-card-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 0.4rem; }
+.modern-exam-icon-action { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid #e2e8f0; border-radius: 0.75rem; background: #fff; color: #64748b; text-decoration: none; }
+.modern-exam-icon-action:hover { background: #f1f5f9; }
+.modern-exam-icon-action.is-destructive { color: #b42318; }
+.modern-exam-start { display: inline-flex; min-height: 2.5rem; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem 0.75rem; background: #edf5f0; color: #315f4f; font-size: 0.74rem; font-weight: 750; text-decoration: none; }
+.modern-exams-empty { display: flex; align-items: center; flex-direction: column; gap: 0.5rem; padding: 3rem 1rem; border: 1px dashed #cbd5e1; border-radius: 1.1rem; background: rgb(255 255 255 / 75%); text-align: center; }
+.modern-exams-empty > div { display: grid; width: 3rem; height: 3rem; place-items: center; border-radius: 1rem; background: #edf5f0; color: #477966; }
+.modern-exams-empty h2 { color: #172b2b; font-size: 0.9rem; font-weight: 750; }
+.modern-exams-empty p { max-width: 24rem; color: #718096; font-size: 0.75rem; }
+
+.modern-stats-hero > div:first-child > p { margin-top: 0.4rem; color: #64748b; font-size: 0.85rem; }
+.modern-stats-hero-icon { display: grid; width: 3.3rem; height: 3.3rem; flex: 0 0 auto; place-items: center; border-radius: 1rem; background: #eaf4ee; color: #477966; }
+.modern-stats-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.7rem; margin-top: 1rem; }
+.modern-stats-metric { display: flex; min-width: 0; flex-direction: column-reverse; gap: 0.25rem; padding: 0.9rem 1rem; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; box-shadow: 0 5px 18px rgb(15 23 42 / 4%); }
+.modern-stats-metric:first-child { background: #edf5f0; }
+.modern-stats-metric > span { color: #64748b; font-size: 0.67rem; font-weight: 650; }
+.modern-stats-metric > strong { overflow: hidden; color: #172b2b; font-size: clamp(1.1rem, 3vw, 1.45rem); font-weight: 800; letter-spacing: -0.04em; text-overflow: ellipsis; white-space: nowrap; }
+.modern-stats-list-heading { margin: 1.35rem 0 0.7rem; }
+.modern-stats-list-heading h2 { color: #172b2b; font-size: 0.98rem; font-weight: 750; }
+.modern-stats-list-heading p { margin-top: 0.15rem; color: #718096; font-size: 0.75rem; }
+.modern-stats-subject-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.modern-stats-subject { padding: 0.95rem 1rem; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; box-shadow: 0 5px 18px rgb(15 23 42 / 4%); }
+.modern-stats-subject-top { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
+.modern-stats-subject-info { display: flex; min-width: 0; align-items: center; gap: 0.75rem; }
+.modern-stats-subject-info > div { min-width: 0; }
+.modern-stats-subject-info h3 { overflow: hidden; color: #172b2b; font-size: 0.84rem; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.modern-stats-subject-info p { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.2rem; color: #718096; font-size: 0.68rem; }
+.modern-stats-subject-info p i { width: 0.18rem; height: 0.18rem; border-radius: 50%; background: #94a3b8; }
+.modern-stats-subject-top > strong { color: #315f4f; font-size: 1rem; font-weight: 800; }
+.modern-stats-progress { height: 0.45rem; overflow: hidden; margin-top: 0.75rem; border-radius: 999px; background: #edf1f3; }
+.modern-stats-progress-value { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #8dbca3, #477966); transition: width 500ms ease; }
+.modern-stats-reset { display: inline-flex; width: 100%; min-height: 2.8rem; align-items: center; justify-content: center; gap: 0.45rem; margin-top: 1rem; background: #fff; color: #64748b; font-size: 0.78rem; font-weight: 700; }
+.modern-stats-reset:disabled { cursor: not-allowed; opacity: 0.5; }
+
+@media (max-width: 640px) {
+  .modern-learning-hero,
+  .modern-exams-hero { align-items: flex-start; flex-direction: column; }
+  .modern-learning-change { align-self: flex-start; }
+  .modern-learning-stat { padding: 0.8rem; }
+  .modern-learning-stat > span { font-size: 0.65rem; }
+  .modern-subject-card { gap: 0.65rem; padding: 0.65rem; }
+  .modern-subject-icon { width: 2.5rem; height: 2.5rem; font-size: 1.1rem; }
+  .modern-subject-action { min-height: 2.3rem; padding: 0.45rem 0.55rem; font-size: 0.68rem; }
+  .modern-exams-tools { width: 100%; }
+  .modern-exams-tools > button { flex: 1; }
+  .modern-exam-create { align-items: flex-start; flex-wrap: wrap; }
+  .modern-exam-create > div:nth-child(2) { flex-basis: calc(100% - 3.8rem); }
+  .modern-exam-create-button { width: 100%; }
+  .modern-exam-card { flex-wrap: wrap; gap: 0.65rem; padding: 0.7rem; }
+  .modern-exam-card-icon { width: 2.45rem; height: 2.45rem; }
+  .modern-exam-card-content { flex-basis: calc(100% - 3.2rem); }
+  .modern-exam-card-actions { width: 100%; justify-content: flex-end; }
+  .modern-exam-start { flex: 1; }
+  .modern-stats-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .modern-stats-metric { padding: 0.75rem; }
+  .modern-stats-hero { align-items: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modern-learn-tabs a,
+  .modern-subject-card,
+  .modern-stats-progress-value {
+    transition: none;
+  }
+}
+
 @media (max-width: 640px) {
   .modern-listings-hero { align-items: stretch; flex-direction: column; }
   .modern-listings-hero-actions { justify-content: stretch; }
@@ -849,51 +1089,41 @@
   text-decoration: none;
 }
 
-.modern-listing-detail-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.95fr);
-  align-items: stretch;
-  gap: 1.2rem;
-}
-
 .modern-listing-detail-image {
-  position: relative;
   display: grid;
-  min-height: 31rem;
+  width: 9rem;
+  height: 9rem;
+  flex: 0 0 auto;
   overflow: hidden;
   place-items: center;
-  border: 1px solid #dce7e2;
-  border-radius: 1.5rem;
-  background:
-    radial-gradient(circle at 50% 45%, rgb(255 255 255 / 86%), transparent 42%),
-    linear-gradient(140deg, #e5f2ec, #f4f7f5);
-  box-shadow: 0 12px 36px rgb(15 23 42 / 7%);
+  border-radius: 1rem;
+  background: linear-gradient(140deg, #e5f2ec, #f4f7f5);
 }
 
-.modern-listing-detail-image > img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; }
-.modern-listing-detail-image > span:not(.modern-listing-detail-image-label) { font-size: clamp(5rem, 13vw, 10rem); filter: drop-shadow(0 12px 20px rgb(15 23 42 / 10%)); }
-.modern-listing-detail-image-label { position: absolute; top: 1rem; left: 1rem; display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid rgb(255 255 255 / 70%); border-radius: 999px; background: rgb(255 255 255 / 88%); padding: 0.55rem 0.8rem; color: #334155; font-size: 0.75rem; font-weight: 750; backdrop-filter: blur(8px); }
+.modern-listing-detail-image > img { width: 100%; height: 100%; object-fit: cover; }
+.modern-listing-detail-image > span { font-size: 3.5rem; filter: drop-shadow(0 8px 14px rgb(15 23 42 / 10%)); }
 
 .modern-listing-detail-card {
   display: flex;
   min-width: 0;
   flex-direction: column;
   padding: clamp(1.25rem, 4vw, 2rem);
-  border: 1px solid #e2e8f0;
+  border: 1px solid #dce7e2;
   border-radius: 1.5rem;
-  background: #fff;
+  background: linear-gradient(145deg, #fff, #fbfdfc);
   box-shadow: 0 12px 36px rgb(15 23 42 / 6%);
 }
 
+.modern-listing-detail-overview { display: flex; align-items: center; gap: 1.2rem; }
+.modern-listing-detail-heading { flex: 1; min-width: 0; }
 .modern-listing-detail-top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
 .modern-listing-detail-category { border-radius: 999px; background: #edf5f0; padding: 0.45rem 0.75rem; color: #477966; font-size: 0.72rem; font-weight: 750; }
 .modern-listing-detail-price { color: #1c5543; font-size: clamp(1.3rem, 4vw, 1.8rem); font-weight: 800; letter-spacing: -0.04em; white-space: nowrap; }
-.modern-listing-detail-card h1 { margin-top: 1.4rem; font-size: clamp(1.65rem, 4vw, 2.5rem); line-height: 1.15; overflow-wrap: anywhere; }
+.modern-listing-detail-card h1 { margin-top: 0.65rem; font-size: clamp(1.45rem, 4vw, 2.2rem); line-height: 1.15; overflow-wrap: anywhere; }
 .modern-listing-detail-location { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.75rem; color: #64748b; font-size: 0.88rem; }
-.modern-listing-detail-divider { height: 1px; margin: 1.35rem 0; background: #e8edf0; }
-.modern-listing-detail-description { color: #475569; font-size: 0.95rem; line-height: 1.8; white-space: pre-wrap; }
+.modern-listing-detail-description { margin-top: 1.25rem; padding-top: 1.1rem; border-top: 1px solid #e8edf0; color: #475569; font-size: 0.92rem; line-height: 1.75; white-space: pre-wrap; }
 .modern-listing-attachment { display: inline-flex; min-height: 2.8rem; align-items: center; align-self: flex-start; gap: 0.5rem; margin-top: 1rem; padding: 0.6rem 0.8rem; background: #f1f7f4; color: #315f4f; font-size: 0.8rem; font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }
-.modern-listing-seller { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; padding: 1.2rem 0 0.8rem; }
+.modern-listing-seller { display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem; padding: 0.9rem 0 0; border-top: 1px solid #e8edf0; }
 .modern-listing-seller-icon { display: grid; width: 2.75rem; height: 2.75rem; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #edf5f0; color: #477966; }
 .modern-listing-seller > div { display: flex; min-width: 0; flex-direction: column; gap: 0.2rem; }
 .modern-listing-seller > div span { color: #718096; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.1em; }
@@ -1031,17 +1261,33 @@
 .modern-people-filter-dialog [role="dialog"] { outline: none; }
 
 @media (max-width: 640px) {
-  .modern-listing-card-link { min-height: 8.5rem; }
-  .modern-listing-card-image { width: 7rem; min-height: 8.5rem; flex-basis: 7rem; }
+  .modern-listing-card-link { min-height: 6rem; }
+  .modern-listing-card-image { width: 5.1rem; min-height: 6rem; flex-basis: 5.1rem; padding: 0.5rem; }
+  .modern-listing-card-media { width: 4.1rem; height: 4.1rem; border-radius: 0.7rem; }
+  .modern-listing-card-media > span { font-size: 1.7rem; }
   .modern-listing-card-content { padding: 0.8rem; }
   .modern-listing-card-content h3 { font-size: 0.88rem; }
   .modern-listing-description { font-size: 0.72rem; }
   .modern-listing-open { font-size: 0.68rem; }
   .modern-listing-card-actions { justify-content: center; flex-direction: column; padding: 0.4rem; }
   .modern-listing-action { width: 2rem; height: 2rem; }
-  .modern-listing-detail-grid { grid-template-columns: minmax(0, 1fr); }
-  .modern-listing-detail-image { min-height: 16rem; max-height: 22rem; }
-  .modern-listing-detail-actions { flex-direction: column; }
+  .modern-listing-detail-card { gap: 0; padding: 1rem; border-radius: 1.15rem; }
+  .modern-listing-detail-overview { align-items: flex-start; gap: 0.8rem; }
+  .modern-listing-detail-image { width: 5.25rem; height: 5.25rem; border-radius: 0.8rem; }
+  .modern-listing-detail-image > span { font-size: 2.25rem; }
+  .modern-listing-detail-top { align-items: flex-start; flex-direction: column-reverse; gap: 0.35rem; }
+  .modern-listing-detail-category { padding: 0.32rem 0.55rem; font-size: 0.63rem; }
+  .modern-listing-detail-price { font-size: 1rem; }
+  .modern-listing-detail-card h1 { margin-top: 0.45rem; font-size: 1.08rem; line-height: 1.25; }
+  .modern-listing-detail-location { margin-top: 0.45rem; font-size: 0.72rem; }
+  .modern-listing-detail-description { margin-top: 0.9rem; padding-top: 0.85rem; font-size: 0.84rem; line-height: 1.65; }
+  .modern-listing-attachment { max-width: 100%; font-size: 0.72rem; }
+  .modern-listing-seller { margin-top: 0.9rem; padding-top: 0.75rem; }
+  .modern-listing-seller-icon { width: 2.35rem; height: 2.35rem; }
+  .modern-listing-detail-actions { flex-direction: column; margin-top: 0.75rem; }
+  .modern-listing-contact,
+  .modern-listing-edit,
+  .modern-listing-delete { min-height: 2.8rem; font-size: 0.8rem; }
   .modern-people-hero { align-items: stretch; flex-direction: column; }
   .modern-people-filter { align-self: flex-start; }
   .modern-people-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }

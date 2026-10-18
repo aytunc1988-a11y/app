@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { RotateCcw } from "lucide-react";
+import { Activity, RotateCcw, Sparkles } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 import { db } from "@/api/base44Client";
@@ -28,38 +28,42 @@ export default function Stats() {
   };
 
   return (
-    <div>
+    <div className="modern-page modern-stats">
       <LearnTabs />
-      <h1 className="font-heading text-xl sm:text-3xl">Statistik</h1>
-      <div className="brutal bg-[#FDFFB6] p-3 mt-3 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <section className="modern-stats-hero">
+        <div><span className="modern-learning-eyebrow"><Sparkles className="h-3.5 w-3.5" /> DEIN FORTSCHRITT</span><h1 className="font-heading">Statistik</h1><p>Sieh, wie weit du schon gekommen bist.</p></div>
+        <div className="modern-stats-hero-icon"><Activity className="h-6 w-6" /></div>
+      </section>
+      <div className="modern-stats-summary">
         {[["Genauigkeit", `${total.pct}%`], ["Fragen", total.q], ["Sessions", total.n], ["Gesamtlernzeit", formatDuration(total.t)]].map(([l, v]) => (
-          <div key={l}><div className="font-heading text-lg">{v}</div><div className="text-[10px] font-bold">{l}</div></div>
+          <div key={l} className="modern-stats-metric"><span>{l}</span><strong>{v}</strong></div>
         ))}
       </div>
 
-      <div className="space-y-2 mt-3">
+      <div className="modern-stats-list-heading"><div><h2>Fortschritt nach Fach</h2><p>Deine Ergebnisse aus den bisherigen Lerneinheiten.</p></div></div>
+      <div className="modern-stats-subject-list">
         {profSubjects.map((s) => {
           const a = agg(sessions.filter((x) => x.subject === s.id));
           return (
-            <div key={s.id} className="brutal bg-white p-3">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className={`w-8 h-8 shrink-0 grid place-items-center border-2 border-black rounded-lg font-heading text-sm ${s.bg}`}>{s.emoji}</span>
-                  <div className="min-w-0"><div className="font-bold truncate">{s.name}</div><div className="text-xs font-semibold text-muted-foreground">{a.c}/{a.q} richtig · {formatDuration(a.t)}</div></div>
+            <article key={s.id} className="modern-stats-subject">
+              <div className="modern-stats-subject-top">
+                <div className="modern-stats-subject-info">
+                  <span className={`modern-subject-icon ${s.bg}`}>{s.emoji}</span>
+                  <div><h3>{s.name}</h3><p>{a.c}/{a.q} richtig <i /> {formatDuration(a.t)}</p></div>
                 </div>
-                <span className="font-heading text-lg">{a.q ? `${a.pct}%` : "–"}</span>
+                <strong>{a.q ? `${a.pct}%` : "–"}</strong>
               </div>
-              <div className="h-2.5 border-2 border-black rounded-full mt-2 overflow-hidden bg-white">
-                <div className={`h-full ${s.bg} transition-all duration-700`} style={{ width: `${a.pct}%` }} />
+              <div className="modern-stats-progress" role="progressbar" aria-label={`${s.name} Fortschritt`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={a.pct}>
+                <div className="modern-stats-progress-value" style={{ width: `${a.pct}%` }} />
               </div>
-            </div>
+            </article>
           );
         })}
       </div>
 
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <button disabled={!sessions.length} className="brutal-btn bg-white w-full mt-3 py-2.5 flex items-center justify-center gap-2 text-sm"><RotateCcw className="w-4 h-4" /> Statistik zurücksetzen</button>
+          <button disabled={!sessions.length} className="brutal-btn modern-stats-reset"><RotateCcw className="w-4 h-4" /> Statistik zurücksetzen</button>
         </AlertDialogTrigger>
         <AlertDialogContent className="brutal">
           <AlertDialogHeader>
